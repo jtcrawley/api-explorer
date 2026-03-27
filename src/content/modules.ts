@@ -244,7 +244,7 @@ for (const name of pokemonNames) {
             "Try adding more Pokemon names to the array",
             "Try accessing different properties — what about data.sprites?",
           ],
-          hint: "You can find all available properties by logging the entire data object: console.log(data)",
+          hint: "Add console.log(data) right after the 'const data = ...' line, then hit Run. Look for 'sprites', 'stats', and 'types' in the output — those are all the properties you can use.",
         },
         quiz: [
           {
@@ -384,7 +384,7 @@ listData.results.forEach((p, i) => {
             "Change offset=0 to offset=150 to see later Pokemon",
             "Notice how the API gives you 'next' and 'previous' URLs for pagination",
           ],
-          hint: "Try console.log(listData) to see the full response, including 'next' and 'previous' URLs.",
+          hint: "Add console.log(listData) right after the 'const listData = ...' line, then hit Run. Look for a 'next' URL in the output — that's how the API lets you page through all 1350 Pokemon.",
         },
         resources: [
           {
@@ -635,7 +635,7 @@ console.log("Content-Type:", simpleResponse.headers.get("content-type"));`,
             "Open DevTools (Cmd+Option+I) and go to the Network tab",
             "Click on a request to see both request and response headers",
           ],
-          hint: "Response headers tell you about the data coming back — like content-type and cache settings.",
+          hint: "Add console.log(response.headers.get('content-type')) after the fetch line, then hit Run. You should see 'application/json' — that confirms the API is sending JSON, not HTML or plain text.",
         },
         resources: [
           {
@@ -768,7 +768,7 @@ await fetchPokemon("not-a-real-pokemon");`,
             "Notice the 200 vs 404 status codes",
             "Try typing a real Pokemon name and a fake one",
           ],
-          hint: "The try/catch block prevents errors from crashing your whole program.",
+          hint: "Try triggering the error on purpose — change 'pikachu' to a random word like 'banana'. The catch block will handle it gracefully and show your error message instead of crashing.",
         },
         quiz: [
           {
@@ -1818,7 +1818,7 @@ matchedPokemon.forEach(p => {
             "The energy values here are simulated — in a real app you'd assign them based on Pokemon base stats",
             "Try adjusting the energy thresholds in energyToType()",
           ],
-          hint: "Try changing the energy thresholds in energyToType() to see how the type mapping shifts!",
+          hint: "Find the line 'if (energy > 80)' and change 80 to 50. Now more Pokemon count as high-energy. Hit Run again to see how the type mapping changes.",
         },
         resources: [
           {
