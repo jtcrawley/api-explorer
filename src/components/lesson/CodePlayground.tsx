@@ -45,7 +45,7 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
     };
 
     try {
-      const wrappedCode = `(async () => { ${code} })()`;
+      const wrappedCode = "(async () => {\n" + code + "\n})()";
       await eval(wrappedCode);
     } catch (err) {
       logs.push(`[ERROR] ${err instanceof Error ? err.message : String(err)}`);
