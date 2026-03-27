@@ -1,11 +1,11 @@
 "use client";
 
 const steps = [
-  { num: 1, from: "🧑‍💻 You", to: "📱 App", label: "Click 'Sign in with Spotify'", color: "var(--accent)", dir: "right" },
-  { num: 2, from: "📱 App", to: "🎵 Spotify", label: "Redirect to Spotify login", color: "#1DB954", dir: "right" },
-  { num: 3, from: "🧑‍💻 You", to: "🎵 Spotify", label: "Enter credentials & approve", color: "#1DB954", dir: "right" },
-  { num: 4, from: "🎵 Spotify", to: "📱 App", label: "Return an auth code", color: "var(--warning)", dir: "left" },
-  { num: 5, from: "📱 App", to: "🎵 Spotify", label: "Exchange code for access token", color: "var(--warning)", dir: "right" },
+  { num: 1, from: "🧑‍💻 You", to: "📱 App", label: "Click 'Sign in with GitHub'", color: "var(--accent)", dir: "right" },
+  { num: 2, from: "📱 App", to: "🐙 GitHub", label: "Redirect to GitHub login", color: "#238636", dir: "right" },
+  { num: 3, from: "🧑‍💻 You", to: "🐙 GitHub", label: "Enter credentials & approve", color: "#238636", dir: "right" },
+  { num: 4, from: "🐙 GitHub", to: "📱 App", label: "Return an auth code", color: "var(--warning)", dir: "left" },
+  { num: 5, from: "📱 App", to: "🐙 GitHub", label: "Exchange code for access token", color: "var(--warning)", dir: "right" },
   { num: 6, from: "📱 App", to: "🧑‍💻 You", label: "You're in — app stores token for API calls", color: "var(--success)", dir: "left" },
 ];
 
@@ -16,7 +16,7 @@ export default function OAuthFlowDiagram() {
       style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}
     >
       <p className="text-xs font-medium uppercase tracking-wider text-center mb-5" style={{ color: "var(--text-tertiary)" }}>
-        OAuth Flow — How "Sign in with Spotify" Works
+        OAuth Flow — How "Sign in with GitHub" Works
       </p>
       <div className="space-y-2.5">
         {steps.map((step) => (

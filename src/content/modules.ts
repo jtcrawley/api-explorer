@@ -68,7 +68,7 @@ An API is a **waiter** at a restaurant.
 
 In the digital world:
 - **Your browser or app** is the client
-- **A remote computer** is the server (it has data, like Pokemon info or your Spotify playlists)
+- **A remote computer** is the server (it has data, like Pokemon info or your playlists)
 - **The API** is the set of rules for how to ask for that data and what you'll get back
 
 ### The Request-Response Cycle
@@ -348,7 +348,7 @@ This tells you as a designer: "I can show name, image, types, stats, and abiliti
 
 ### Rate Limits
 
-Most APIs have a limit on how many requests you can make. PokeAPI is generous (100 requests per minute), but Spotify limits you to a certain number per second. Always check this in the docs!`,
+Most APIs have a limit on how many requests you can make. PokeAPI is generous (100 requests per minute), but most paid APIs like GitHub or Stripe limit you to a certain number per second. Always check this in the docs!`,
         exercise: {
           starterCode: `// Let's use query parameters to browse Pokemon
 // The /pokemon endpoint returns a list, not just one
@@ -582,7 +582,7 @@ fetch("https://api.example.com/data", {
 
 **2. Bearer Token** — A temporary pass (like a concert wristband)
 \`\`\`javascript
-fetch("https://api.spotify.com/v1/me", {
+fetch("https://api.github.com/user", {
   headers: { "Authorization": "Bearer your-token-here" }
 })
 \`\`\`
@@ -594,7 +594,7 @@ fetch("https://api.spotify.com/v1/me", {
 - **Rate limiting** — Track how many requests you make
 - **Security** — Only authorized users access data
 - **Billing** — Some APIs charge per request
-- **Privacy** — Your Spotify data shouldn't be public
+- **Privacy** — Your private data shouldn't be public
 
 ### For Designers
 
@@ -1367,16 +1367,16 @@ misty.team.forEach(p => {
   {
     id: "4",
     title: "Leveling Up — Real-World APIs",
-    description: "OAuth, Spotify, and combining APIs with databases.",
+    description: "OAuth, authentication, and combining APIs with databases.",
     icon: "Rocket",
     chapters: [
       {
         id: "4-1",
         title: "OAuth — Logging In With Another Service",
-        subtitle: "How 'Sign in with Google/Spotify' works",
+        subtitle: "How 'Sign in with Google' works",
         readTime: 6,
         narrative:
-          "You've seen those 'Sign in with Google' buttons everywhere. That's OAuth. Let's demystify it before we connect to Spotify.",
+          "You've seen those 'Sign in with Google' buttons everywhere. That's OAuth. Let's demystify exactly how it works.",
         concepts: [
           "OAuth 2.0",
           "Access token",
@@ -1386,54 +1386,54 @@ misty.team.forEach(p => {
         ],
         content: `## OAuth — The Fancy Handshake
 
-OAuth lets users grant your app permission to access their data on another service (like Spotify) **without sharing their password**.
+OAuth lets users grant your app permission to access their data on another service **without sharing their password**.
 
 ### The Flow (Simplified)
 
-1. **Your app** → Redirects user to Spotify login page
+1. **Your app** → Redirects user to GitHub login page
 2. **User** → Logs in and clicks "Allow" (granting permissions)
-3. **Spotify** → Redirects back to your app with a **code**
+3. **GitHub** → Redirects back to your app with a **code**
 4. **Your app** → Exchanges that code for an **access token**
 5. **Your app** → Uses the token to make API calls on behalf of the user
 
-### Real Example: Spotify
+### Real Example: GitHub
 
 \`\`\`
-Step 1: Redirect to Spotify
-https://accounts.spotify.com/authorize?
+Step 1: Redirect to GitHub
+https://github.com/login/oauth/authorize?
   client_id=YOUR_CLIENT_ID&
   response_type=code&
-  redirect_uri=http://localhost:3000/api/spotify/callback&
-  scope=user-top-read playlist-read-private
+  redirect_uri=http://localhost:3000/api/github/callback&
+  scope=read:user repo
 
 Step 2: User logs in and approves
 
-Step 3: Spotify redirects to your app
-http://localhost:3000/api/spotify/callback?code=AQB...xyz
+Step 3: GitHub redirects to your app
+http://localhost:3000/api/github/callback?code=AQB...xyz
 
 Step 4: Exchange code for token (server-side)
-POST https://accounts.spotify.com/api/token
+POST https://github.com/login/oauth/access_token
 
 Step 5: Use token for API calls
-GET https://api.spotify.com/v1/me/top/tracks
+GET https://api.github.com/user/repos
 Authorization: Bearer BQC...abc
 \`\`\`
 
 ### Scopes — What You're Asking Permission For
 
-When you redirect to Spotify, you specify **scopes** — what data you want access to:
-- \`user-top-read\` — Read the user's top tracks/artists
-- \`playlist-read-private\` — Read their private playlists
-- \`user-library-read\` — Read their saved tracks
+When you redirect to GitHub, you specify **scopes** — what data you want access to:
+- \`read:user\` — Read the user's profile
+- \`repo\` — Access repositories
+- \`gist\` — Read gists
 
 Users see these scopes on the consent screen — design this carefully!
 
 ### For Designers
 
 OAuth introduces several UX moments to design:
-1. **"Connect Spotify" button** — The entry point
-2. **Redirect to Spotify** — User briefly leaves your app
-3. **Consent screen** — Spotify asks "Allow this app to..."
+1. **"Connect GitHub" button** — The entry point
+2. **Redirect to GitHub** — User briefly leaves your app
+3. **Consent screen** — GitHub asks "Allow this app to..."
 4. **Redirect back** — User returns to your app, now connected
 5. **Connected state** — Show their profile, a "Disconnect" option
 6. **Token expired** — Graceful re-authentication flow`,
@@ -1443,38 +1443,38 @@ OAuth introduces several UX moments to design:
 
 const oauthFlow = {
   step1: {
-    action: "Redirect user to Spotify",
-    url: "https://accounts.spotify.com/authorize",
+    action: "Redirect user to GitHub",
+    url: "https://github.com/login/oauth/authorize",
     params: {
       client_id: "your-client-id",
       response_type: "code",
-      redirect_uri: "http://localhost:3000/api/spotify/callback",
-      scope: "user-top-read playlist-read-private",
+      redirect_uri: "http://localhost:3000/api/github/callback",
+      scope: "read:user repo",
     },
   },
   step2: {
-    action: "User approves on Spotify",
-    result: "Spotify redirects to your redirect_uri with a code",
+    action: "User approves on GitHub",
+    result: "GitHub redirects to your redirect_uri with a code",
   },
   step3: {
     action: "Exchange code for access token",
     method: "POST",
-    url: "https://accounts.spotify.com/api/token",
+    url: "https://github.com/login/oauth/access_token",
     body: {
       grant_type: "authorization_code",
       code: "the-code-from-step-2",
-      redirect_uri: "http://localhost:3000/api/spotify/callback",
+      redirect_uri: "http://localhost:3000/api/github/callback",
     },
   },
   step4: {
-    action: "Use token to call Spotify API",
+    action: "Use token to call GitHub API",
     method: "GET",
-    url: "https://api.spotify.com/v1/me/top/tracks",
+    url: "https://api.github.com/user/repos",
     headers: { Authorization: "Bearer access-token-from-step-3" },
   },
 };
 
-console.log("=== OAuth Flow for Spotify ===\\n");
+console.log("=== OAuth Flow for GitHub ===\\n");
 Object.entries(oauthFlow).forEach(([step, details]) => {
   console.log(\`\${step.toUpperCase()}: \${details.action}\`);
   if (details.url) console.log(\`  URL: \${details.url}\`);
@@ -1484,15 +1484,15 @@ Object.entries(oauthFlow).forEach(([step, details]) => {
   console.log("");
 });
 
-console.log("Once you set up Spotify in /settings,");
-console.log("the app handles all these steps automatically!");`,
+console.log("With a real OAuth setup,");
+console.log("your app handles all these steps automatically!");`,
           solution: `// Conceptual exercise — no changes needed`,
           instructions: [
             "Run the code to see the OAuth flow visualized",
-            "Go to developer.spotify.com and create a free app",
+            "Go to github.com/settings/developers to create a free OAuth app",
             "Add your client ID and secret to .env.local",
           ],
-          hint: "You'll need a Spotify account (free is fine) to create a developer app.",
+          hint: "You'll need a GitHub account (free) to create an OAuth app at github.com/settings/developers.",
         },
         resources: [
           {
@@ -1502,132 +1502,108 @@ console.log("the app handles all these steps automatically!");`,
             description: "A clear visual explanation of the OAuth flow.",
           },
           {
-            title: "Spotify Authorization Guide",
-            url: "https://developer.spotify.com/documentation/web-api/tutorials/code-flow",
+            title: "GitHub OAuth Documentation",
+            url: "https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps",
             type: "docs",
-            description: "Official Spotify guide to implementing OAuth.",
+            description: "Official GitHub guide to implementing OAuth.",
           },
         ],
       },
       {
         id: "4-2",
-        title: "Connecting to Spotify",
-        subtitle: "Fetching your real music data",
+        title: "Authenticated APIs in Practice",
+        subtitle: "Using tokens to access protected data",
         readTime: 7,
         narrative:
-          "Time for the real thing. Let's connect to Spotify, authenticate, and pull your actual listening data. This is where it gets personal — and exciting.",
+          "Most real-world APIs require authentication. Let's explore how tokens work in practice using the GitHub API — which you can try right now without any setup.",
         concepts: [
-          "Spotify Web API",
+          "GitHub API",
           "Access token",
           "User profile",
-          "Top tracks",
-          "Playlists",
+          "Bearer token",
+          "Personal Access Token",
         ],
-        content: `## Connecting to Spotify
+        content: `## Authenticated APIs in Practice
 
-### Prerequisites
-1. A Spotify account (free works!)
-2. A Spotify Developer app (create at developer.spotify.com)
-3. Client ID and Secret in your \`.env.local\`
+Most APIs beyond simple public ones (like PokeAPI) require authentication. The most common method is a **Bearer token** — a string you include in every request header.
 
-### What We Can Access
+### The GitHub API — No OAuth Required
 
-With the right scopes, the Spotify API gives you:
-
-- **Your profile** — Name, image, country
-- **Top tracks** — Your most played songs (last 4 weeks, 6 months, or all time)
-- **Top artists** — Your most listened artists
-- **Playlists** — All your playlists and their tracks
-- **Saved tracks** — Your "Liked Songs" library
-
-### Making Spotify API Calls
-
-Once authenticated, calling the Spotify API is just like calling PokeAPI — but with an Authorization header:
+GitHub has a great API that lets you access public data without any auth, and private data with a Personal Access Token (PAT). You already created one earlier in this course!
 
 \`\`\`javascript
-// Get your top tracks
-const response = await fetch(
-  "https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=medium_term",
-  {
-    headers: {
-      Authorization: \`Bearer \${accessToken}\`,
-    },
-  }
-);
-const data = await response.json();
+// Public data — no auth needed
+const response = await fetch("https://api.github.com/users/jtcrawley");
+const user = await response.json();
+console.log(user.name, user.public_repos);
 
-// Each track has:
-// - name: "Song Name"
-// - artists: [{ name: "Artist Name" }]
-// - album: { name: "Album", images: [{ url: "..." }] }
-// - popularity: 75 (0-100)
+// Private data — needs a token
+const response = await fetch("https://api.github.com/user/repos", {
+  headers: {
+    Authorization: \`Bearer YOUR_GITHUB_TOKEN\`,
+  },
+});
+const repos = await response.json();
 \`\`\`
 
-### The Data You Get
+### What the Token Does
 
-Spotify returns rich data for every track:
-- Song name, artist(s), album
-- Album artwork (multiple sizes!)
-- Popularity score
-- Duration
-- Preview URL (30-second clip)
+The token tells GitHub: *"This request is coming from a trusted app that the user has authorised."*
 
-This is amazing design material — album art, artist images, listening patterns.`,
+Without it: \`401 Unauthorized\`
+With it: \`200 OK\` + your data
+
+### The Authorization Header
+
+Every authenticated API uses the same pattern — the format just varies slightly:
+
+| API | Header format |
+|-----|--------------|
+| GitHub | \`Authorization: Bearer YOUR_TOKEN\` |
+| PokeAPI | No auth needed |
+| Stripe | \`Authorization: Bearer sk_live_...\` |
+| Supabase | \`apikey: YOUR_ANON_KEY\` |
+
+### For Designers
+
+When you see a feature that says *"Connect your account"* — that's OAuth generating one of these tokens behind the scenes. Once connected, every API call the app makes on your behalf includes your token in the header.`,
         exercise: {
-          starterCode: `// After connecting Spotify in /settings, this code will work!
-// For now, let's explore what the Spotify API response looks like
+          starterCode: `// Let's call the GitHub API!
+// Public profile — no auth needed
 
-const exampleSpotifyResponse = {
-  items: [
-    {
-      name: "Bohemian Rhapsody",
-      artists: [{ name: "Queen" }],
-      album: {
-        name: "A Night at the Opera",
-        images: [{ url: "https://album-art.jpg", height: 640 }],
-      },
-      popularity: 91,
-      duration_ms: 354947,
-    },
-    {
-      name: "Stairway to Heaven",
-      artists: [{ name: "Led Zeppelin" }],
-      album: {
-        name: "Led Zeppelin IV",
-        images: [{ url: "https://album-art2.jpg", height: 640 }],
-      },
-      popularity: 78,
-      duration_ms: 482830,
-    },
-  ],
-};
+const username = "jtcrawley"; // change this to any GitHub username
 
-console.log("=== Your Top Tracks (Example) ===\\n");
-exampleSpotifyResponse.items.forEach((track, i) => {
-  const mins = Math.floor(track.duration_ms / 60000);
-  const secs = Math.floor((track.duration_ms % 60000) / 1000);
-  console.log(\`\${i + 1}. "\${track.name}" by \${track.artists[0].name}\`);
-  console.log(\`   Album: \${track.album.name}\`);
-  console.log(\`   Popularity: \${"★".repeat(Math.round(track.popularity / 20))}\`);
-  console.log(\`   Duration: \${mins}:\${secs.toString().padStart(2, "0")}\`);
-  console.log("");
-});
+const response = await fetch(\`https://api.github.com/users/\${username}\`);
+const user = await response.json();
 
-console.log("Connect Spotify in /settings to see YOUR data!");`,
+console.log("=== GitHub Profile ===");
+console.log("Name:", user.name);
+console.log("Username:", user.login);
+console.log("Public repos:", user.public_repos);
+console.log("Followers:", user.followers);
+console.log("Bio:", user.bio);
+console.log("\\nRaw response status:", response.status);`,
           solution: `// Conceptual exercise with example data`,
           instructions: [
-            "Run to see what Spotify API data looks like",
-            "Notice the nested structure — artists is an array, album has images",
-            "After connecting Spotify, real data replaces this example",
+            "Run the code to fetch a real GitHub profile",
+            "Change the username to your own GitHub username",
+            "Notice we're using a GET request with no auth — this is public data",
+            "Private data (like private repos) would need an Authorization header",
           ],
-          hint: "The Spotify API returns very rich data — perfect for beautiful UI cards!",
+          hint: "Try changing the username to 'torvalds' or 'gaearon' — you'll get real data back!",
         },
         resources: [
           {
-            title: "Spotify Web API Reference",
-            url: "https://developer.spotify.com/documentation/web-api",
+            title: "GitHub REST API Docs",
+            url: "https://docs.github.com/en/rest",
             type: "docs",
-            description: "Complete reference for all Spotify API endpoints.",
+            description: "Full reference for the GitHub API — great for exploring.",
+          },
+          {
+            title: "HTTP Authentication — MDN",
+            url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication",
+            type: "article",
+            description: "How Bearer tokens and HTTP auth work under the hood.",
           },
         ],
       },
@@ -1637,7 +1613,7 @@ console.log("Connect Spotify in /settings to see YOUR data!");`,
         subtitle: "Building features that persist",
         readTime: 6,
         narrative:
-          "Here's where everything comes together. We'll fetch data from Spotify, save it to our Supabase database, and build something that lasts beyond a single session.",
+          "Here's where everything comes together. We'll fetch data from an API, save it to our database, and build something that lasts beyond a single session.",
         concepts: [
           "Data pipeline",
           "API to database",
@@ -1647,7 +1623,7 @@ console.log("Connect Spotify in /settings to see YOUR data!");`,
         content: `## The Full Loop: API → Database → UI
 
 Until now we've done two things separately:
-1. Fetch data from APIs (PokeAPI, Spotify)
+1. Fetch data from APIs (PokeAPI, GitHub)
 2. Store data in a database (Supabase)
 
 Now let's combine them: **fetch from an API, then save to the database.**
@@ -1656,23 +1632,20 @@ Now let's combine them: **fetch from an API, then save to the database.**
 
 \`\`\`javascript
 // 1. Fetch from API
-const apiResponse = await fetch("https://api.spotify.com/v1/me/top/tracks", {
-  headers: { Authorization: \`Bearer \${token}\` }
-});
-const { items: tracks } = await apiResponse.json();
+const apiResponse = await fetch("https://pokeapi.co/api/v2/pokemon?limit=5");
+const { results: pokemon } = await apiResponse.json();
 
 // 2. Transform the data (pick only what we need)
-const tracksToSave = tracks.map(track => ({
-  spotify_track_id: track.id,
-  name: track.name,
-  artist: track.artists[0].name,
-  album_art_url: track.album.images[0]?.url,
+const pokemonToSave = pokemon.map(p => ({
+  name: p.name,
+  url: p.url,
+  saved_at: new Date().toISOString(),
 }));
 
 // 3. Save to database
 const { data, error } = await supabase
-  .from('saved_tracks')
-  .insert(tracksToSave)
+  .from('saved_pokemon')
+  .insert(pokemonToSave)
   .select();
 
 // 4. Now the data persists! Show it in the UI anytime.
@@ -1689,8 +1662,7 @@ const { data, error } = await supabase
 
 This "fetch → transform → save → display" pattern is behind almost every feature:
 - **Instagram**: Fetch posts from API → Save to cache → Display in feed
-- **Spotify Wrapped**: Fetch listening data → Aggregate in database → Display yearly summary
-- **Your app**: Fetch Pokemon/tracks → Save favorites → Show "My Collection"`,
+- **Your app**: Fetch Pokemon → Aggregate by type → Display your collection`,
         exercise: {
           starterCode: `// Let's simulate the full API → Database → UI loop
 
@@ -1705,7 +1677,7 @@ console.log("Step 1: Fetched", apiTracks.length, "tracks from API\\n");
 
 // Step 2: Transform (pick what we need)
 const tracksToSave = apiTracks.map(t => ({
-  spotify_track_id: t.id,
+  pokemon_id: t.id,
   name: t.name,
   artist: t.artist,
   saved_at: new Date().toISOString(),
@@ -1731,7 +1703,7 @@ console.log("\\nThis data now persists in your Supabase database!");`,
           instructions: [
             "Run the code to see the full fetch → save → display loop",
             "This is the same pattern used in real apps!",
-            "With real Supabase + Spotify, this data persists forever",
+            "With real Supabase + PokeAPI, this data persists forever",
           ],
           hint: "The key insight: APIs give you data temporarily; databases make it permanent.",
         },
@@ -1755,7 +1727,7 @@ console.log("\\nThis data now persists in your Supabase database!");`,
       {
         id: "5-1",
         title: "Putting It All Together",
-        subtitle: "Your final project: Music + Pokemon Mashup",
+        subtitle: "Your final project: Pokemon Explorer Dashboard",
         readTime: 8,
         narrative:
           "You've learned APIs, databases, HTTP methods, OAuth, and CRUD. Now let's combine everything into one project that shows off your new skills.",
@@ -1765,48 +1737,33 @@ console.log("\\nThis data now persists in your Supabase database!");`,
           "API integration",
           "UI data flow",
         ],
-        content: `## Capstone: Music + Pokemon Mashup
+        content: `## Capstone: Pokemon Explorer Dashboard
 
-The idea: **Match your Spotify listening mood to Pokemon types.**
+The idea: **Build a personal Pokemon collection app using everything you've learned.**
 
 ### How It Works
 
-1. **Connect Spotify** → Fetch your top tracks
-2. **Analyze mood** → Map music attributes to Pokemon types
-   - High energy → Fire/Electric type
-   - Chill vibes → Water/Grass type
-   - Dark/moody → Ghost/Dark type
-3. **Fetch matching Pokemon** → Call PokeAPI for Pokemon of that type
-4. **Save to database** → Store your mood-matched Pokemon team
-5. **Display beautifully** → Show your "Spirit Pokemon" with album art
-
-### Mapping Music to Pokemon Types
-
-| Music Mood | Pokemon Type | Example |
-|-----------|-------------|---------|
-| High energy, upbeat | Fire, Electric | Charizard, Pikachu |
-| Calm, acoustic | Grass, Water | Bulbasaur, Squirtle |
-| Dark, intense | Ghost, Dark | Gengar, Umbreon |
-| Pop, mainstream | Normal, Fairy | Eevee, Jigglypuff |
-| Rock, heavy | Rock, Steel | Onix, Steelix |
+1. **Fetch Pokemon** → Call PokeAPI for Pokemon data
+2. **Filter by type** → Let users browse by Fire, Water, Electric, etc.
+3. **Save favourites** → Store their collection in Supabase
+4. **Display beautifully** → Show cards with sprites, types, and stats
+5. **Track history** → Show when each Pokemon was saved
 
 ### The Data Flow
 
 \`\`\`
-Spotify API → Your Top Tracks → Mood Analysis
+PokeAPI → Pokemon by Type → User selects favourite
                                       ↓
-PokeAPI → Pokemon by Type ← Type Mapping
-                ↓
-         Supabase Database → "My Spirit Team"
-                ↓
-              Your UI → Beautiful Display
+                            Supabase Database → "My Collection"
+                                      ↓
+                              Your UI → Beautiful Cards
 \`\`\`
 
 This project uses EVERYTHING you've learned:
-- **GET requests** to both Spotify and PokeAPI
-- **OAuth** for Spotify authentication
-- **JSON parsing** for both API responses
-- **Database CRUD** for saving your team
+- **GET requests** to PokeAPI
+- **Query parameters** for filtering by type
+- **JSON parsing** for API responses
+- **Database CRUD** for saving your collection
 - **Error handling** for when things go wrong
 - **Schema design** for your data model`,
         exercise: {
@@ -1858,17 +1815,17 @@ matchedPokemon.forEach(p => {
           solution: `// Same as starter — this is the guided capstone`,
           instructions: [
             "Run to see how music maps to Pokemon types",
-            "The energy values would come from Spotify's audio features API",
+            "The energy values here are simulated — in a real app you'd assign them based on Pokemon base stats",
             "Try adjusting the energy thresholds in energyToType()",
           ],
-          hint: "Spotify provides audio features like energy, danceability, and valence for every track!",
+          hint: "Try changing the energy thresholds in energyToType() to see how the type mapping shifts!",
         },
         resources: [
           {
-            title: "Spotify Audio Features API",
-            url: "https://developer.spotify.com/documentation/web-api/reference/get-audio-features",
+            title: "PokeAPI Documentation",
+            url: "https://pokeapi.co/docs/v2",
             type: "docs",
-            description: "Get danceability, energy, mood data for any track.",
+            description: "Full reference for the PokeAPI — explore all available endpoints.",
           },
         ],
       },
