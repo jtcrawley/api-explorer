@@ -2,13 +2,25 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark";
+export type PokemonTheme = "bulbasaur" | "squirtle" | "charmander";
+export type ThemeMode = "light" | "dark";
 
-const ThemeContext = createContext<{
-  theme: Theme;
+interface ThemeContextType {
+  pokemon: PokemonTheme;
+  mode: ThemeMode;
+  setPokemon: (p: PokemonTheme) => void;
+  toggleMode: () => void;
+  // Legacy compat for any existing toggleTheme callers
+  theme: ThemeMode;
   toggleTheme: () => void;
-}>({
-  theme: "light",
+}
+
+const ThemeContext = createContext<ThemeContextType>({
+  pokemon: "bulbasaur",
+  mode: "dark",
+  setPokemon: () => {},
+  toggleMode: () => {},
+  theme: "dark",
   toggleTheme: () => {},
 });
 
@@ -16,35 +28,58 @@ export function useTheme() {
   return useContext(ThemeContext);
 }
 
+function applyTheme(pokemon: PokemonTheme, mode: ThemeMode) {
+  const root = document.documentElement;
+  // Remove all theme classes
+  root.classList.remove(
+    "theme-bulbasaur-light", "theme-bulbasaur-dark",
+    "theme-squirtle-light", "theme-squirtle-dark",
+    "theme-charmander-light", "theme-charmander-dark",
+    "dark"
+  );
+  root.classList.add(`theme-${pokemon}-${mode}`);
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [pokemon, setPokemonState] = useState<PokemonTheme>("bulbasaur");
+  const [mode, setMode] = useState<ThemeMode>("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem("api-explorer-theme") as Theme | null;
-    if (stored) {
-      setTheme(stored);
-      document.documentElement.classList.toggle("dark", stored === "dark");
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setTheme("dark");
-      document.documentElement.classList.add("dark");
-    }
+    const storedPokemon = localStorage.getItem("theme-pokemon") as PokemonTheme | null;
+    const storedMode = localStorage.getItem("theme-mode") as ThemeMode | null;
+    const p = storedPokemon ?? "bulbasaur";
+    const m = storedMode ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    setPokemonState(p);
+    setMode(m);
+    applyTheme(p, m);
   }, []);
 
-  const toggleTheme = () => {
-    const next = theme === "light" ? "dark" : "light";
-    setTheme(next);
-    localStorage.setItem("api-explorer-theme", next);
-    document.documentElement.classList.toggle("dark", next === "dark");
+  const setPokemon = (p: PokemonTheme) => {
+    setPokemonState(p);
+    localStorage.setItem("theme-pokemon", p);
+    applyTheme(p, mode);
   };
 
-  if (!mounted) {
-    return <>{children}</>;
-  }
+  const toggleMode = () => {
+    const next = mode === "light" ? "dark" : "light";
+    setMode(next);
+    localStorage.setItem("theme-mode", next);
+    applyTheme(pokemon, next);
+  };
+
+  if (!mounted) return <>{children}</>;
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{
+      pokemon,
+      mode,
+      setPokemon,
+      toggleMode,
+      theme: mode,
+      toggleTheme: toggleMode,
+    }}>
       {children}
     </ThemeContext.Provider>
   );

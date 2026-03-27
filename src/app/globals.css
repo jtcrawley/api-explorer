@@ -3,38 +3,125 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8fafc;
-    --bg-tertiary: #f1f5f9;
-    --bg-code: #1e293b;
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-tertiary: #94a3b8;
-    --border: #e2e8f0;
-    --border-hover: #cbd5e1;
-    --accent: #6366f1;
-    --accent-light: #eef2ff;
+  /* ── Bulbasaur Light ── */
+  :root,
+  .theme-bulbasaur-light {
+    --bg-primary: #f8fffe;
+    --bg-secondary: #ecfdf5;
+    --bg-tertiary: #d1fae5;
+    --bg-code: #0f2d1a;
+    --text-primary: #064e3b;
+    --text-secondary: #065f46;
+    --text-tertiary: #6ee7b7;
+    --border: #a7f3d0;
+    --border-hover: #6ee7b7;
+    --accent: #059669;
+    --accent-light: #d1fae5;
     --success: #22c55e;
     --success-light: #f0fdf4;
     --error: #ef4444;
     --error-light: #fef2f2;
-    --warning: #f59e0b;
+    --warning: #d97706;
     --warning-light: #fffbeb;
   }
 
-  .dark {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --bg-code: #0d1117;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-tertiary: #64748b;
-    --border: #334155;
-    --border-hover: #475569;
-    --accent: #818cf8;
-    --accent-light: #1e1b4b;
+  /* ── Bulbasaur Dark ── */
+  .theme-bulbasaur-dark {
+    --bg-primary: #022c22;
+    --bg-secondary: #064e3b;
+    --bg-tertiary: #065f46;
+    --bg-code: #011a14;
+    --text-primary: #ecfdf5;
+    --text-secondary: #6ee7b7;
+    --text-tertiary: #34d399;
+    --border: #065f46;
+    --border-hover: #059669;
+    --accent: #34d399;
+    --accent-light: #064e3b;
+    --success: #4ade80;
+    --success-light: #052e16;
+    --error: #f87171;
+    --error-light: #450a0a;
+    --warning: #fbbf24;
+    --warning-light: #451a03;
+  }
+
+  /* ── Squirtle Light ── */
+  .theme-squirtle-light {
+    --bg-primary: #f0f9ff;
+    --bg-secondary: #e0f2fe;
+    --bg-tertiary: #bae6fd;
+    --bg-code: #0a1929;
+    --text-primary: #0c4a6e;
+    --text-secondary: #075985;
+    --text-tertiary: #38bdf8;
+    --border: #7dd3fc;
+    --border-hover: #38bdf8;
+    --accent: #0284c7;
+    --accent-light: #e0f2fe;
+    --success: #22c55e;
+    --success-light: #f0fdf4;
+    --error: #ef4444;
+    --error-light: #fef2f2;
+    --warning: #d97706;
+    --warning-light: #fffbeb;
+  }
+
+  /* ── Squirtle Dark ── */
+  .theme-squirtle-dark {
+    --bg-primary: #041625;
+    --bg-secondary: #0a2540;
+    --bg-tertiary: #0f3460;
+    --bg-code: #020d17;
+    --text-primary: #e0f2fe;
+    --text-secondary: #7dd3fc;
+    --text-tertiary: #38bdf8;
+    --border: #0f3460;
+    --border-hover: #0284c7;
+    --accent: #38bdf8;
+    --accent-light: #0a2540;
+    --success: #4ade80;
+    --success-light: #052e16;
+    --error: #f87171;
+    --error-light: #450a0a;
+    --warning: #fbbf24;
+    --warning-light: #451a03;
+  }
+
+  /* ── Charmander Light ── */
+  .theme-charmander-light {
+    --bg-primary: #fff8f0;
+    --bg-secondary: #fff1e0;
+    --bg-tertiary: #ffe4c4;
+    --bg-code: #2d1500;
+    --text-primary: #7c2d12;
+    --text-secondary: #9a3412;
+    --text-tertiary: #fb923c;
+    --border: #fed7aa;
+    --border-hover: #fb923c;
+    --accent: #ea580c;
+    --accent-light: #fff1e0;
+    --success: #22c55e;
+    --success-light: #f0fdf4;
+    --error: #dc2626;
+    --error-light: #fef2f2;
+    --warning: #d97706;
+    --warning-light: #fffbeb;
+  }
+
+  /* ── Charmander Dark ── */
+  .theme-charmander-dark {
+    --bg-primary: #1f0800;
+    --bg-secondary: #3d1200;
+    --bg-tertiary: #5c1f00;
+    --bg-code: #0f0400;
+    --text-primary: #fff1e0;
+    --text-secondary: #fdba74;
+    --text-tertiary: #fb923c;
+    --border: #5c1f00;
+    --border-hover: #c2410c;
+    --accent: #fb923c;
+    --accent-light: #3d1200;
     --success: #4ade80;
     --success-light: #052e16;
     --error: #f87171;
