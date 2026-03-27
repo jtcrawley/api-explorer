@@ -24,9 +24,9 @@ function renderMarkdown(md: string): string {
   html = html.replace(
     /```(\w+)?\n([\s\S]*?)```/g,
     (_, lang, code) =>
-      `<pre class="code-block"><div class="flex items-center justify-between px-4 py-2 border-b border-slate-700"><span class="text-xs text-slate-400">${
+      `<pre class="code-block"><div class="flex items-center justify-between px-4 py-3 border-b border-slate-700"><span class="text-xs text-slate-400 font-medium tracking-wider uppercase">${
         lang || "code"
-      }</span></div><code class="block p-4 overflow-x-auto">${escapeHtml(
+      }</span></div><code class="block px-5 py-5 overflow-x-auto">${escapeHtml(
         code.trim()
       )}</code></pre>`
   );
