@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTheme } from "@/components/ui/ThemeProvider";
+import Logo from "@/components/ui/Logo";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import { modules, getTotalChapters } from "@/content/modules";
@@ -43,14 +44,7 @@ export default function HomePage() {
         className="flex items-center justify-between px-8 py-4 border-b"
         style={{ borderColor: "var(--border)" }}
       >
-        <div>
-          <h1
-            className="text-lg font-bold tracking-tight"
-            style={{ color: "var(--text-primary)" }}
-          >
-            API Explorer
-          </h1>
-        </div>
+        <Logo size={28} />
         <div className="flex items-center gap-3">
           <button
             onClick={toggleTheme}
@@ -92,7 +86,7 @@ export default function HomePage() {
           style={{ color: "var(--text-secondary)" }}
         >
           A story-driven journey from &quot;What&apos;s an API?&quot; to building
-          real features with Pokemon and Spotify data.
+          real features with Pokemon data.
         </p>
         <div className="flex items-center justify-center gap-4">
           <Button

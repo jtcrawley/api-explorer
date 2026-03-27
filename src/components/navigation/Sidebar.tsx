@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/components/ui/ThemeProvider";
+import Logo from "@/components/ui/Logo";
 import { modules } from "@/content/modules";
 import { getCompletedChapterIds, getCompletedCount } from "@/lib/progress";
 import { getTotalChapters } from "@/content/modules";
@@ -42,15 +43,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="p-6 pb-4">
         <Link href="/" className="block">
-          <h1
-            className="text-lg font-bold tracking-tight"
-            style={{ color: "var(--text-primary)" }}
-          >
-            API Explorer
-          </h1>
-          <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
-            A Designer&apos;s Guide
-          </p>
+          <Logo size={28} />
         </Link>
       </div>
 
