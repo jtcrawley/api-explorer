@@ -28,6 +28,10 @@ export default function ChapterPage() {
   const chapterId = params.chapter as string;
 
   const [completed, setCompleted] = useState(false);
+  const [celebrating, setCelebrating] = useState(false);
+
+  const CELEBRATE_POKEMON = ["pikachu", "charizard", "mewtwo", "eevee", "lucario", "garchomp"];
+  const celebratePokemon = CELEBRATE_POKEMON[parseInt(chapterId.replace(/\D/g, ""), 10) % CELEBRATE_POKEMON.length];
 
   const module = getModule(moduleId);
   const chapter = getChapter(moduleId, chapterId);
@@ -58,10 +62,12 @@ export default function ChapterPage() {
   const handleComplete = () => {
     markChapterComplete(chapterId);
     setCompleted(true);
+    setCelebrating(true);
+    setTimeout(() => setCelebrating(false), 2200);
     if (next) {
       setTimeout(() => {
         router.push(`/learn/${next.moduleId}/${next.chapterId}`);
-      }, 500);
+      }, 2400);
     }
   };
 
@@ -216,6 +222,37 @@ export default function ChapterPage() {
         </div>
       </main>
 
+      {/* Chapter complete celebration */}
+      {celebrating && (
+        <div
+          className="fixed bottom-8 right-8 flex items-end gap-3 px-5 py-4 rounded-2xl border shadow-xl z-50"
+          style={{
+            backgroundColor: "var(--bg-secondary)",
+            borderColor: "var(--success)",
+            animation: "slideUp 0.3s ease-out",
+          }}
+        >
+          <img
+            src={`https://play.pokemonshowdown.com/sprites/ani/${celebratePokemon}.gif`}
+            alt={celebratePokemon}
+            style={{ imageRendering: "pixelated", height: 72 }}
+          />
+          <div>
+            <p className="text-sm font-semibold" style={{ color: "var(--success)" }}>
+              Chapter complete!
+            </p>
+            <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
+              {celebratePokemon.charAt(0).toUpperCase() + celebratePokemon.slice(1)} approves.
+            </p>
+          </div>
+        </div>
+      )}
+      <style>{`
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
