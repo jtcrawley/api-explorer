@@ -13,6 +13,20 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [activeTab, setActiveTab] = useState<"output" | "instructions">("instructions");
+  const [urlCopied, setUrlCopied] = useState(false);
+
+  // Auto-detect static fetch URL from starter code for Postman button
+  const fetchUrlMatch = exercise.starterCode.match(/fetch\(\s*["']([^"'\n]+)["']/);
+  const postmanUrl = fetchUrlMatch ? fetchUrlMatch[1] : null;
+  const methodMatch = exercise.starterCode.match(/method:\s*["'](GET|POST|PUT|DELETE|PATCH)["']/i);
+  const httpMethod = methodMatch ? methodMatch[1].toUpperCase() : "GET";
+
+  const copyUrlToClipboard = () => {
+    if (!postmanUrl) return;
+    navigator.clipboard.writeText(postmanUrl);
+    setUrlCopied(true);
+    setTimeout(() => setUrlCopied(false), 2000);
+  };
 
   const runCode = useCallback(async () => {
     setIsRunning(true);
@@ -201,6 +215,43 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
                   </p>
                 </div>
               ))}
+
+              {postmanUrl && (
+                <div
+                  className="mt-4 p-3 rounded-xl flex items-center gap-3"
+                  style={{ backgroundColor: "var(--bg-tertiary)", borderLeft: "3px solid #FF6C37" }}
+                >
+                  <span className="text-sm flex-shrink-0" style={{ color: "#FF6C37" }}>🔶</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold mb-1" style={{ color: "#FF6C37" }}>Try in Postman</p>
+                    <p className="text-xs font-mono truncate" style={{ color: "var(--text-secondary)" }}>
+                      <span className="font-bold" style={{ color: "var(--text-primary)" }}>{httpMethod}</span>{" "}
+                      {postmanUrl}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      onClick={copyUrlToClipboard}
+                      className="text-xs px-2 py-1 rounded-lg transition-colors"
+                      style={{
+                        backgroundColor: urlCopied ? "var(--success-light)" : "var(--bg-secondary)",
+                        color: urlCopied ? "var(--success)" : "var(--text-tertiary)",
+                      }}
+                    >
+                      {urlCopied ? "Copied!" : "Copy URL"}
+                    </button>
+                    <a
+                      href="https://web.postman.co/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs px-2 py-1 rounded-lg transition-colors"
+                      style={{ backgroundColor: "#FF6C37", color: "white" }}
+                    >
+                      Open ↗
+                    </a>
+                  </div>
+                </div>
+              )}
 
               {exercise.hint && (
                 <div className="mt-4">

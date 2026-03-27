@@ -1,0 +1,231 @@
+{
+  "info": {
+    "name": "The Backend — Pokemon Companion App",
+    "description": "All API requests from The Backend course. Import this into Postman to explore every endpoint used throughout the lessons.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Module 1: What Even Is an API?",
+      "item": [
+        {
+          "name": "Get Pikachu",
+          "request": {
+            "method": "GET",
+            "url": "https://pokeapi.co/api/v2/pokemon/pikachu",
+            "description": "Your very first API call. Fetches all data for Pikachu — stats, types, sprites, abilities and more."
+          }
+        },
+        {
+          "name": "Get Any Pokemon by Name",
+          "request": {
+            "method": "GET",
+            "url": "https://pokeapi.co/api/v2/pokemon/{{pokemonName}}",
+            "description": "Use the pokemonName variable to switch Pokemon without changing the URL. Try: charizard, bulbasaur, mewtwo."
+          }
+        },
+        {
+          "name": "List Pokemon (with pagination)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://pokeapi.co/api/v2/pokemon?limit=5&offset=0",
+              "query": [
+                { "key": "limit", "value": "5", "description": "How many to return" },
+                { "key": "offset", "value": "0", "description": "How many to skip (for pagination)" }
+              ]
+            },
+            "description": "Returns a paginated list of Pokemon. Change limit and offset to page through all 1350+."
+          }
+        },
+        {
+          "name": "Pokemon API Base URL",
+          "request": {
+            "method": "GET",
+            "url": "https://pokeapi.co/api/v2",
+            "description": "The base URL of the PokeAPI. Returns a list of all available endpoints — great for exploring what data exists."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Module 2: Speaking the Language",
+      "item": [
+        {
+          "name": "GET — Fetch a Post",
+          "request": {
+            "method": "GET",
+            "url": "https://jsonplaceholder.typicode.com/posts/1",
+            "description": "A simple GET request to JSONPlaceholder — a free fake REST API for testing."
+          }
+        },
+        {
+          "name": "POST — Create a Post",
+          "request": {
+            "method": "POST",
+            "url": "https://jsonplaceholder.typicode.com/posts",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"My Pokemon Blog Post\",\n  \"body\": \"Today I caught my first Pikachu.\",\n  \"userId\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Creates a new post. JSONPlaceholder doesn't actually save it, but returns what the response would look like."
+          }
+        },
+        {
+          "name": "GET — Pokemon with Headers Visible",
+          "request": {
+            "method": "GET",
+            "url": "https://pokeapi.co/api/v2/pokemon/pikachu",
+            "description": "Same as the basic Pikachu request — but in Postman, click the Headers tab in the response to see content-type, cache-control, and more."
+          }
+        },
+        {
+          "name": "GET — Trigger a 404 Error",
+          "request": {
+            "method": "GET",
+            "url": "https://pokeapi.co/api/v2/pokemon/notareamonster",
+            "description": "Intentionally fetches a Pokemon that doesn't exist. Watch the status code change to 404 and see what the error response looks like."
+          }
+        },
+        {
+          "name": "GET — Trigger a Bad Endpoint (404)",
+          "request": {
+            "method": "GET",
+            "url": "https://pokeapi.co/api/v2/doesnotexist",
+            "description": "Another 404 — fetching an endpoint that doesn't exist on the API."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Module 3: Databases",
+      "item": [
+        {
+          "name": "JSONPlaceholder — Get All Users",
+          "request": {
+            "method": "GET",
+            "url": "https://jsonplaceholder.typicode.com/users",
+            "description": "Think of this as a 'SELECT * FROM users' — returns all rows from a fake users table."
+          }
+        },
+        {
+          "name": "JSONPlaceholder — Get Single User",
+          "request": {
+            "method": "GET",
+            "url": "https://jsonplaceholder.typicode.com/users/1",
+            "description": "Fetches a single user by ID. Notice the relational structure: user has address, company, etc."
+          }
+        },
+        {
+          "name": "JSONPlaceholder — Get User's Posts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://jsonplaceholder.typicode.com/posts?userId=1",
+              "query": [{ "key": "userId", "value": "1", "description": "Filter posts by user ID — like a JOIN" }]
+            },
+            "description": "Filters posts by userId — this is a REST API version of a database JOIN."
+          }
+        },
+        {
+          "name": "JSONPlaceholder — Update a Post (PUT)",
+          "request": {
+            "method": "PUT",
+            "url": "https://jsonplaceholder.typicode.com/posts/1",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"title\": \"Updated Title\",\n  \"body\": \"Updated content\",\n  \"userId\": 1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Updates an entire post record. PUT replaces the whole object."
+          }
+        },
+        {
+          "name": "JSONPlaceholder — Delete a Post",
+          "request": {
+            "method": "DELETE",
+            "url": "https://jsonplaceholder.typicode.com/posts/1",
+            "description": "Deletes a post by ID. Returns 200 with an empty body on success."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Module 4: Real-World APIs",
+      "item": [
+        {
+          "name": "GitHub — Get a User",
+          "request": {
+            "method": "GET",
+            "url": "https://api.github.com/users/{{githubUsername}}",
+            "description": "Fetches public GitHub profile data. No auth needed. Try: octocat, torvalds, gaearon."
+          }
+        },
+        {
+          "name": "GitHub — Get User Repos",
+          "request": {
+            "method": "GET",
+            "url": "https://api.github.com/users/{{githubUsername}}/repos",
+            "description": "Returns all public repos for a user. This is a one-to-many relationship: one user has many repos."
+          }
+        },
+        {
+          "name": "GitHub — Get Authenticated User (requires token)",
+          "request": {
+            "method": "GET",
+            "url": "https://api.github.com/user",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{githubToken}}", "description": "Add your GitHub personal access token here" }
+            ],
+            "description": "Returns YOUR GitHub profile when authenticated. This is OAuth in action — the token proves who you are."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bonus: Explore More PokeAPI",
+      "item": [
+        {
+          "name": "Get Pokemon Species Info",
+          "request": {
+            "method": "GET",
+            "url": "https://pokeapi.co/api/v2/pokemon-species/pikachu",
+            "description": "Richer lore data: flavor text, evolution chain, habitat, legendary status."
+          }
+        },
+        {
+          "name": "Get Pokemon Type",
+          "request": {
+            "method": "GET",
+            "url": "https://pokeapi.co/api/v2/type/electric",
+            "description": "Returns all Pokemon of a given type, plus damage relations (strong/weak against)."
+          }
+        },
+        {
+          "name": "Get Evolution Chain",
+          "request": {
+            "method": "GET",
+            "url": "https://pokeapi.co/api/v2/evolution-chain/10",
+            "description": "Returns the full evolution chain for a Pokemon family. Chain 10 is Eevee's evolutions."
+          }
+        },
+        {
+          "name": "Search Pokemon by Generation",
+          "request": {
+            "method": "GET",
+            "url": "https://pokeapi.co/api/v2/generation/1",
+            "description": "Returns all Pokemon introduced in Generation 1 (the original 151)."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "pokemonName", "value": "pikachu", "description": "Change this to any Pokemon name" },
+    { "key": "githubUsername", "value": "octocat", "description": "Change this to any GitHub username" },
+    { "key": "githubToken", "value": "", "description": "Add your GitHub personal access token for authenticated requests" }
+  ]
+}

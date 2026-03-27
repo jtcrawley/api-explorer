@@ -401,6 +401,172 @@ listData.results.forEach((p, i) => {
           },
         ],
       },
+      {
+        id: "1-4",
+        title: "The Designer's API Toolkit",
+        subtitle: "Exploring APIs visually with Postman",
+        readTime: 6,
+        narrative:
+          "Your PM just asked you to design a new Pokemon detail page and wants to know exactly what data is available. Instead of pinging the dev team, you open Postman, type in the API URL, and in 30 seconds you have the full picture. This is how designers work at API-first companies.",
+        concepts: ["Postman", "API clients", "Collections", "Environments", "Variables"],
+        content: `## What is Postman?
+
+Postman is the most popular tool for exploring and testing APIs. Think of it as a browser built specifically for APIs — instead of navigating to a URL and seeing a webpage, you send requests and see raw data come back.
+
+Every developer you work with uses it. Learning Postman means you can explore APIs yourself, without writing a single line of code.
+
+## Why Designers Should Know Postman
+
+At an API-first company, Postman changes what you can do as a designer:
+
+- **Explore independently** — see exactly what data exists before designing a feature
+- **Speak confidently** — know what's technically possible without asking engineering
+- **Design with real data** — use actual API responses to inform your layouts and copy
+- **Share intent** — export a collection that shows devs exactly what API calls your feature needs
+
+## Getting Started
+
+1. Go to **postman.com** and create a free account
+2. Open the web app at **web.postman.co**
+3. Click **New → HTTP Request**
+
+That's it. No install required.
+
+## Making Your First Request
+
+Let's make the same call you wrote in code — fetching Pikachu.
+
+**Step 1:** Make sure the method dropdown says **GET**
+
+**Step 2:** Paste this URL into the address bar:
+
+\`\`\`
+https://pokeapi.co/api/v2/pokemon/pikachu
+\`\`\`
+
+**Step 3:** Hit **Send**
+
+You'll see Pikachu's full JSON response — 200+ fields including stats, sprites, abilities, moves, and types. This is the real data your designs would be working with.
+
+## Reading the Response
+
+Postman breaks the response into three tabs:
+
+- **Body** — the actual JSON data (what you've been using in code)
+- **Headers** — metadata about the response (content-type, cache settings, server)
+- **Status** — the status code (200 = success, 404 = not found, 500 = server error)
+
+As a designer, Body is your goldmine. You can see exactly what fields exist and what format they're in before designing the UI.
+
+## Building a Collection
+
+A **Collection** is a folder for saving API requests. Create one called **"Pokemon Companion App"** and save your requests there.
+
+Collections are how teams share API knowledge. When you export yours, devs know exactly what endpoints your feature needs — no guesswork.
+
+**To save a request:** After sending it, click the **Save** button and choose your collection.
+
+## Using Variables
+
+Instead of hardcoding \`pikachu\` in every URL, Postman lets you use variables:
+
+\`\`\`
+https://pokeapi.co/api/v2/pokemon/{{pokemonName}}
+\`\`\`
+
+Set \`pokemonName = charizard\` in your environment and all your requests update at once. This mirrors how real apps work — the Pokemon name comes from user input, not the code.
+
+## The Designer Workflow
+
+Here's how Postman fits into your process:
+
+1. **Discover** — explore the API to understand what data exists
+2. **Design** — make UI decisions based on real fields and real values
+3. **Specify** — export your collection so devs know exactly what to build
+4. **Validate** — when devs ship, test the endpoints yourself without asking for a build
+
+## Download the Course Collection
+
+We've pre-built a Postman collection with every API request from this course — organised by module. Import it once and every endpoint is ready to explore.`,
+        exercise: {
+          starterCode: `// You've been exploring in Postman — now let's use what you found.
+// Postman showed you Pikachu's full data object.
+// Let's pull out some fields you might not have known existed.
+
+const response = await fetch("https://pokeapi.co/api/v2/pokemon/pikachu");
+const pikachu = await response.json();
+
+// Fields you found in Postman:
+console.log("Name:", pikachu.name);
+console.log("Base Experience:", pikachu.base_experience);
+console.log("Height:", pikachu.height, "(in decimetres)");
+console.log("Weight:", pikachu.weight, "(in hectograms)");
+console.log("Order (Pokedex number):", pikachu.order);
+
+// TODO: Add one more field you spotted in Postman
+// Try: pikachu.abilities[0].ability.name`,
+          solution: `const response = await fetch("https://pokeapi.co/api/v2/pokemon/pikachu");
+const pikachu = await response.json();
+console.log("Name:", pikachu.name);
+console.log("Base Experience:", pikachu.base_experience);
+console.log("Height:", pikachu.height);
+console.log("Weight:", pikachu.weight);
+console.log("First Ability:", pikachu.abilities[0].ability.name);`,
+          instructions: [
+            "Hit Run to see the fields Postman helped you discover",
+            "Uncomment the TODO line and change it to pikachu.abilities[0].ability.name",
+            "Try swapping 'pikachu' for another Pokemon you searched in Postman",
+            "Notice how knowing the field names from Postman makes writing code much faster",
+          ],
+          hint: "Open Postman, search for pikachu, then click into the 'abilities' array in the response. You'll see ability.name right there — then type it into the code.",
+        },
+        quiz: [
+          {
+            id: "1-4-1",
+            question: "What is a Postman Collection?",
+            options: [
+              "A list of all Pokemon types",
+              "A saved folder of API requests you can share with your team",
+              "A database of API documentation",
+              "A type of HTTP method",
+            ],
+            correctIndex: 1,
+            explanation: "Collections are folders for organising and sharing API requests — great for handing off to devs or exploring an API systematically.",
+          },
+          {
+            id: "1-4-2",
+            question: "What does {{pokemonName}} mean in a Postman URL?",
+            options: [
+              "A broken URL that needs fixing",
+              "A required field that Postman fills in automatically",
+              "An environment variable you can change in one place to update all requests",
+              "A comment telling you what to type",
+            ],
+            correctIndex: 2,
+            explanation: "Double curly braces are Postman variables. Set pokemonName = 'charizard' in your environment and every request using {{pokemonName}} updates at once.",
+          },
+        ],
+        resources: [
+          {
+            title: "Postman Beginner's Course",
+            url: "https://www.youtube.com/watch?v=VywxIQ2ZXw4",
+            type: "video",
+            description: "A full walkthrough of Postman from scratch — great companion to this chapter.",
+          },
+          {
+            title: "Download the Pokemon Companion Collection",
+            url: "/downloads/pokemon-companion.postman_collection.json",
+            type: "interactive",
+            description: "Import this into Postman to get every API request from this course, pre-organised by module.",
+          },
+          {
+            title: "Postman Learning Center",
+            url: "https://learning.postman.com/docs/getting-started/overview/",
+            type: "docs",
+            description: "Official Postman docs — everything from basics to advanced testing.",
+          },
+        ],
+      },
     ],
   },
   {
