@@ -102,6 +102,10 @@
     color: var(--accent);
   }
 
+  .prose-custom pre {
+    @apply my-4;
+  }
+
   .prose-custom pre code {
     @apply px-0 py-0 bg-transparent;
     color: inherit;
