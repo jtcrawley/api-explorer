@@ -6,11 +6,20 @@ import { usePathname } from "next/navigation";
 import Logo from "@/components/ui/Logo";
 import ThemePicker from "@/components/ui/ThemePicker";
 import { modules } from "@/content/modules";
-import { getCompletedChapterIds, getCompletedCount } from "@/lib/progress";
+import { getCompletedChapterIds } from "@/lib/progress";
 import { getTotalChapters } from "@/content/modules";
+import { useTheme } from "@/components/ui/ThemeProvider";
+import {
+  EVOLUTION_LINES,
+  EVOLUTION_NAMES,
+  getEvolutionStage,
+  getStageProgress,
+  spriteUrl,
+} from "@/lib/evolution";
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { pokemon, mode } = useTheme();
   const [completedIds, setCompletedIds] = useState<string[]>([]);
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
   const totalChapters = getTotalChapters();
@@ -31,9 +40,23 @@ export default function Sidebar() {
   const completedCount = completedIds.length;
   const progressPercent = totalChapters > 0 ? (completedCount / totalChapters) * 100 : 0;
 
+  // Evolution XP system
+  const stage = getEvolutionStage(progressPercent);
+  const stageProgress = getStageProgress(progressPercent);
+  const evolutionLine = EVOLUTION_LINES[pokemon];
+  const evolutionNames = EVOLUTION_NAMES[pokemon];
+  const currentSprite = spriteUrl(evolutionLine[stage]);
+  const isMaxStage = stage === 2;
+  const nextSprite = isMaxStage ? null : spriteUrl(evolutionLine[stage + 1]);
+  const currentName = evolutionNames[stage];
+  const nextName = isMaxStage ? null : evolutionNames[stage + 1];
+
+  // Silhouette opacity: more visible in dark mode
+  const silhouetteOpacity = mode === "dark" ? 0.45 : 0.2;
+
   return (
     <aside
-      className="w-72 h-screen fixed left-0 top-0 flex flex-col border-r overflow-y-auto"
+      className="w-72 h-screen fixed left-0 top-0 flex flex-col border-r"
       style={{
         backgroundColor: "var(--bg-secondary)",
         borderColor: "var(--border)",
@@ -46,27 +69,8 @@ export default function Sidebar() {
         </Link>
       </div>
 
-      {/* Progress bar */}
-      <div className="px-6 pb-4">
-        <div className="flex justify-between text-xs mb-1.5">
-          <span style={{ color: "var(--text-tertiary)" }}>Progress</span>
-          <span style={{ color: "var(--text-secondary)" }}>
-            {completedCount}/{totalChapters}
-          </span>
-        </div>
-        <div
-          className="h-1.5 rounded-full overflow-hidden"
-          style={{ backgroundColor: "var(--bg-tertiary)" }}
-        >
-          <div
-            className="h-full rounded-full transition-all duration-500 bg-accent-500"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 px-3 pb-4">
+      {/* Navigation — only this section scrolls */}
+      <nav className="flex-1 px-3 pb-4 overflow-y-auto min-h-0">
         {modules.map((module) => {
           const isExpanded = expandedModule === module.id;
           const moduleCompleted = module.chapters.every((c) =>
@@ -92,7 +96,7 @@ export default function Sidebar() {
                       : "var(--accent)",
                   }}
                 >
-                  {moduleCompleted ? "\u2713" : module.id}
+                  {moduleCompleted ? "✓" : module.id}
                 </span>
                 <span
                   className="text-sm font-medium truncate"
@@ -122,8 +126,7 @@ export default function Sidebar() {
                 <div className="ml-5 mt-1 space-y-0.5">
                   {module.chapters.map((chapter) => {
                     const isActive =
-                      pathname ===
-                      `/learn/${module.id}/${chapter.id}`;
+                      pathname === `/learn/${module.id}/${chapter.id}`;
                     const isComplete = completedIds.includes(chapter.id);
 
                     return (
@@ -153,7 +156,7 @@ export default function Sidebar() {
                               : undefined
                           }
                         >
-                          {isComplete ? "\u2713" : ""}
+                          {isComplete ? "✓" : ""}
                         </span>
                         <span className="truncate">{chapter.title}</span>
                       </Link>
@@ -167,18 +170,115 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom controls */}
-      <div
-        className="p-4 border-t flex items-center justify-between"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <Link
-          href="/playground"
-          className="text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-[var(--bg-tertiary)] transition-colors"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          Playground
-        </Link>
-        <ThemePicker />
+
+        {/* Chapter progress label — sits above the border */}
+        <div className="px-6 pb-2 flex items-center justify-between">
+          <span className="text-[11px] font-medium" style={{ color: "var(--text-tertiary)" }}>
+            Chapter progress
+          </span>
+          <span className="text-[11px] font-semibold" style={{ color: "var(--text-secondary)" }}>
+            {completedCount}/{totalChapters}
+          </span>
+        </div>
+
+      <div className="border-t" style={{ borderColor: "var(--border)" }}>
+
+        {/* Trainer card — IS the ThemePicker trigger */}
+        <div className="px-3 pb-3">
+          <ThemePicker
+            renderTrigger={({ ref, onClick, open }) => (
+              <button
+                ref={ref}
+                onClick={onClick}
+                aria-expanded={open}
+                aria-label="Switch Pokémon theme"
+                className="w-full flex items-center gap-2.5 px-3 py-3 rounded-xl hover:bg-[var(--bg-tertiary)] transition-colors text-left group"
+                style={{
+                  outline: open ? "1.5px solid var(--accent)" : "1.5px solid transparent",
+                }}
+              >
+                {/* Current evolved sprite */}
+                <img
+                  src={currentSprite}
+                  alt={currentName}
+                  width={48}
+                  height={48}
+                  style={{ imageRendering: "auto", objectFit: "contain", flexShrink: 0 }}
+                />
+
+                {/* Name + XP bar */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline justify-between mb-1">
+                    <span
+                      className="text-sm font-semibold truncate"
+                      style={{ color: "var(--text-primary)" }}
+                    >
+                      {currentName}
+                    </span>
+                    {/* Overall % instead of X/Y count */}
+                    <span
+                      className="text-[11px] font-medium flex-shrink-0 ml-1"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {Math.round(progressPercent)}%
+                    </span>
+                  </div>
+
+                  {/* XP bar — progress within current evolution stage */}
+                  <div
+                    className="h-1.5 rounded-full overflow-hidden"
+                    style={{ backgroundColor: "var(--bg-tertiary)" }}
+                  >
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{
+                        width: `${stageProgress * 100}%`,
+                        backgroundColor: "var(--accent)",
+                      }}
+                    />
+                  </div>
+
+                  {/* Next evolution — right-aligned under the bar */}
+                  <div className="mt-1 text-right">
+                    <span
+                      className="text-[10px]"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {isMaxStage ? "✦ MAX LEVEL" : `→ ${nextName}`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Next-stage silhouette — more visible in dark mode */}
+                {nextSprite ? (
+                  <img
+                    src={nextSprite}
+                    alt="???"
+                    width={32}
+                    height={32}
+                    style={{
+                      imageRendering: "auto",
+                      objectFit: "contain",
+                      flexShrink: 0,
+                      filter: `brightness(0) opacity(${silhouetteOpacity})`,
+                    }}
+                  />
+                ) : (
+                  <svg
+                    className="w-4 h-4 flex-shrink-0 opacity-0 group-hover:opacity-50 transition-opacity"
+                    style={{ color: "var(--text-tertiary)" }}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                )}
+              </button>
+            )}
+          />
+        </div>
       </div>
     </aside>
   );

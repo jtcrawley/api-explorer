@@ -3,130 +3,109 @@
 @tailwind utilities;
 
 @layer base {
-  /* ── Bulbasaur Light ── */
-  :root,
-  .theme-bulbasaur-light {
-    --bg-primary: #f8fffe;
-    --bg-secondary: #ecfdf5;
-    --bg-tertiary: #d1fae5;
-    --bg-code: #0f2d1a;
-    --text-primary: #064e3b;
-    --text-secondary: #065f46;
-    --text-tertiary: #6ee7b7;
-    --border: #a7f3d0;
-    --border-hover: #6ee7b7;
-    --accent: #059669;
-    --accent-light: #d1fae5;
-    --success: #22c55e;
+  /* ═══════════════════════════════════════════════════
+     LIGHT BASE — neutral slate, shared across all themes
+     Only --accent + --accent-light change per Pokémon
+     ═══════════════════════════════════════════════════ */
+  :root {
+    --bg-primary:    #ffffff;
+    --bg-secondary:  #f8fafc;
+    --bg-tertiary:   #f1f5f9;
+    --bg-code:       #0f172a;
+    --text-primary:  #0f172a;
+    --text-secondary:#475569;
+    --text-tertiary: #64748b;   /* was #94a3b8 — now 4.5:1 on white */
+    --border:        #e2e8f0;
+    --border-hover:  #cbd5e1;
+    /* Defaults to Bulbasaur */
+    --accent:        #15803d;
+    --accent-light:  #dcfce7;
+    --success:       #16a34a;
     --success-light: #f0fdf4;
-    --error: #ef4444;
-    --error-light: #fef2f2;
-    --warning: #d97706;
-    --warning-light: #fffbeb;
+    --error:         #dc2626;
+    --error-light:   #fef2f2;
+    --warning:       #d97706;
+    --warning-light: #fefce8;
+  }
+
+  /* ── Bulbasaur Light (green) — 5.1:1 on white ── */
+  .theme-bulbasaur-light {
+    --accent:       #15803d;
+    --accent-light: #dcfce7;
   }
 
   /* ── Bulbasaur Dark ── */
   .theme-bulbasaur-dark {
-    --bg-primary: #022c22;
-    --bg-secondary: #064e3b;
-    --bg-tertiary: #065f46;
-    --bg-code: #011a14;
-    --text-primary: #ecfdf5;
-    --text-secondary: #6ee7b7;
-    --text-tertiary: #34d399;
-    --border: #065f46;
-    --border-hover: #059669;
-    --accent: #34d399;
-    --accent-light: #064e3b;
-    --success: #4ade80;
+    --bg-primary:    #09090b;
+    --bg-secondary:  #18181b;
+    --bg-tertiary:   #27272a;
+    --bg-code:       #1e1e20;
+    --text-primary:  #fafafa;
+    --text-secondary:#c4c4c8;   /* was #a1a1aa — brighter for readability */
+    --text-tertiary: #a1a1aa;   /* was #52525b — much brighter, ~7:1 on dark bg */
+    --border:        #27272a;
+    --border-hover:  #3f3f46;
+    --accent:        #4ade80;
+    --accent-light:  #14532d;
+    --success:       #4ade80;
     --success-light: #052e16;
-    --error: #f87171;
-    --error-light: #450a0a;
-    --warning: #fbbf24;
+    --error:         #f87171;
+    --error-light:   #450a0a;
+    --warning:       #fbbf24;
     --warning-light: #451a03;
   }
 
-  /* ── Squirtle Light ── */
+  /* ── Squirtle Light (blue) — 5.9:1 on white ── */
   .theme-squirtle-light {
-    --bg-primary: #f0f9ff;
-    --bg-secondary: #e0f2fe;
-    --bg-tertiary: #bae6fd;
-    --bg-code: #0a1929;
-    --text-primary: #0c4a6e;
-    --text-secondary: #075985;
-    --text-tertiary: #38bdf8;
-    --border: #7dd3fc;
-    --border-hover: #38bdf8;
-    --accent: #0284c7;
+    --accent:       #0369a1;
     --accent-light: #e0f2fe;
-    --success: #22c55e;
-    --success-light: #f0fdf4;
-    --error: #ef4444;
-    --error-light: #fef2f2;
-    --warning: #d97706;
-    --warning-light: #fffbeb;
   }
 
   /* ── Squirtle Dark ── */
   .theme-squirtle-dark {
-    --bg-primary: #041625;
-    --bg-secondary: #0a2540;
-    --bg-tertiary: #0f3460;
-    --bg-code: #020d17;
-    --text-primary: #e0f2fe;
-    --text-secondary: #7dd3fc;
-    --text-tertiary: #38bdf8;
-    --border: #0f3460;
-    --border-hover: #0284c7;
-    --accent: #38bdf8;
-    --accent-light: #0a2540;
-    --success: #4ade80;
+    --bg-primary:    #09090b;
+    --bg-secondary:  #18181b;
+    --bg-tertiary:   #27272a;
+    --bg-code:       #1e1e20;
+    --text-primary:  #fafafa;
+    --text-secondary:#c4c4c8;
+    --text-tertiary: #a1a1aa;
+    --border:        #27272a;
+    --border-hover:  #3f3f46;
+    --accent:        #38bdf8;
+    --accent-light:  #0c4a6e;
+    --success:       #4ade80;
     --success-light: #052e16;
-    --error: #f87171;
-    --error-light: #450a0a;
-    --warning: #fbbf24;
+    --error:         #f87171;
+    --error-light:   #450a0a;
+    --warning:       #fbbf24;
     --warning-light: #451a03;
   }
 
-  /* ── Charmander Light ── */
+  /* ── Charmander Light (orange) — 5.0:1 on white ── */
   .theme-charmander-light {
-    --bg-primary: #fff8f0;
-    --bg-secondary: #fff1e0;
-    --bg-tertiary: #ffe4c4;
-    --bg-code: #2d1500;
-    --text-primary: #7c2d12;
-    --text-secondary: #9a3412;
-    --text-tertiary: #fb923c;
-    --border: #fed7aa;
-    --border-hover: #fb923c;
-    --accent: #ea580c;
-    --accent-light: #fff1e0;
-    --success: #22c55e;
-    --success-light: #f0fdf4;
-    --error: #dc2626;
-    --error-light: #fef2f2;
-    --warning: #d97706;
-    --warning-light: #fffbeb;
+    --accent:       #c2410c;
+    --accent-light: #ffedd5;
   }
 
   /* ── Charmander Dark ── */
   .theme-charmander-dark {
-    --bg-primary: #1f0800;
-    --bg-secondary: #3d1200;
-    --bg-tertiary: #5c1f00;
-    --bg-code: #0f0400;
-    --text-primary: #fff1e0;
-    --text-secondary: #fdba74;
-    --text-tertiary: #fb923c;
-    --border: #5c1f00;
-    --border-hover: #c2410c;
-    --accent: #fb923c;
-    --accent-light: #3d1200;
-    --success: #4ade80;
+    --bg-primary:    #09090b;
+    --bg-secondary:  #18181b;
+    --bg-tertiary:   #27272a;
+    --bg-code:       #1e1e20;
+    --text-primary:  #fafafa;
+    --text-secondary:#c4c4c8;
+    --text-tertiary: #a1a1aa;
+    --border:        #27272a;
+    --border-hover:  #3f3f46;
+    --accent:        #fb923c;
+    --accent-light:  #7c2d12;
+    --success:       #4ade80;
     --success-light: #052e16;
-    --error: #f87171;
-    --error-light: #450a0a;
-    --warning: #fbbf24;
+    --error:         #f87171;
+    --error-light:   #450a0a;
+    --warning:       #fbbf24;
     --warning-light: #451a03;
   }
 
@@ -154,6 +133,7 @@
   .code-block {
     @apply font-mono text-sm rounded-xl overflow-hidden;
     background: var(--bg-code);
+    border: 1px solid var(--border);
     color: #e2e8f0;
     line-height: 1.75;
   }
@@ -213,6 +193,89 @@
   }
 }
 
+/* ─── Evolution strip animations ─── */
+
+/* XP bar fills up then resets, loops */
+@keyframes xpBarFill {
+  0%, 5%   { width: 0%; }
+  55%      { width: 72%; }
+  75%, 100%{ width: 0%; }
+}
+
+/* Delayed variant for the second XP bar segment */
+@keyframes xpBarFillDelayed {
+  0%, 5%   { width: 0%; }
+  55%      { width: 72%; }
+  75%, 100%{ width: 0%; }
+}
+
+/* Silhouette lifts slightly out of pure black at XP peak */
+@keyframes silhouetteGlow1 {
+  0%, 45%  { filter: brightness(0) opacity(0.35); }
+  55%, 65% { filter: brightness(0.18) opacity(0.6); }
+  78%, 100%{ filter: brightness(0) opacity(0.35); }
+}
+
+@keyframes silhouetteGlow2 {
+  0%, 45%  { filter: brightness(0) opacity(0.35); }
+  55%, 65% { filter: brightness(0.18) opacity(0.6); }
+  78%, 100%{ filter: brightness(0) opacity(0.35); }
+}
+
+.evo-xp-bar {
+  animation: xpBarFill 4s ease-in-out infinite;
+}
+
+.evo-xp-bar-delayed {
+  animation: xpBarFillDelayed 4s ease-in-out 2s infinite;
+}
+
+.evo-silhouette-1 {
+  animation: silhouetteGlow1 4s ease-in-out infinite;
+}
+
+.evo-silhouette-2 {
+  animation: silhouetteGlow2 4s ease-in-out 2s infinite;
+}
+
+/* ─── Modal animations ─── */
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.9) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* New Pokémon pops in with spring */
+@keyframes evolvedPop {
+  0%   { transform: scale(0.25) rotate(-8deg); opacity: 0; }
+  65%  { transform: scale(1.18) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Brief white flash at moment of evolution */
+@keyframes flashBurst {
+  0%        { opacity: 0; }
+  15%, 30%  { opacity: 0.75; }
+  100%      { opacity: 0; }
+}
+
+/* Confetti particle flying outward */
+@keyframes particleFly {
+  0%   {
+    transform: translate(-50%, -50%) translate(0px, 0px) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(0.1) rotate(var(--rot));
+    opacity: 0;
+  }
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
@@ -225,11 +288,11 @@
 
 ::-webkit-scrollbar-thumb {
   @apply rounded-full;
-  background: var(--text-tertiary);
+  background: var(--border-hover);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: var(--text-tertiary);
 }
 
 /* Smooth transitions for theme toggle */

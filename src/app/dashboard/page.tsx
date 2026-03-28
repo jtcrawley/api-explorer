@@ -60,8 +60,8 @@ export default function DashboardPage() {
               style={{ backgroundColor: "var(--bg-tertiary)" }}
             >
               <div
-                className="h-full rounded-full transition-all duration-700 bg-accent-500"
-                style={{ width: `${progressPercent}%` }}
+                className="h-full rounded-full transition-all duration-700"
+                style={{ backgroundColor: "var(--accent)", width: `${progressPercent}%` }}
               />
             </div>
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
@@ -125,8 +125,8 @@ export default function DashboardPage() {
                     style={{ backgroundColor: "var(--bg-tertiary)" }}
                   >
                     <div
-                      className="h-full rounded-full transition-all duration-500 bg-accent-500"
-                      style={{ width: `${modulePercent}%` }}
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${modulePercent}%`, backgroundColor: "var(--accent)" }}
                     />
                   </div>
                   <div className="mt-3 space-y-1">
