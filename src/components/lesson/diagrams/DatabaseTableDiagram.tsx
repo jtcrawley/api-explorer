@@ -25,8 +25,8 @@ export default function DatabaseTableDiagram() {
           <div className="w-3 h-3 rounded-full bg-yellow-400" />
           <div className="w-3 h-3 rounded-full bg-green-400" />
         </div>
-        <p className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>
-          Table: <span style={{ color: "var(--accent)" }}>saved_pokemon</span>
+        <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "var(--accent)" }}>
+          Table: saved_pokemon
         </p>
       </div>
 

@@ -9,7 +9,6 @@ const methods = [
     label: "Read / Fetch",
     example: "GET /pokemon/pikachu",
     desc: "Retrieve data. Nothing changes on the server.",
-    icon: "📥",
   },
   {
     verb: "POST",
@@ -19,7 +18,6 @@ const methods = [
     label: "Create",
     example: "POST /saved-pokemon",
     desc: "Send new data to create something on the server.",
-    icon: "✏️",
   },
   {
     verb: "PUT",
@@ -29,7 +27,6 @@ const methods = [
     label: "Update / Replace",
     example: "PUT /pokemon/25",
     desc: "Replace an existing resource entirely.",
-    icon: "🔄",
   },
   {
     verb: "DELETE",
@@ -39,7 +36,6 @@ const methods = [
     label: "Remove",
     example: "DELETE /saved-pokemon/42",
     desc: "Remove a resource from the server.",
-    icon: "🗑️",
   },
 ];
 
@@ -49,7 +45,7 @@ export default function HttpMethodsDiagram() {
       className="rounded-2xl p-6 mb-10"
       style={{ backgroundColor: "var(--bg-secondary)", border: "1px solid var(--border)" }}
     >
-      <p className="text-xs font-medium uppercase tracking-wider text-center mb-5" style={{ color: "var(--text-tertiary)" }}>
+      <p className="text-[11px] font-bold uppercase tracking-widest text-center mb-5" style={{ color: "var(--accent)" }}>
         The 4 HTTP Methods
       </p>
       <div className="grid grid-cols-2 gap-3">
