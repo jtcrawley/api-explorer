@@ -111,15 +111,20 @@ export default function WelcomeDiagram() {
         </div>
       </div>
 
-      {/* ── 2. Agentic flow ── */}
+      {/* ── 2. Agentic Design — text + flow merged ── */}
       <div>
         <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "var(--accent)" }}>
-          What an agentic interaction looks like
+          The age of Agentic Design
         </p>
         <div
           className="rounded-xl border p-5"
           style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border)" }}
         >
+          {/* Lead text */}
+          <p className="text-sm leading-relaxed mb-5" style={{ color: "var(--text-secondary)" }}>
+            AI agents don&apos;t just generate text. They call APIs, query databases, chain tools together, and take real actions in the world. Someone has to design every moment where a human and that system interact. That someone is you.
+          </p>
+
           {/* Nodes */}
           <div className="flex items-start gap-1.5 overflow-x-auto pb-1">
             {AGENT_FLOW.map((node, i) => (
