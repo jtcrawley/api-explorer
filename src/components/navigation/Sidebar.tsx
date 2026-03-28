@@ -239,7 +239,7 @@ export default function Sidebar() {
         <div className="border-t" style={{ borderColor: "var(--border)" }}>
 
           {/* Trainer card — IS the ThemePicker trigger */}
-          <div className="px-3 pb-3">
+          <div className="px-3 pt-3 pb-3">
             <ThemePicker
               renderTrigger={({ ref, onClick, open }) => (
                 <button
