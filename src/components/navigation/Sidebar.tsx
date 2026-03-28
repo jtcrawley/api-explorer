@@ -17,6 +17,14 @@ import {
   spriteUrl,
 } from "@/lib/evolution";
 
+const MODULE_ICONS: Record<string, React.ReactNode> = {
+  "1": <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
+  "2": <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>,
+  "3": <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3" strokeWidth={2}/><path strokeWidth={2} d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path strokeWidth={2} d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>,
+  "4": <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="5" y="11" width="14" height="10" rx="2" strokeWidth={2}/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 018 0v4" /></svg>,
+  "5": <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>,
+};
+
 export default function Sidebar() {
   const pathname = usePathname();
   const { pokemon, mode } = useTheme();
@@ -169,13 +177,15 @@ export default function Sidebar() {
                   className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors hover:bg-[var(--bg-tertiary)]"
                 >
                   <span
-                    className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+                    className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{
                       backgroundColor: "var(--accent-light)",
                       color: "var(--accent)",
                     }}
                   >
-                    {moduleCompleted ? "✓" : module.id}
+                    {moduleCompleted
+                      ? <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                      : MODULE_ICONS[module.id]}
                   </span>
                   <span
                     className="text-sm font-medium truncate min-w-0"
@@ -295,8 +305,8 @@ export default function Sidebar() {
             <span
               className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
               style={{
-                backgroundColor: "var(--bg-tertiary)",
-                color: "var(--text-tertiary)",
+                backgroundColor: pathname === "/glossary" ? "var(--accent-light)" : "var(--bg-tertiary)",
+                color: pathname === "/glossary" ? "var(--accent)" : "var(--text-tertiary)",
               }}
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
