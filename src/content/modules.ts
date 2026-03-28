@@ -51,12 +51,12 @@ export const modules: Module[] = [
       {
         id: "1-0",
         title: "Welcome to API Trainer",
-        subtitle: "Your role is evolving. This is how you keep up.",
+        subtitle: "Your role is evolving. Time to become the very best.",
         readTime: 4,
         narrative:
           "Every great trainer starts somewhere. Before you learn to catch Pokémon, you need to understand the world you're entering. This chapter is your map.",
         concepts: ["Course Overview", "Designer × Engineer", "Agentic Design"],
-        content: `Your role is evolving. Time to become the very best.`,
+        content: ``,
         resources: [],
       },
       {
