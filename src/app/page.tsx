@@ -85,7 +85,7 @@ export default function HomePage() {
 
       {/* Header */}
       <header
-        className="flex items-center justify-between px-8 py-4 border-b"
+        className="flex items-center justify-between px-4 sm:px-8 py-4 border-b"
         style={{ borderColor: "var(--border)" }}
       >
         <Logo size={28} />
@@ -101,7 +101,7 @@ export default function HomePage() {
       </header>
 
       {/* Hero */}
-      <section className="max-w-3xl mx-auto px-8 pt-16 pb-8 text-center">
+      <section className="max-w-3xl mx-auto px-4 sm:px-8 pt-10 sm:pt-16 pb-8 text-center">
         <div
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-6"
           style={{ backgroundColor: "var(--accent-light)", color: "var(--accent)" }}
@@ -109,13 +109,13 @@ export default function HomePage() {
           For Product Designers
         </div>
         <h1
-          className="text-5xl font-bold tracking-tight leading-tight mb-4"
+          className="text-3xl sm:text-5xl font-bold tracking-tight leading-tight mb-4"
           style={{ color: "var(--text-primary)" }}
         >
           Learn APIs &<br />Databases
         </h1>
         <p
-          className="text-xl max-w-xl mx-auto leading-relaxed"
+          className="text-base sm:text-xl max-w-xl mx-auto leading-relaxed"
           style={{ color: "var(--text-secondary)" }}
         >
           A story-driven journey from &quot;What&apos;s an API?&quot; to building
@@ -124,7 +124,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Starter selection ── */}
-      <section className="max-w-3xl mx-auto px-8 pb-10">
+      <section className="max-w-3xl mx-auto px-4 sm:px-8 pb-10">
         <div className="text-center mb-8">
           <p
             className="text-xs font-semibold uppercase tracking-widest mb-1"
@@ -146,7 +146,7 @@ export default function HomePage() {
         </div>
 
         {/* Starter cards */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
           {STARTERS.map((starter) => {
             const option = POKEMON_OPTIONS.find((p) => p.id === starter.id)!;
             const isActive = pokemon === starter.id;
@@ -161,7 +161,7 @@ export default function HomePage() {
                   setPokemon(starter.id);
                   setHasExplicitlyChosen(true);
                 }}
-                className="relative flex flex-col items-center gap-3 px-4 py-6 rounded-2xl border-2 transition-colors duration-200 text-center"
+                className="relative flex flex-col items-center gap-2 sm:gap-3 px-2 sm:px-4 py-4 sm:py-6 rounded-2xl border-2 transition-colors duration-200 text-center"
                 style={{
                   borderColor: isActive ? accentColor : "var(--border)",
                   backgroundColor: isActive ? "var(--accent-light)" : "var(--bg-secondary)",
@@ -180,19 +180,20 @@ export default function HomePage() {
                 </span>
 
                 {/* Fixed sprite box — same size for all three */}
-                <div className="flex items-center justify-center" style={{ width: 80, height: 80 }}>
+                <div className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 flex-shrink-0">
                   <img
                     src={option.sprite}
                     alt={option.label}
-                    width={80}
-                    height={80}
-                    style={{ imageRendering: "auto", objectFit: "contain", maxWidth: 80, maxHeight: 80 }}
+                    width={64}
+                    height={64}
+                    className="w-full h-full"
+                    style={{ imageRendering: "auto", objectFit: "contain" }}
                   />
                 </div>
 
                 <div className="w-full">
                   <p
-                    className="text-base font-bold mb-1 transition-colors duration-200"
+                    className="text-xs sm:text-base font-bold mb-1 transition-colors duration-200"
                     style={{ color: isActive ? accentColor : "var(--text-primary)" }}
                   >
                     {option.label}
@@ -206,13 +207,13 @@ export default function HomePage() {
                   </span>
 
                   <p
-                    className="text-xs font-medium mb-1 transition-colors duration-200"
+                    className="text-[10px] sm:text-xs font-medium mb-1 transition-colors duration-200 hidden sm:block"
                     style={{ color: isActive ? accentColor : "var(--text-secondary)" }}
                   >
                     {starter.tagline}
                   </p>
                   <p
-                    className="text-xs leading-relaxed"
+                    className="text-[10px] sm:text-xs leading-relaxed hidden sm:block"
                     style={{ color: "var(--text-secondary)" }}
                   >
                     {starter.description}
@@ -225,11 +226,12 @@ export default function HomePage() {
 
         {/* Evolution preview strip — animated XP bars */}
         <div
-          className="px-6 py-6 rounded-2xl border"
+          className="px-4 sm:px-6 py-6 rounded-2xl border"
           style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border)" }}
         >
+          <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
           {/* Fixed-height row — nothing moves when Pokémon changes */}
-          <div className="flex items-center justify-center gap-0">
+          <div className="flex items-center justify-center gap-0" style={{ minWidth: 416 }}>
 
             {/* Stage 0 — base form */}
             <div className="flex flex-col items-center gap-2" style={{ width: 80 }}>
@@ -311,6 +313,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+          </div>
 
           <p
             className="text-xs text-center mt-4"
@@ -322,7 +325,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="max-w-3xl mx-auto px-8 pb-16 flex items-center justify-center gap-4">
+      <section className="max-w-3xl mx-auto px-4 sm:px-8 pb-16 flex items-center justify-center gap-4">
         <Button size="lg" onClick={() => router.push("/learn/1/1-1")}>
           {hasStarted ? "Continue your journey" : "Begin your journey"} →
         </Button>
@@ -330,7 +333,7 @@ export default function HomePage() {
 
       {/* Modules overview */}
       <section
-        className="max-w-4xl mx-auto px-8 pb-20 border-t pt-12"
+        className="max-w-4xl mx-auto px-4 sm:px-8 pb-20 border-t pt-12"
         style={{ borderColor: "var(--border)" }}
       >
         <h3

@@ -280,7 +280,7 @@ export default function ChapterPage() {
           </span>
         </div>
 
-        <div className="max-w-3xl mx-auto px-8 py-12">
+        <div className="max-w-3xl mx-auto px-4 sm:px-8 py-6 sm:py-12">
 
           {/* Header */}
           <div className="mb-10">
@@ -292,7 +292,7 @@ export default function ChapterPage() {
               {completed && <Badge variant="success">Completed</Badge>}
             </div>
             <h1
-              className="text-3xl font-bold tracking-tight mb-2"
+              className="text-2xl sm:text-3xl font-bold tracking-tight mb-2"
               style={{ color: "var(--text-primary)" }}
             >
               {chapter.title}
@@ -313,8 +313,8 @@ export default function ChapterPage() {
             <img
               src={evolvedSprite}
               alt={evolvedName}
-              width={72}
-              height={72}
+              width={56}
+              height={56}
               style={{ imageRendering: "auto", objectFit: "contain", flexShrink: 0 }}
             />
             <p
@@ -366,12 +366,13 @@ export default function ChapterPage() {
 
           {/* Navigation */}
           <div
-            className="flex items-center justify-between pt-8 mt-8 border-t"
+            className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 pt-8 mt-8 border-t"
             style={{ borderColor: "var(--border)" }}
           >
             {prev ? (
               <Button
                 variant="ghost"
+                className="w-full sm:w-auto"
                 onClick={() => router.push(`/learn/${prev.moduleId}/${prev.chapterId}`)}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -380,20 +381,20 @@ export default function ChapterPage() {
                 Previous
               </Button>
             ) : (
-              <div />
+              <div className="hidden sm:block" />
             )}
 
             {!completed ? (
-              <Button onClick={handleComplete}>Mark Complete & Continue</Button>
+              <Button className="w-full sm:w-auto" onClick={handleComplete}>Mark Complete & Continue</Button>
             ) : next ? (
-              <Button onClick={() => router.push(`/learn/${next.moduleId}/${next.chapterId}`)}>
+              <Button className="w-full sm:w-auto" onClick={() => router.push(`/learn/${next.moduleId}/${next.chapterId}`)}>
                 Next Chapter
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </Button>
             ) : (
-              <Button variant="secondary" onClick={() => router.push("/dashboard")}>
+              <Button variant="secondary" className="w-full sm:w-auto" onClick={() => router.push("/dashboard")}>
                 View Dashboard
               </Button>
             )}
