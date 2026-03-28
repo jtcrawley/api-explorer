@@ -5,12 +5,17 @@ import { useEffect, useState } from "react";
 import Logo from "@/components/ui/Logo";
 import Button from "@/components/ui/Button";
 import StarterCard from "@/components/home/StarterCard";
-import ModuleCard from "@/components/home/ModuleCard";
-import { modules, getTotalChapters, getFlatChapterList } from "@/content/modules";
+import { getTotalChapters, getFlatChapterList } from "@/content/modules";
 import { getCompletedCount, getCompletedChapterIds } from "@/lib/progress";
 import { useTheme, type PokemonTheme } from "@/components/ui/ThemeProvider";
 import { POKEMON_OPTIONS } from "@/components/ui/ThemePicker";
-import { EVOLUTION_LINES, EVOLUTION_NAMES, spriteUrl } from "@/lib/evolution";
+import {
+  EVOLUTION_LINES,
+  EVOLUTION_NAMES,
+  spriteUrl,
+  getEvolutionStage,
+  getStageProgress,
+} from "@/lib/evolution";
 
 const STARTERS: {
   id: PokemonTheme;
@@ -54,20 +59,14 @@ const STARTERS: {
   },
 ];
 
-const moduleIcons = [
-  <svg key="zap" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
-  <svg key="code" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>,
-  <svg key="db" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3" strokeWidth={2}/><path strokeWidth={2} d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path strokeWidth={2} d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>,
-  <svg key="lock" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><rect x="5" y="11" width="14" height="10" rx="2" strokeWidth={2}/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 018 0v4" /></svg>,
-  <svg key="star" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>,
-];
 
 export default function HomePage() {
   const router = useRouter();
   const { pokemon, mode, setPokemon } = useTheme();
-  const [completedCount, setCompletedCount] = useState(0);
-  const [continueUrl, setContinueUrl] = useState("/learn/1/1-1");
+  const [completedCount,     setCompletedCount]     = useState(0);
+  const [continueUrl,        setContinueUrl]        = useState("/learn/1/1-0");
   const [hasExplicitlyChosen, setHasExplicitlyChosen] = useState(false);
+  const [isLoaded,           setIsLoaded]           = useState(false);
   const totalChapters = getTotalChapters();
 
   useEffect(() => {
@@ -76,19 +75,28 @@ export default function HomePage() {
     const completedIds = getCompletedChapterIds();
     const next = getFlatChapterList().find((c) => !completedIds.includes(c.chapter.id));
     if (next) setContinueUrl(`/learn/${next.moduleId}/${next.chapter.id}`);
+    setIsLoaded(true);
   }, []);
 
   const hasStarted = completedCount > 0;
-  const evoLine = EVOLUTION_LINES[pokemon];
-  const evoNames = EVOLUTION_NAMES[pokemon];
+  const evoLine    = EVOLUTION_LINES[pokemon];
+  const evoNames   = EVOLUTION_NAMES[pokemon];
+
+  // Evolution stage based on progress
+  const progressPercent  = totalChapters > 0 ? (completedCount / totalChapters) * 100 : 0;
+  const stage            = getEvolutionStage(progressPercent);
+  const stageProgress    = getStageProgress(progressPercent);
+  const evolvedSprite    = spriteUrl(evoLine[stage]);
+  const evolvedName      = evoNames[stage];
+  const nextStageName    = stage < 2 ? evoNames[stage + 1] : null;
 
   // Derive type color from the selected starter
   const currentStarter = STARTERS.find((s) => s.id === pokemon)!;
   const typeColor  = mode === "dark" ? currentStarter.typeDarkColor : currentStarter.typeColor;
   const typeBg     = mode === "dark" ? currentStarter.typeDarkBg   : currentStarter.typeBg;
 
-  // Silhouette opacity — more visible in dark mode
-  const silhouetteOpacity = mode === "dark" ? 0.45 : 0.28;
+  // Silhouette opacity — pure black, kept low to stay mysterious
+  const silhouetteOpacity = mode === "dark" ? 0.18 : 0.13;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "var(--bg-primary)" }}>
@@ -111,26 +119,128 @@ export default function HomePage() {
       </header>
 
       {/* Hero */}
-      <section className="max-w-3xl mx-auto px-4 sm:px-8 pt-10 sm:pt-16 pb-8 text-center">
+      <section className="relative overflow-hidden">
+        {/* ── Dot grid background ── */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          aria-hidden="true"
+          style={{ opacity: 0.35 }}
+        >
+          <defs>
+            <pattern id="hero-dot-grid" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+              <circle cx="12" cy="12" r="1" fill="var(--accent)" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#hero-dot-grid)" />
+        </svg>
+
+        {/* Accent bloom — radial glow behind the heading */}
         <div
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-6"
-          style={{ backgroundColor: "var(--accent-light)", color: "var(--accent)" }}
+          className="absolute pointer-events-none"
+          aria-hidden="true"
+          style={{
+            top: "-10%", left: "50%", transform: "translateX(-50%)",
+            width: "90%", maxWidth: 700, height: 420,
+            background: "radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--accent) 14%, transparent) 0%, transparent 65%)",
+          }}
+        />
+
+        {/* Fade grid out toward bottom so starters section reads cleanly */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden="true"
+          style={{ background: "linear-gradient(to bottom, transparent 35%, var(--bg-primary) 100%)" }}
+        />
+
+        {/* Content */}
+        <div
+          className="relative max-w-3xl mx-auto px-4 sm:px-8 pt-12 sm:pt-20 pb-10 text-center"
+          style={{ opacity: isLoaded ? 1 : 0, transition: "opacity 0.3s ease" }}
         >
-          For Product Designers
+          {/* ── Returning user: personalised trainer status ── */}
+          {hasStarted ? (
+            <>
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-8" style={{ color: "var(--accent)" }}>
+                Welcome back, Trainer
+              </p>
+
+              {/* Trainer status card */}
+              <div
+                className="inline-flex items-center gap-5 sm:gap-6 px-5 sm:px-8 py-4 sm:py-5 rounded-2xl border mb-8 text-left"
+                style={{
+                  borderColor: "var(--accent)30",
+                  backgroundColor: "color-mix(in srgb, var(--bg-secondary) 80%, transparent)",
+                  backdropFilter: "blur(8px)",
+                  boxShadow: "0 0 40px -12px color-mix(in srgb, var(--accent) 25%, transparent)",
+                }}
+              >
+                {/* Sprite */}
+                <div
+                  className="relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center"
+                  style={{
+                    background: `radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--accent) 28%, transparent) 0%, transparent 70%)`,
+                    border: "1px solid var(--accent)30",
+                  }}
+                >
+                  <img
+                    src={evolvedSprite}
+                    alt={evolvedName}
+                    width={64} height={64}
+                    style={{ imageRendering: "auto", objectFit: "contain", width: 52, height: 52, filter: "drop-shadow(0 2px 8px var(--accent)55)" }}
+                  />
+                </div>
+
+                {/* Stats */}
+                <div className="min-w-0">
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-base sm:text-lg font-bold" style={{ color: "var(--text-primary)" }}>
+                      {evolvedName}
+                    </span>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full" style={{ backgroundColor: "var(--accent-light)", color: "var(--accent)" }}>
+                      Stage {stage + 1}
+                    </span>
+                  </div>
+
+                  {/* XP bar */}
+                  <div className="w-44 sm:w-56 h-1.5 rounded-full overflow-hidden mb-1.5" style={{ backgroundColor: "var(--bg-tertiary)" }}>
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{ width: `${Math.round(stageProgress * 100)}%`, backgroundColor: "var(--accent)" }}
+                    />
+                  </div>
+
+                  <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                    {completedCount} of {totalChapters} chapters
+                    {nextStageName && <span> · evolves into {nextStageName}</span>}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <Button size="lg" onClick={() => router.push(continueUrl)}>
+                  Continue your journey →
+                </Button>
+              </div>
+            </>
+          ) : (
+            /* ── First visit: editorial heading ── */
+            <>
+              <div
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-6"
+                style={{ backgroundColor: "var(--accent-light)", color: "var(--accent)" }}
+              >
+                For Product Designers
+              </div>
+              <h1 className="text-3xl sm:text-5xl font-bold tracking-tight leading-tight mb-4" style={{ color: "var(--text-primary)" }}>
+                Learn<br />
+                <span style={{ color: "var(--accent)" }}>APIs & Databases</span>
+              </h1>
+              <p className="text-base sm:text-xl max-w-xl mx-auto leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                A story-driven journey from &quot;What&apos;s an API?&quot; to building real features with Pokémon data.
+              </p>
+            </>
+          )}
         </div>
-        <h1
-          className="text-3xl sm:text-5xl font-bold tracking-tight leading-tight mb-4"
-          style={{ color: "var(--text-primary)" }}
-        >
-          Learn APIs &<br />Databases
-        </h1>
-        <p
-          className="text-base sm:text-xl max-w-xl mx-auto leading-relaxed"
-          style={{ color: "var(--text-secondary)" }}
-        >
-          A story-driven journey from &quot;What&apos;s an API?&quot; to building
-          real features with Pokémon data.
-        </p>
       </section>
 
       {/* ── Starter selection ── */}
@@ -336,45 +446,23 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="max-w-3xl mx-auto px-4 sm:px-8 pb-16 flex items-center justify-center gap-4">
-        <Button size="lg" onClick={() => router.push(continueUrl)}>
-          {hasStarted ? "Continue your journey" : "Begin your journey"} →
-        </Button>
-      </section>
-
-      {/* Modules overview */}
-      <section
-        className="max-w-4xl mx-auto px-4 sm:px-8 pb-20 border-t pt-12"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <h3
-          className="text-sm font-medium uppercase tracking-wider mb-6 text-center"
-          style={{ color: "var(--text-tertiary)" }}
-        >
-          Your Learning Journey
-        </h3>
-        <div className="space-y-4">
-          {modules.map((module, i) => (
-            <ModuleCard
-              key={module.id}
-              moduleId={module.id}
-              title={module.title}
-              description={module.description}
-              chapterCount={module.chapters.length}
-              icon={moduleIcons[i]}
-              onClick={() =>
-                router.push(`/learn/${module.id}/${module.chapters[0].id}`)
-              }
-            />
-          ))}
-        </div>
-      </section>
+      {/* CTA — only shown on first visit; returning users have the button in the hero */}
+      {!hasStarted && (
+        <section className="max-w-3xl mx-auto px-4 sm:px-8 pb-16 flex items-center justify-center">
+          <Button size="lg" onClick={() => router.push(continueUrl)}>
+            Begin your journey →
+          </Button>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="text-center py-8 border-t" style={{ borderColor: "var(--border)" }}>
-        <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+        <p className="text-xs mb-2" style={{ color: "var(--text-tertiary)" }}>
           Built for designers who want to speak the language of APIs.
+        </p>
+        <p className="text-[10px]" style={{ color: "var(--text-tertiary)", opacity: 0.55 }}>
+          Fan project — not affiliated with Nintendo, Game Freak, or The Pokémon Company.
+          Pokémon and all related names are trademarks of their respective owners.
         </p>
       </footer>
     </div>

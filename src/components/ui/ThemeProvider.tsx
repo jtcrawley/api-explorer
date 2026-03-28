@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 export type PokemonTheme = "bulbasaur" | "squirtle" | "charmander";
 export type ThemeMode = "light" | "dark";
@@ -41,20 +41,17 @@ function applyTheme(pokemon: PokemonTheme, mode: ThemeMode) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [pokemon, setPokemonState] = useState<PokemonTheme>("bulbasaur");
-  const [mode, setMode] = useState<ThemeMode>("dark");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const storedPokemon = localStorage.getItem("theme-pokemon") as PokemonTheme | null;
-    const storedMode = localStorage.getItem("theme-mode") as ThemeMode | null;
-    const p = storedPokemon ?? "bulbasaur";
-    const m = storedMode ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    setPokemonState(p);
-    setMode(m);
-    applyTheme(p, m);
-  }, []);
+  const [pokemon, setPokemonState] = useState<PokemonTheme>(() => {
+    if (typeof window === "undefined") return "bulbasaur";
+    return (localStorage.getItem("theme-pokemon") as PokemonTheme) || "bulbasaur";
+  });
+  const [mode, setMode] = useState<ThemeMode>(() => {
+    if (typeof window === "undefined") return "dark";
+    return (
+      (localStorage.getItem("theme-mode") as ThemeMode) ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+    );
+  });
 
   const setPokemon = (p: PokemonTheme) => {
     setPokemonState(p);
@@ -68,8 +65,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("theme-mode", next);
     applyTheme(pokemon, next);
   };
-
-  if (!mounted) return <>{children}</>;
 
   return (
     <ThemeContext.Provider value={{

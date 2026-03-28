@@ -83,8 +83,8 @@ export default function Sidebar() {
   const currentName = evolutionNames[stage];
   const nextName = isMaxStage ? null : evolutionNames[stage + 1];
 
-  // Silhouette opacity: more visible in dark mode
-  const silhouetteOpacity = mode === "dark" ? 0.45 : 0.2;
+  // Silhouette opacity: pure black, low opacity — keeps it mysterious
+  const silhouetteOpacity = mode === "dark" ? 0.18 : 0.13;
 
   return (
     <>
@@ -248,6 +248,35 @@ export default function Sidebar() {
             );
           })}
         </nav>
+
+        {/* Dashboard link */}
+        <div className="px-3 pb-1">
+          <Link
+            href="/dashboard"
+            onClick={() => setMobileOpen(false)}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${
+              pathname === "/dashboard"
+                ? "bg-[var(--accent-light)] font-medium"
+                : "hover:bg-[var(--bg-tertiary)]"
+            }`}
+            style={{
+              color: pathname === "/dashboard" ? "var(--accent)" : "var(--text-secondary)",
+            }}
+          >
+            <span
+              className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+              style={{
+                backgroundColor: pathname === "/dashboard" ? "var(--accent-light)" : "var(--bg-tertiary)",
+                color: pathname === "/dashboard" ? "var(--accent)" : "var(--text-tertiary)",
+              }}
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </span>
+            <span className="text-sm font-medium">Dashboard</span>
+          </Link>
+        </div>
 
         {/* Glossary link */}
         <div className="px-3 pb-2">

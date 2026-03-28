@@ -8,7 +8,7 @@ const methods = [
     border: "rgba(59,130,246,0.3)",
     label: "Read / Fetch",
     example: "GET /pokemon/pikachu",
-    desc: "Retrieve data. Safe — nothing changes on the server.",
+    desc: "Retrieve data. Nothing changes on the server.",
     icon: "📥",
   },
   {

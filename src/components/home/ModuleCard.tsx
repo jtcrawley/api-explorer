@@ -68,20 +68,15 @@ export default function ModuleCard({
       >
         <defs>
           <pattern
-            id={`hex-mod-${moduleId}`}
+            id={`dot-mod-${moduleId}`}
             x="0" y="0"
-            width="34.64" height="60"
+            width="20" height="20"
             patternUnits="userSpaceOnUse"
           >
-            <polygon points="17.32,0 34.64,10 34.64,30 17.32,40 0,30 0,10"
-              fill="none" stroke="var(--accent)" strokeWidth="0.7" />
-            <polygon points="0,30 17.32,40 17.32,60 0,70 -17.32,60 -17.32,40"
-              fill="none" stroke="var(--accent)" strokeWidth="0.7" />
-            <polygon points="34.64,30 51.96,40 51.96,60 34.64,70 17.32,60 17.32,40"
-              fill="none" stroke="var(--accent)" strokeWidth="0.7" />
+            <circle cx="10" cy="10" r="1" fill="var(--accent)" />
           </pattern>
         </defs>
-        <rect width="100%" height="100%" fill={`url(#hex-mod-${moduleId})`} />
+        <rect width="100%" height="100%" fill={`url(#dot-mod-${moduleId})`} />
       </svg>
 
       {/* Specular highlight */}

@@ -49,6 +49,49 @@ export const modules: Module[] = [
     icon: "Zap",
     chapters: [
       {
+        id: "1-0",
+        title: "Welcome to API Trainer",
+        subtitle: "Why every designer on an engineering team needs this",
+        readTime: 3,
+        narrative:
+          "Every great trainer starts somewhere. Before you learn to catch Pokémon, you need to understand the world you're entering. This chapter is your map.",
+        concepts: ["Course Overview", "APIs in Practice", "Designer × Engineer"],
+        content: `## You're on an engineering team. The backend is a black box.
+
+You design the product. Engineers build it. Between your Figma file and the shipped feature, something gets lost in translation every single time.
+
+When an engineer says "that'll require a new endpoint" or "the API doesn't support filtering by date," do you know what that means? If not, this course fixes that.
+
+---
+
+## What shifts when you understand the backend
+
+You don't need to become an engineer. A little fluency goes a long way:
+
+**Design what's buildable.** Know which features require new data or significant backend work before you've spent a week in Figma.
+
+**Have real conversations.** Ask informed questions. Catch edge cases engineers didn't think to flag.
+
+**Read a ticket.** Endpoints, payloads, response schemas, status codes. These will stop being noise.
+
+**Unblock yourself.** Calling an API, reading a JSON response, understanding a 401 error. These are literacy skills, not engineering ones.
+
+---
+
+## Five modules, fifteen chapters
+
+The course follows a narrative: you've joined a team building a Pokémon companion app and need to understand the backend to do your job.
+
+- **Module 1:** What is an API? The request-response cycle, your first API call.
+- **Module 2:** HTTP methods, headers, auth, and error codes.
+- **Module 3:** Databases. Tables, rows, CRUD operations with real data.
+- **Module 4:** OAuth, Spotify, combining APIs with your own database.
+- **Module 5:** A capstone project that pulls everything together.
+
+Each module has interactive exercises. You write real code in the browser, call real APIs, and see real results. Your trainer journey starts in the next chapter.`,
+        resources: [],
+      },
+      {
         id: "1-1",
         title: "The Restaurant Analogy",
         subtitle: "Understanding APIs through everyday life",

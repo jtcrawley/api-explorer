@@ -3,6 +3,14 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useTheme, type PokemonTheme } from "./ThemeProvider";
+import { getCompletedChapterIds } from "@/lib/progress";
+import { getTotalChapters } from "@/content/modules";
+import {
+  getEvolutionStage,
+  EVOLUTION_LINES,
+  EVOLUTION_NAMES,
+  spriteUrl,
+} from "@/lib/evolution";
 
 export const POKEMON_OPTIONS: {
   id: PokemonTheme;
@@ -81,6 +89,18 @@ export default function ThemePicker({ renderTrigger }: ThemePickerProps = {}) {
   const { pokemon, mode, setPokemon, toggleMode } = useTheme();
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<PopoverPos>({});
+  const [completedIds, setCompletedIds] = useState<string[]>([]);
+
+  // Keep progress in sync so evolved sprites update automatically
+  useEffect(() => {
+    setCompletedIds(getCompletedChapterIds());
+    const interval = setInterval(() => setCompletedIds(getCompletedChapterIds()), 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const totalChapters = getTotalChapters();
+  const progressPercent = totalChapters > 0 ? (completedIds.length / totalChapters) * 100 : 0;
+  const stage = getEvolutionStage(progressPercent);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const triggerRef = useRef<HTMLButtonElement>(null) as React.RefObject<HTMLButtonElement>;
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -201,40 +221,33 @@ export default function ThemePicker({ renderTrigger }: ThemePickerProps = {}) {
               {/* Pokémon options */}
               <div className="space-y-0.5 mb-2">
                 {POKEMON_OPTIONS.map((p) => {
-                  const isActive = pokemon === p.id;
-                  const color = mode === "dark" ? p.accentDark : p.accent;
+                  const isActive   = pokemon === p.id;
+                  const color      = mode === "dark" ? p.accentDark : p.accent;
+                  // Show the evolved form matching the user's current progress stage
+                  const evolvedSpriteName = EVOLUTION_LINES[p.id][stage];
+                  const evolvedLabel      = EVOLUTION_NAMES[p.id][stage];
                   return (
                     <button
                       key={p.id}
                       onClick={() => { setPokemon(p.id); setOpen(false); }}
                       className="w-full flex items-center gap-3 px-2 py-1.5 rounded-xl transition-all text-left"
                       style={{
-                        backgroundColor: isActive
-                          ? "var(--bg-tertiary)"
-                          : "transparent",
-                        outline: isActive
-                          ? `1.5px solid ${color}`
-                          : "1.5px solid transparent",
+                        backgroundColor: isActive ? "var(--bg-tertiary)" : "transparent",
+                        outline: isActive ? `1.5px solid ${color}` : "1.5px solid transparent",
                       }}
                     >
                       <img
-                        src={p.sprite}
-                        alt={p.label}
+                        src={spriteUrl(evolvedSpriteName)}
+                        alt={evolvedLabel}
                         width={40}
                         height={40}
-                        style={{
-                          imageRendering: "auto",
-                          objectFit: "contain",
-                          flexShrink: 0,
-                        }}
+                        style={{ imageRendering: "auto", objectFit: "contain", flexShrink: 0 }}
                       />
                       <span
                         className="text-sm font-medium flex-1"
-                        style={{
-                          color: isActive ? color : "var(--text-secondary)",
-                        }}
+                        style={{ color: isActive ? color : "var(--text-secondary)" }}
                       >
-                        {p.label}
+                        {evolvedLabel}
                       </span>
                       {isActive && (
                         <span

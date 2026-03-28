@@ -113,7 +113,7 @@ export default function StarterCard({
             : "none",
         }}
       >
-        {/* ── Hex grid texture — masked to the specular highlight region ── */}
+        {/* ── Dot grid texture — masked to the specular highlight region ── */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
           style={{
@@ -127,20 +127,15 @@ export default function StarterCard({
         >
           <defs>
             <pattern
-              id={`hex-starter-${option.id}`}
+              id={`dot-starter-${option.id}`}
               x="0" y="0"
-              width="34.64" height="60"
+              width="20" height="20"
               patternUnits="userSpaceOnUse"
             >
-              <polygon points="17.32,0 34.64,10 34.64,30 17.32,40 0,30 0,10"
-                fill="none" stroke={accentColor} strokeWidth="0.7" />
-              <polygon points="0,30 17.32,40 17.32,60 0,70 -17.32,60 -17.32,40"
-                fill="none" stroke={accentColor} strokeWidth="0.7" />
-              <polygon points="34.64,30 51.96,40 51.96,60 34.64,70 17.32,60 17.32,40"
-                fill="none" stroke={accentColor} strokeWidth="0.7" />
+              <circle cx="10" cy="10" r="1" fill={accentColor} />
             </pattern>
           </defs>
-          <rect width="100%" height="100%" fill={`url(#hex-starter-${option.id})`} />
+          <rect width="100%" height="100%" fill={`url(#dot-starter-${option.id})`} />
         </svg>
 
         {/* ── Specular highlight — follows cursor ── */}
@@ -166,7 +161,7 @@ export default function StarterCard({
         />
 
         {/* ────────────────────────────────────────
-            TCG HEADER STRIP — name + type badge
+            TCG HEADER STRIP — name + pokeball
         ──────────────────────────────────────── */}
         <div
           className="flex items-center justify-between px-2.5 sm:px-3 pt-2.5 pb-1.5"
@@ -178,12 +173,22 @@ export default function StarterCard({
           >
             {option.label}
           </span>
-          <span
-            className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full leading-none flex-shrink-0 ml-1"
-            style={{ backgroundColor: typeBg, color: typeColor }}
+
+          {/* Pokéball — always visible, full opacity when active */}
+          <div
+            className="w-4 h-4 sm:w-[18px] sm:h-[18px] flex-shrink-0 ml-1.5"
+            style={{
+              color: accentColor,
+              opacity: isActive ? 1 : 0.28,
+              transition: "opacity 0.2s ease",
+            }}
           >
-            {starter.type}
-          </span>
+            <div style={{ transform: mode === "light" ? "scaleY(-1)" : undefined }}>
+              <div key={pokeballKey} className={isActive && pokeballKey > 0 ? "pokeball-catch" : ""}>
+                <PokeballSVG />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* ────────────────────────────────────────
@@ -235,19 +240,13 @@ export default function StarterCard({
             }}
           />
 
-          {/* Pokéball selection indicator inside the artwork */}
-          <div
-            className="absolute top-1.5 right-1.5 w-4 h-4 sm:w-[18px] sm:h-[18px] z-20 pointer-events-none"
-            style={{
-              color: accentColor,
-              opacity: isActive ? 1 : 0,
-              transition: "opacity 0.2s ease",
-            }}
+          {/* Type badge inside the artwork window */}
+          <span
+            className="absolute top-2 right-2 z-20 text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full leading-none pointer-events-none"
+            style={{ backgroundColor: typeBg, color: typeColor }}
           >
-            <div key={pokeballKey} className={isActive && pokeballKey > 0 ? "pokeball-catch" : ""}>
-              <PokeballSVG />
-            </div>
-          </div>
+            {starter.type}
+          </span>
 
           {/* Sprite */}
           <img

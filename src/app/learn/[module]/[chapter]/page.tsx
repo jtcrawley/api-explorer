@@ -339,6 +339,12 @@ export default function ChapterPage() {
             <p className="text-lg" style={{ color: "var(--text-secondary)" }}>
               {chapter.subtitle}
             </p>
+            {/* Key concepts */}
+            <div className="flex flex-wrap gap-2 mt-3">
+              {chapter.concepts.map((concept) => (
+                <Badge key={concept} variant="accent">{concept}</Badge>
+              ))}
+            </div>
           </div>
 
           {/* Narrative callout */}
@@ -366,13 +372,6 @@ export default function ChapterPage() {
 
           {/* Visual diagram */}
           {Diagram && <Diagram />}
-
-          {/* Key concepts */}
-          <div className="flex flex-wrap gap-2 mb-10">
-            {chapter.concepts.map((concept) => (
-              <Badge key={concept} variant="accent">{concept}</Badge>
-            ))}
-          </div>
 
           {/* Main content */}
           <div className="mb-12">
