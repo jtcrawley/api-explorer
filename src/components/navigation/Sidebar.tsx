@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "@/components/ui/Logo";
@@ -24,6 +24,7 @@ export default function Sidebar() {
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const totalChapters = getTotalChapters();
+  const sidebarRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setCompletedIds(getCompletedChapterIds());
@@ -53,6 +54,21 @@ export default function Sidebar() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
+  // Auto-close when focus moves outside the sidebar (keyboard tab-out)
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handler = (e: FocusEvent) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(e.target as Node)
+      ) {
+        setMobileOpen(false);
+      }
+    };
+    document.addEventListener("focusin", handler);
+    return () => document.removeEventListener("focusin", handler);
+  }, [mobileOpen]);
+
   const completedCount = completedIds.length;
   const progressPercent = totalChapters > 0 ? (completedCount / totalChapters) * 100 : 0;
 
@@ -72,27 +88,23 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* ── Mobile hamburger button ── */}
-      <button
-        onClick={() => setMobileOpen((v) => !v)}
-        className="md:hidden fixed top-4 left-4 z-50 w-9 h-9 flex items-center justify-center rounded-xl border transition-colors"
-        style={{
-          backgroundColor: "var(--bg-secondary)",
-          borderColor: "var(--border)",
-          color: "var(--text-primary)",
-        }}
-        aria-label={mobileOpen ? "Close menu" : "Open menu"}
-      >
-        {mobileOpen ? (
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        ) : (
+      {/* ── Mobile hamburger — only visible when sidebar is closed ── */}
+      {!mobileOpen && (
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="md:hidden fixed top-4 left-4 z-50 w-9 h-9 flex items-center justify-center rounded-xl border transition-colors"
+          style={{
+            backgroundColor: "var(--bg-secondary)",
+            borderColor: "var(--border)",
+            color: "var(--text-primary)",
+          }}
+          aria-label="Open menu"
+        >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-        )}
-      </button>
+        </button>
+      )}
 
       {/* ── Mobile backdrop ── */}
       {mobileOpen && (
@@ -105,22 +117,39 @@ export default function Sidebar() {
 
       {/* ── Sidebar ── */}
       <aside
+        ref={sidebarRef}
         className={`
-          w-72 h-screen fixed left-0 top-0 z-40 flex flex-col border-r
+          w-72 fixed left-0 top-0 z-40 flex flex-col border-r
           transition-transform duration-300 ease-in-out
           ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
         `}
         style={{
+          height: "100dvh",
           backgroundColor: "var(--bg-secondary)",
           borderColor: "var(--border)",
         }}
       >
-        {/* Logo */}
-        <div className="p-6 pb-4">
+        {/* Logo + mobile close button */}
+        <div className="flex items-center justify-between px-5 py-4 flex-shrink-0">
           <Link href="/" className="block" onClick={() => setMobileOpen(false)}>
             <Logo size={28} />
           </Link>
+          {/* Close button — only shown on mobile */}
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="md:hidden w-8 h-8 flex items-center justify-center rounded-xl border transition-colors"
+            style={{
+              backgroundColor: "var(--bg-tertiary)",
+              borderColor: "var(--border)",
+              color: "var(--text-secondary)",
+            }}
+            aria-label="Close menu"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
         {/* Navigation — only this section scrolls */}
@@ -149,7 +178,7 @@ export default function Sidebar() {
                     {moduleCompleted ? "✓" : module.id}
                   </span>
                   <span
-                    className="text-sm font-medium truncate"
+                    className="text-sm font-medium truncate min-w-0"
                     style={{ color: "var(--text-primary)" }}
                   >
                     {module.title}
@@ -223,7 +252,7 @@ export default function Sidebar() {
         {/* Bottom controls */}
 
         {/* Chapter progress label — sits above the border */}
-        <div className="px-4 pb-2 flex items-center justify-between">
+        <div className="px-4 pb-2 flex items-center justify-between flex-shrink-0">
           <span className="text-[11px] font-medium" style={{ color: "var(--text-tertiary)" }}>
             Chapter progress
           </span>
@@ -232,7 +261,7 @@ export default function Sidebar() {
           </span>
         </div>
 
-        <div className="border-t" style={{ borderColor: "var(--border)" }}>
+        <div className="border-t flex-shrink-0" style={{ borderColor: "var(--border)" }}>
 
           {/* Trainer card — IS the ThemePicker trigger */}
           <div className="px-3 pt-3 pb-3">

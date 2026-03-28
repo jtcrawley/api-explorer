@@ -125,7 +125,8 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
         <textarea
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          className="w-full p-4 font-mono text-sm leading-6 resize-none focus:outline-none min-h-[280px]"
+          rows={Math.max(10, Math.min(code.split("\n").length + 2, 36))}
+          className="w-full p-4 font-mono text-sm leading-6 resize-none focus:outline-none"
           style={{
             backgroundColor: "var(--bg-code)",
             color: "#e2e8f0",

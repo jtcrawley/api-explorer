@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 
 interface LessonContentProps {
   content: string;
@@ -8,9 +8,54 @@ interface LessonContentProps {
 
 export default function LessonContent({ content }: LessonContentProps) {
   const html = useMemo(() => renderMarkdown(content), [content]);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Inject copy buttons into code block toolbars after render
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.querySelectorAll<HTMLPreElement>("pre.code-block").forEach((pre) => {
+      if (pre.querySelector(".copy-btn")) return; // already injected
+      const codeEl = pre.querySelector("code");
+      const toolbar = pre.querySelector<HTMLElement>(".code-toolbar");
+      if (!codeEl || !toolbar) return;
+
+      const btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.textContent = "Copy";
+      Object.assign(btn.style, {
+        fontSize: "11px",
+        padding: "2px 10px",
+        borderRadius: "6px",
+        border: "1px solid var(--border)",
+        background: "transparent",
+        color: "var(--text-tertiary)",
+        cursor: "pointer",
+        flexShrink: "0",
+        transition: "color 0.15s, border-color 0.15s",
+      });
+
+      btn.addEventListener("click", () => {
+        navigator.clipboard.writeText(codeEl.textContent ?? "").then(() => {
+          btn.textContent = "Copied!";
+          btn.style.color = "var(--accent)";
+          btn.style.borderColor = "var(--accent)";
+          setTimeout(() => {
+            btn.textContent = "Copy";
+            btn.style.color = "var(--text-tertiary)";
+            btn.style.borderColor = "var(--border)";
+          }, 2000);
+        });
+      });
+
+      toolbar.appendChild(btn);
+    });
+  }, [html]);
 
   return (
     <div
+      ref={containerRef}
       className="prose-custom"
       dangerouslySetInnerHTML={{ __html: html }}
     />
@@ -24,7 +69,7 @@ function renderMarkdown(md: string): string {
   html = html.replace(
     /```(\w+)?\n([\s\S]*?)```/g,
     (_, lang, code) =>
-      `<pre class="code-block"><div class="flex items-center justify-between px-4 py-3 border-b" style="border-color: var(--border)"><span class="text-xs font-medium tracking-wider uppercase" style="color: var(--text-tertiary)">${
+      `<pre class="code-block"><div class="code-toolbar flex items-center justify-between px-4 py-3 border-b" style="border-color: var(--border)"><span class="text-xs font-medium tracking-wider uppercase" style="color: var(--text-tertiary)">${
         lang || "code"
       }</span></div><code>${escapeHtml(
         code.trim()

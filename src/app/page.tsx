@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import Logo from "@/components/ui/Logo";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
-import { modules, getTotalChapters } from "@/content/modules";
-import { getCompletedCount } from "@/lib/progress";
+import { modules, getTotalChapters, getFlatChapterList } from "@/content/modules";
+import { getCompletedCount, getCompletedChapterIds } from "@/lib/progress";
 import { useTheme, type PokemonTheme } from "@/components/ui/ThemeProvider";
 import { POKEMON_OPTIONS } from "@/components/ui/ThemePicker";
 import { EVOLUTION_LINES, EVOLUTION_NAMES, spriteUrl } from "@/lib/evolution";
@@ -65,12 +65,16 @@ export default function HomePage() {
   const router = useRouter();
   const { pokemon, mode, setPokemon } = useTheme();
   const [completedCount, setCompletedCount] = useState(0);
+  const [continueUrl, setContinueUrl] = useState("/learn/1/1-1");
   const [hasExplicitlyChosen, setHasExplicitlyChosen] = useState(false);
   const totalChapters = getTotalChapters();
 
   useEffect(() => {
     setCompletedCount(getCompletedCount());
     setHasExplicitlyChosen(localStorage.getItem("theme-pokemon") !== null);
+    const completedIds = getCompletedChapterIds();
+    const next = getFlatChapterList().find((c) => !completedIds.includes(c.chapter.id));
+    if (next) setContinueUrl(`/learn/${next.moduleId}/${next.chapter.id}`);
   }, []);
 
   const hasStarted = completedCount > 0;
@@ -325,7 +329,7 @@ export default function HomePage() {
 
       {/* CTA */}
       <section className="max-w-3xl mx-auto px-4 sm:px-8 pb-16 flex items-center justify-center gap-4">
-        <Button size="lg" onClick={() => router.push("/learn/1/1-1")}>
+        <Button size="lg" onClick={() => router.push(continueUrl)}>
           {hasStarted ? "Continue your journey" : "Begin your journey"} →
         </Button>
       </section>

@@ -154,14 +154,12 @@ export default function DashboardPage() {
                         >
                           <span
                             className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 ${
-                              done
-                                ? "bg-[var(--success)] text-white"
-                                : "border"
+                              done ? "text-white" : "border"
                             }`}
                             style={
-                              !done
-                                ? { borderColor: "var(--border)" }
-                                : undefined
+                              done
+                                ? { backgroundColor: "var(--accent)" }
+                                : { borderColor: "var(--border)" }
                             }
                           >
                             {done ? "\u2713" : ""}
