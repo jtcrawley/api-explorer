@@ -289,6 +289,14 @@
   100%      { opacity: 0; }
 }
 
+/* Shiny sparkle — individual ✦ star that pops in and fades out */
+@keyframes sparklePop {
+  0%   { transform: translate(-50%, -50%) scale(0)    rotate(0deg);  opacity: 0; }
+  35%  { transform: translate(-50%, -50%) scale(1.15) rotate(18deg); opacity: 1; }
+  65%  { transform: translate(-50%, -50%) scale(0.9)  rotate(10deg); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(0)    rotate(30deg); opacity: 0; }
+}
+
 /* Confetti particle flying outward */
 @keyframes particleFly {
   0%   {

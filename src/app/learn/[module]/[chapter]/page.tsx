@@ -64,6 +64,45 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+// ─── Sparkle ring ─────────────────────────────────────────────────────────────
+
+const SPARKLE_POS = [
+  { top: "-18%", left: "50%" },
+  { top: "4%",   left: "93%" },
+  { top: "50%",  left: "112%" },
+  { top: "96%",  left: "93%" },
+  { top: "118%", left: "50%" },
+  { top: "96%",  left: "7%" },
+  { top: "50%",  left: "-12%" },
+  { top: "4%",   left: "7%" },
+];
+const SPARKLE_COLORS = ["var(--accent)", "#fbbf24", "#f0abfc", "#fbbf24", "var(--accent)", "#f0abfc", "#fbbf24", "var(--accent)"];
+
+function SparkleRing({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`relative inline-block ${className}`}>
+      {SPARKLE_POS.map((pos, i) => (
+        <span
+          key={i}
+          aria-hidden="true"
+          className="absolute pointer-events-none select-none"
+          style={{
+            top: pos.top,
+            left: pos.left,
+            fontSize: i % 2 === 0 ? "15px" : "10px",
+            lineHeight: 1,
+            color: SPARKLE_COLORS[i],
+            animation: `sparklePop 2s ease-in-out ${i * 0.26}s infinite`,
+          }}
+        >
+          ✦
+        </span>
+      ))}
+      {children}
+    </div>
+  );
+}
+
 // ─── Confetti ────────────────────────────────────────────────────────────────
 
 const CONFETTI_COLORS = [
@@ -424,13 +463,15 @@ export default function ChapterPage() {
               animation: "modalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
             }}
           >
-            <img
-              src={evolvedSprite}
-              alt={evolvedName}
-              width={96}
-              height={96}
-              style={{ imageRendering: "auto", objectFit: "contain" }}
-            />
+            <SparkleRing>
+              <img
+                src={evolvedSprite}
+                alt={evolvedName}
+                width={96}
+                height={96}
+                style={{ imageRendering: "auto", objectFit: "contain" }}
+              />
+            </SparkleRing>
 
             <div>
               <p className="text-xl font-bold mb-2" style={{ color: "var(--success)" }}>
@@ -527,18 +568,19 @@ export default function ChapterPage() {
             </p>
 
             {/* Final evolved sprite — large */}
-            <img
-              src={courseComplete.finalSprite}
-              alt={courseComplete.finalName}
-              width={128}
-              height={128}
-              className="relative z-10"
-              style={{
-                imageRendering: "auto",
-                objectFit: "contain",
-                animation: "evolvedPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both",
-              }}
-            />
+            <SparkleRing className="relative z-10">
+              <img
+                src={courseComplete.finalSprite}
+                alt={courseComplete.finalName}
+                width={128}
+                height={128}
+                style={{
+                  imageRendering: "auto",
+                  objectFit: "contain",
+                  animation: "evolvedPop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both",
+                }}
+              />
+            </SparkleRing>
 
             {/* Headline */}
             <div className="relative z-10">
@@ -674,17 +716,19 @@ export default function ChapterPage() {
 
               {/* New form */}
               <div className="flex flex-col items-center gap-1.5">
-                <img
-                  src={evolution.toSprite}
-                  alt={evolution.toName}
-                  width={80}
-                  height={80}
-                  style={{
-                    imageRendering: "auto",
-                    objectFit: "contain",
-                    animation: "evolvedPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both",
-                  }}
-                />
+                <SparkleRing>
+                  <img
+                    src={evolution.toSprite}
+                    alt={evolution.toName}
+                    width={80}
+                    height={80}
+                    style={{
+                      imageRendering: "auto",
+                      objectFit: "contain",
+                      animation: "evolvedPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both",
+                    }}
+                  />
+                </SparkleRing>
                 <span
                   className="text-sm font-bold"
                   style={{ color: "var(--accent)" }}
