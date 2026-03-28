@@ -1,9 +1,11 @@
+import WelcomeDiagram from "./WelcomeDiagram";
 import RequestResponseDiagram from "./RequestResponseDiagram";
 import HttpMethodsDiagram from "./HttpMethodsDiagram";
 import DatabaseTableDiagram from "./DatabaseTableDiagram";
 import OAuthFlowDiagram from "./OAuthFlowDiagram";
 
 const diagramMap: Record<string, React.ComponentType> = {
+  "1-0": WelcomeDiagram,
   "1-1": RequestResponseDiagram,
   "2-1": HttpMethodsDiagram,
   "3-1": DatabaseTableDiagram,

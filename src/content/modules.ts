@@ -64,45 +64,15 @@ When an engineer says "that'll require a new endpoint" or "the API doesn't suppo
 
 ---
 
-## What shifts when you understand the backend
-
-You don't need to become an engineer. A little fluency goes a long way:
-
-**Design what's buildable.** Know which features require new data or significant backend work before you've spent a week in Figma.
-
-**Have real conversations.** Ask informed questions. Catch edge cases engineers didn't think to flag.
-
-**Read a ticket.** Endpoints, payloads, response schemas, status codes. These will stop being noise.
-
-**Unblock yourself.** Calling an API, reading a JSON response, understanding a 401 error. These are literacy skills, not engineering ones.
-
----
-
 ## The age of Agentic Design
 
 Something bigger is happening. AI agents don't just generate text. They call APIs, query databases, chain tools together, and take actions in the world. The products we design are increasingly built on top of these systems.
 
-This changes what it means to be a product designer.
-
-When a user asks an AI assistant to "book me a flight," an agent is making API calls, handling authentication, processing responses, and deciding what to do when things fail. Someone has to design the permissions screen, the loading state, the error message when the API is down, the confirmation flow when it succeeds. That someone is you.
-
-If you don't understand how an API works, you can't design the trust signals, the failure states, or the moments where the agent needs to pause and ask a human. You're designing interfaces for systems you can't see.
+This changes what it means to be a product designer. If you don't understand how an API works, you can't design the trust signals, the failure states, or the moments where the agent needs to pause and ask a human. You're designing interfaces for systems you can't see.
 
 The designers shaping what agentic products do and how they behave are the ones who understand the backend. Not at an engineering level. At a fluency level.
 
 ---
-
-## Five modules, fifteen chapters
-
-The course follows a narrative: you've joined a team building a Pokémon companion app and need to understand the backend to do your job.
-
-- **Module 1:** What is an API? The request-response cycle, your first API call.
-- **Module 2:** HTTP methods, headers, auth, and error codes.
-- **Module 3:** Databases. Tables, rows, CRUD operations with real data.
-- **Module 4:** OAuth, Spotify, combining APIs with your own database.
-- **Module 5:** A capstone project that pulls everything together.
-
-Each module has interactive exercises. You write real code in the browser, call real APIs, and see real results.
 
 Your role is evolving. Time to become the very best.`,
         resources: [],
