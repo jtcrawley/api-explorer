@@ -7,7 +7,7 @@ export default function SetupPage() {
   return (
     <div className="flex">
       <Sidebar />
-      <main className="ml-72 flex-1 min-h-screen p-12">
+      <main className="md:ml-72 flex-1 min-h-screen p-12">
         <div className="max-w-3xl mx-auto prose-custom">
           <h1>Setup Guide</h1>
           <p style={{ color: "var(--text-secondary)" }}>

@@ -30,7 +30,7 @@ export default function SettingsPage() {
   return (
     <div className="flex">
       <Sidebar />
-      <main className="ml-72 flex-1 min-h-screen p-12">
+      <main className="md:ml-72 flex-1 min-h-screen p-12">
         <div className="max-w-2xl mx-auto">
           <h1
             className="text-3xl font-bold tracking-tight mb-2"

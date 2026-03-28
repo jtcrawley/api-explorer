@@ -202,7 +202,7 @@ export default function ChapterPage() {
     return (
       <div className="flex">
         <Sidebar />
-        <main className="ml-72 flex-1 p-12">
+        <main className="md:ml-72 flex-1 p-12">
           <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
             Chapter not found
           </h1>
@@ -269,7 +269,17 @@ export default function ChapterPage() {
   return (
     <div className="flex">
       <Sidebar />
-      <main className="ml-72 flex-1 min-h-screen">
+      <main className="md:ml-72 flex-1 min-h-screen">
+        {/* Mobile top bar — gives breathing room below the hamburger button */}
+        <div
+          className="md:hidden flex items-center gap-3 px-16 py-4 border-b"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <span className="text-sm font-medium truncate" style={{ color: "var(--text-secondary)" }}>
+            Module {moduleId} · {chapter.title}
+          </span>
+        </div>
+
         <div className="max-w-3xl mx-auto px-8 py-12">
 
           {/* Header */}
