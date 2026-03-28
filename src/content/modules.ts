@@ -1695,7 +1695,7 @@ Most APIs beyond simple public ones (like PokeAPI) require authentication. The m
 
 ### The GitHub API — No OAuth Required
 
-GitHub has a great API that lets you access public data without any auth, and private data with a Personal Access Token (PAT). You already created one earlier in this course!
+GitHub has a great API that lets you access public data without any auth, and private data with a Personal Access Token (PAT). You can create one in your GitHub settings under Developer Settings → Personal Access Tokens.
 
 \`\`\`javascript
 // Public data — no auth needed
@@ -2038,10 +2038,10 @@ console.log(JSON.stringify(collection[0], null, 2));`,
             description: "How to create a table and insert rows from your app.",
           },
           {
-            title: "JavaScript Promise.all explained",
-            url: "https://www.youtube.com/watch?v=zJTCnvntzdE",
+            title: "JavaScript Promises In 10 Minutes",
+            url: "https://www.youtube.com/watch?v=DHvZLI7Db8E",
             type: "video",
-            description: "How to fetch multiple things at once — the pattern used in the exercise above.",
+            description: "Covers Promise.all and async patterns — exactly the technique used in the exercise above.",
           },
         ],
       },

@@ -185,7 +185,6 @@
     @apply font-mono text-sm px-1.5 py-0.5 rounded;
     background: var(--bg-tertiary);
     color: var(--accent);
-    word-break: break-all;
     overflow-wrap: anywhere;
   }
 
