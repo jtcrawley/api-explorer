@@ -56,13 +56,7 @@ export const modules: Module[] = [
         narrative:
           "Every great trainer starts somewhere. Before you learn to catch Pokémon, you need to understand the world you're entering. This chapter is your map.",
         concepts: ["Course Overview", "Designer × Engineer", "Agentic Design"],
-        content: `## You're on an engineering team. The backend is a black box.
-
-You design the product. Engineers build it. Between your Figma file and the shipped feature, something gets lost in translation every single time.
-
-When an engineer says "that'll require a new endpoint" or "the API doesn't support filtering by date," do you know what that means? If not, this course fixes that.
-
-## The age of Agentic Design
+        content: `## The age of Agentic Design
 
 Something bigger is happening. AI agents don't just generate text. They call APIs, query databases, chain tools together, and take actions in the world. The products we design are increasingly built on top of these systems.
 
