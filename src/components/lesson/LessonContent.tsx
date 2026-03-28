@@ -84,12 +84,19 @@ function renderMarkdown(md: string): string {
   html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
 
-  // Lists
-  html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
-  html = html.replace(/(<li>.*<\/li>\n?)+/g, "<ul>$&</ul>");
+  // Unordered lists — use a temp tag to avoid mixing with ordered items
+  html = html.replace(/^- (.+)$/gm, "<__ULI__>$1</__ULI__>");
+  html = html.replace(/(<__ULI__>[\s\S]*?<\/__ULI__>\n?)+/g, (match) => {
+    const items = match.replace(/<__ULI__>([\s\S]*?)<\/__ULI__>/g, "<li>$1</li>");
+    return `<ul>${items}</ul>`;
+  });
 
-  // Numbered lists
-  html = html.replace(/^\d+\. (.+)$/gm, "<li>$1</li>");
+  // Ordered lists
+  html = html.replace(/^\d+\. (.+)$/gm, "<__OLI__>$1</__OLI__>");
+  html = html.replace(/(<__OLI__>[\s\S]*?<\/__OLI__>\n?)+/g, (match) => {
+    const items = match.replace(/<__OLI__>([\s\S]*?)<\/__OLI__>/g, "<li>$1</li>");
+    return `<ol>${items}</ol>`;
+  });
 
   // Paragraphs
   html = html.replace(

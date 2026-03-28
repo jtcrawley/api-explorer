@@ -202,6 +202,10 @@
     @apply list-disc pl-6 mb-4 space-y-1;
   }
 
+  .prose-custom ol {
+    @apply list-decimal pl-6 mb-4 space-y-1;
+  }
+
   .prose-custom li {
     @apply text-base leading-7;
     color: var(--text-secondary);
