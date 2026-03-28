@@ -62,8 +62,6 @@ You design the product. Engineers build it. Between your Figma file and the ship
 
 When an engineer says "that'll require a new endpoint" or "the API doesn't support filtering by date," do you know what that means? If not, this course fixes that.
 
----
-
 ## The age of Agentic Design
 
 Something bigger is happening. AI agents don't just generate text. They call APIs, query databases, chain tools together, and take actions in the world. The products we design are increasingly built on top of these systems.
@@ -71,8 +69,6 @@ Something bigger is happening. AI agents don't just generate text. They call API
 This changes what it means to be a product designer. If you don't understand how an API works, you can't design the trust signals, the failure states, or the moments where the agent needs to pause and ask a human. You're designing interfaces for systems you can't see.
 
 The designers shaping what agentic products do and how they behave are the ones who understand the backend. Not at an engineering level. At a fluency level.
-
----
 
 Your role is evolving. Time to become the very best.`,
         resources: [],
