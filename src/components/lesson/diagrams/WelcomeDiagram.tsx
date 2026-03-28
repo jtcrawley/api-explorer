@@ -167,41 +167,50 @@ export default function WelcomeDiagram() {
         </div>
       </div>
 
-      {/* ── 3. Module roadmap ── */}
+      {/* ── 3. Module roadmap — vertical timeline ── */}
       <div>
         <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "var(--accent)" }}>
           Your journey — 5 modules
         </p>
-        <div className="flex items-start gap-2 overflow-x-auto pb-1">
+        <div className="flex flex-col">
           {modules.map((mod, i) => (
-            <div key={mod.id} className="flex items-start gap-2 flex-shrink-0">
-              <div
-                className="flex flex-col gap-2 p-3.5 rounded-xl border w-36"
-                style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border)" }}
-              >
+            <div key={mod.id} className="flex gap-4">
+              {/* Timeline spine */}
+              <div className="flex flex-col items-center flex-shrink-0" style={{ width: "28px" }}>
                 <span
-                  className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                  className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 z-10"
                   style={{ backgroundColor: "var(--accent-light)", color: "var(--accent)" }}
                 >
                   {MODULE_ICONS[i]}
                 </span>
+                {i < modules.length - 1 && (
+                  <div
+                    className="w-px flex-1 my-1"
+                    style={{ backgroundColor: "var(--border)", minHeight: "20px" }}
+                  />
+                )}
+              </div>
+
+              {/* Content */}
+              <div className={`flex items-start justify-between gap-3 w-full ${i < modules.length - 1 ? "pb-5" : ""}`}>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "var(--accent)" }}>
+                  <p className="text-[10px] font-bold uppercase tracking-widest leading-none mb-1" style={{ color: "var(--accent)" }}>
                     Module {mod.id}
                   </p>
-                  <p className="text-xs font-semibold leading-snug mb-1" style={{ color: "var(--text-primary)" }}>
+                  <p className="text-sm font-semibold leading-snug" style={{ color: "var(--text-primary)" }}>
                     {mod.title}
                   </p>
-                  <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>
-                    {mod.chapters.length} chapters
+                  <p className="text-xs mt-0.5" style={{ color: "var(--text-tertiary)" }}>
+                    {mod.description}
                   </p>
                 </div>
+                <span
+                  className="text-[10px] font-semibold flex-shrink-0 px-2 py-0.5 rounded-full mt-0.5"
+                  style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-tertiary)" }}
+                >
+                  {mod.chapters.length} ch
+                </span>
               </div>
-              {i < modules.length - 1 && (
-                <div className="mt-5">
-                  <Chevron />
-                </div>
-              )}
             </div>
           ))}
         </div>
