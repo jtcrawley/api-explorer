@@ -26,7 +26,7 @@ function renderMarkdown(md: string): string {
     (_, lang, code) =>
       `<pre class="code-block"><div class="flex items-center justify-between px-4 py-3 border-b" style="border-color: var(--border)"><span class="text-xs font-medium tracking-wider uppercase" style="color: var(--text-tertiary)">${
         lang || "code"
-      }</span></div><code class="block px-5 py-5 overflow-x-auto">${escapeHtml(
+      }</span></div><code>${escapeHtml(
         code.trim()
       )}</code></pre>`
   );

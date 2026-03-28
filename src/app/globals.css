@@ -150,30 +150,43 @@
     min-width: max-content; /* keeps code on one line so scroll is meaningful */
   }
 
+  .prose-custom {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
+  }
+
   .prose-custom h1 {
     @apply text-3xl font-bold tracking-tight mb-4;
     color: var(--text-primary);
+    overflow-wrap: break-word;
   }
 
   .prose-custom h2 {
     @apply text-2xl font-semibold tracking-tight mb-3 mt-10;
     color: var(--text-primary);
+    overflow-wrap: break-word;
   }
 
   .prose-custom h3 {
     @apply text-lg font-semibold mb-2 mt-8;
     color: var(--text-primary);
+    overflow-wrap: break-word;
   }
 
   .prose-custom p {
     @apply text-base leading-7 mb-4;
     color: var(--text-secondary);
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .prose-custom code {
     @apply font-mono text-sm px-1.5 py-0.5 rounded;
     background: var(--bg-tertiary);
     color: var(--accent);
+    word-break: break-all;
+    overflow-wrap: anywhere;
   }
 
   .prose-custom pre {
@@ -192,6 +205,8 @@
   .prose-custom li {
     @apply text-base leading-7;
     color: var(--text-secondary);
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .prose-custom strong {

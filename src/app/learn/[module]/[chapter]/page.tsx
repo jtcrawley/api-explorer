@@ -269,7 +269,7 @@ export default function ChapterPage() {
   return (
     <div className="flex">
       <Sidebar />
-      <main className="md:ml-72 flex-1 min-h-screen">
+      <main className="md:ml-72 flex-1 min-h-screen min-w-0 overflow-x-hidden">
         {/* Mobile top bar — gives breathing room below the hamburger button */}
         <div
           className="md:hidden flex items-center gap-3 px-16 py-4 border-b"
@@ -318,8 +318,8 @@ export default function ChapterPage() {
               style={{ imageRendering: "auto", objectFit: "contain", flexShrink: 0 }}
             />
             <p
-              className="text-sm leading-relaxed italic"
-              style={{ color: "var(--text-primary)" }}
+              className="text-sm leading-relaxed italic min-w-0"
+              style={{ color: "var(--text-primary)", overflowWrap: "break-word", wordBreak: "break-word" }}
             >
               {chapter.narrative}
             </p>
