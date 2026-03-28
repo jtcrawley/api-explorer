@@ -315,7 +315,7 @@ export default function ChapterPage() {
               alt={evolvedName}
               width={56}
               height={56}
-              style={{ imageRendering: "auto", objectFit: "contain", flexShrink: 0 }}
+              style={{ imageRendering: "auto", objectFit: "contain", flexShrink: 0, transform: "scaleX(-1)" }}
             />
             <p
               className="text-sm leading-relaxed italic min-w-0"

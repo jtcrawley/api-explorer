@@ -34,7 +34,6 @@ export const POKEMON_OPTIONS: {
   },
 ];
 
-const POPOVER_W = 232;
 const POPOVER_H = 260;
 const MARGIN = 10;
 
@@ -42,7 +41,7 @@ interface PopoverPos {
   top?: number;
   bottom?: number;
   left?: number;
-  right?: number;
+  width?: number;
 }
 
 function SunIcon() {
@@ -89,7 +88,6 @@ export default function ThemePicker({ renderTrigger }: ThemePickerProps = {}) {
   const computePos = useCallback(() => {
     if (!triggerRef.current) return;
     const r = triggerRef.current.getBoundingClientRect();
-    const vw = window.innerWidth;
     const vh = window.innerHeight;
     const newPos: PopoverPos = {};
 
@@ -100,12 +98,9 @@ export default function ThemePicker({ renderTrigger }: ThemePickerProps = {}) {
       newPos.top = r.bottom + MARGIN;
     }
 
-    // Horizontal: align left to trigger, shift if clips right edge
-    if (r.left + POPOVER_W > vw - MARGIN) {
-      newPos.left = Math.max(MARGIN, vw - POPOVER_W - MARGIN);
-    } else {
-      newPos.left = r.left;
-    }
+    // Horizontal: align exactly to trigger's left edge, same width
+    newPos.left = r.left;
+    newPos.width = r.width;
 
     setPos(newPos);
   }, []);
@@ -188,7 +183,6 @@ export default function ThemePicker({ renderTrigger }: ThemePickerProps = {}) {
             style={{
               position: "fixed",
               zIndex: 9999,
-              width: POPOVER_W,
               ...pos,
               backgroundColor: "var(--bg-secondary)",
               borderColor: "var(--border)",

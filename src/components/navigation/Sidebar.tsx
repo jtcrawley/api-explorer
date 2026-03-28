@@ -142,12 +142,8 @@ export default function Sidebar() {
                   <span
                     className="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
                     style={{
-                      backgroundColor: moduleCompleted
-                        ? "var(--success-light)"
-                        : "var(--accent-light)",
-                      color: moduleCompleted
-                        ? "var(--success)"
-                        : "var(--accent)",
+                      backgroundColor: "var(--accent-light)",
+                      color: "var(--accent)",
                     }}
                   >
                     {moduleCompleted ? "✓" : module.id}
@@ -202,13 +198,13 @@ export default function Sidebar() {
                           <span
                             className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 ${
                               isComplete
-                                ? "bg-[var(--success)] text-white"
+                                ? "text-white"
                                 : "border"
                             }`}
                             style={
-                              !isComplete
-                                ? { borderColor: "var(--border)" }
-                                : undefined
+                              isComplete
+                                ? { backgroundColor: "var(--accent)" }
+                                : { borderColor: "var(--border)" }
                             }
                           >
                             {isComplete ? "✓" : ""}
