@@ -5,12 +5,12 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "API Trainer",
   description:
-    "A story-driven interactive learning platform for product designers to learn APIs and databases.",
+    "A story-driven interactive learning platform for product designers to understand APIs, databases, and how modern apps are built. No coding experience needed.",
   metadataBase: new URL("https://apitrainer.vercel.app"),
   openGraph: {
     title: "API Trainer",
     description:
-      "A story-driven interactive learning platform for product designers to learn APIs and databases.",
+      "A story-driven interactive learning platform for product designers to understand APIs, databases, and how modern apps are built. No coding experience needed.",
     url: "https://apitrainer.vercel.app",
     siteName: "API Trainer",
     type: "website",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "API Trainer",
     description:
-      "A story-driven interactive learning platform for product designers to learn APIs and databases.",
+      "A story-driven interactive learning platform for product designers to understand APIs, databases, and how modern apps are built. No coding experience needed.",
   },
 };
 
