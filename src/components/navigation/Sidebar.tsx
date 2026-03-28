@@ -227,7 +227,7 @@ export default function Sidebar() {
         {/* Bottom controls */}
 
         {/* Chapter progress label — sits above the border */}
-        <div className="px-6 pb-2 flex items-center justify-between">
+        <div className="px-4 pb-2 flex items-center justify-between">
           <span className="text-[11px] font-medium" style={{ color: "var(--text-tertiary)" }}>
             Chapter progress
           </span>
