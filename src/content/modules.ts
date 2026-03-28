@@ -1887,244 +1887,331 @@ console.log("\\nThis data now persists in your Supabase database!");`,
   {
     id: "5",
     title: "Capstone Project",
-    description: "Put it all together and build something real.",
+    description: "Wire every concept together into a real feature — then see exactly where this knowledge takes you next.",
     icon: "Trophy",
     chapters: [
       {
         id: "5-1",
         title: "Putting It All Together",
-        subtitle: "Your final project: Pokémon Explorer Dashboard",
-        readTime: 8,
+        subtitle: "Build a Pokémon collection app from scratch",
+        readTime: 10,
         narrative:
-          "You've learned APIs, databases, HTTP methods, OAuth, and CRUD. Now let's combine everything into one project that shows off your new skills.",
+          "Here's where everything comes together. We'll fetch data from an API, save it to our database, and build something that lasts beyond a single session.",
         concepts: [
-          "Full-stack thinking",
-          "Data modeling",
-          "API integration",
-          "UI data flow",
+          "Full-stack architecture",
+          "Data flow design",
+          "API + database",
+          "Schema design",
+          "Error handling",
         ],
-        content: `## Capstone: Pokémon Explorer Dashboard
+        content: `## The Capstone: Pokémon Collection App
 
-The idea: **Build a personal Pokémon collection app using everything you've learned.**
+You've learned every piece in isolation. Now we wire them together.
 
-### How It Works
+The app: a personal Pokémon collection where users browse by type, view stats, save favourites, and see their history. Every feature maps directly to something you've learned.
 
-1. **Fetch Pokémon** → Call PokeAPI for Pokémon data
-2. **Filter by type** → Let users browse by Fire, Water, Electric, etc.
-3. **Save favourites** → Store their collection in Supabase
-4. **Display beautifully** → Show cards with sprites, types, and stats
-5. **Track history** → Show when each Pokémon was saved
+### The Full Architecture
 
-### The Data Flow
+Here's how data moves through the whole system:
 
 \`\`\`
-PokeAPI → Pokémon by Type → User selects favourite
-                                      ↓
-                            Supabase Database → "My Collection"
-                                      ↓
-                              Your UI → Beautiful Cards
+Browser (Your UI)
+      │
+      │  1. GET /type/fire  (PokeAPI)
+      ▼
+  PokeAPI ──────────────────────► JSON: list of Pokémon
+      │
+      │  2. GET /pokemon/charizard  (PokeAPI)
+      ▼
+  PokeAPI ──────────────────────► JSON: stats, sprite, moves
+      │
+      │  3. POST (Supabase)
+      ▼
+  Your Database ────────────────► Row saved with timestamp
+      │
+      │  4. SELECT (Supabase)
+      ▼
+  "My Collection" UI ───────────► Your saved Pokémon cards
 \`\`\`
 
-This project uses EVERYTHING you've learned:
-- **GET requests** to PokeAPI
-- **Query parameters** for filtering by type
-- **JSON parsing** for API responses
-- **Database CRUD** for saving your collection
-- **Error handling** for when things go wrong
-- **Schema design** for your data model`,
+### Connecting the Concepts
+
+**Module 1 → PokeAPI calls**
+Every card in your UI starts with a fetch request. Browse by type? That's \`GET /type/{name}\`. View details? That's \`GET /pokemon/{id}\`.
+
+**Module 2 → HTTP methods + headers**
+Reading the collection uses GET. Saving a Pokémon uses POST. Removing one uses DELETE. Your Supabase client sends the right method automatically — but now you understand *why*.
+
+**Module 3 → Database schema**
+Your \`saved_pokemon\` table needs a clear schema:
+
+| Column | Type | Purpose |
+|--------|------|---------|
+| id | uuid | Primary key |
+| pokemon_id | integer | PokeAPI id |
+| name | text | Display name |
+| sprite_url | text | Image URL |
+| types | text[] | Array of types |
+| saved_at | timestamp | When it was added |
+
+**Module 4 → Authentication**
+In a production version, OAuth protects your collection so only *you* can see and edit it. The token from login travels in your request headers to Supabase — exactly what you learned.
+
+### The Designer Angle
+
+This is where API fluency pays off most. Instead of asking an engineer "can we filter Pokémon by type?", you already know:
+- PokeAPI has a \`/type/{name}\` endpoint that returns every Pokémon of that type
+- The response includes a \`pokemon\` array you can map over
+- Each item has a \`pokemon.url\` you can follow for full stats
+
+You can spec the *exact* data shape in your designs. That's a genuinely different level of collaboration.
+
+### What's in the Playground
+
+The exercise below builds the core of this app: fetch a type, parse the response, then structure it exactly how you'd pass it into a UI component or save it to the database.
+
+Try changing \`"fire"\` to \`"water"\`, \`"psychic"\`, or \`"dragon"\` and run again.`,
         exercise: {
-          starterCode: `// Capstone Step 1: The mood-to-type mapping logic
+          starterCode: `// Capstone: Build the data layer for a Pokémon type browser
+// This is the exact pattern you'd use in a real app
 
-// Simulated top tracks with energy levels
-const myTopTracks = [
-  { name: "Thunderstruck", artist: "AC/DC", energy: 0.95 },
-  { name: "Bohemian Rhapsody", artist: "Queen", energy: 0.75 },
-  { name: "Yesterday", artist: "The Beatles", energy: 0.25 },
-  { name: "Creep", artist: "Radiohead", energy: 0.45 },
-  { name: "Uptown Funk", artist: "Bruno Mars", energy: 0.93 },
-];
+const TYPE = "fire"; // Try: "water", "dragon", "psychic", "ghost"
 
-// Map energy to Pokémon type
-function energyToType(energy) {
-  if (energy >= 0.8) return { type: "fire", reason: "High energy!" };
-  if (energy >= 0.6) return { type: "electric", reason: "Upbeat vibes" };
-  if (energy >= 0.4) return { type: "normal", reason: "Balanced mood" };
-  if (energy >= 0.2) return { type: "water", reason: "Chill and calm" };
-  return { type: "ghost", reason: "Dark and moody" };
-}
+// Step 1: Fetch all Pokémon of a given type
+console.log(\`Fetching \${TYPE}-type Pokémon...\\n\`);
 
-console.log("=== Music → Pokémon Type Mapping ===\\n");
+const typeRes = await fetch(\`https://pokeapi.co/api/v2/type/\${TYPE}\`);
+const typeData = await typeRes.json();
 
-const typeCount = {};
-myTopTracks.forEach(track => {
-  const { type, reason } = energyToType(track.energy);
-  typeCount[type] = (typeCount[type] || 0) + 1;
-  console.log(\`"\${track.name}" → \${type} (\${reason})\`);
+// The response has a pokemon array — each item wraps the Pokémon data
+const firstFive = typeData.pokemon.slice(0, 5);
+
+// Step 2: Fetch full details for each (name + sprite)
+const details = await Promise.all(
+  firstFive.map(entry => fetch(entry.pokemon.url).then(r => r.json()))
+);
+
+// Step 3: Shape the data the way your UI actually needs it
+// This is exactly what you'd insert into your database or pass to a component
+const collection = details.map(p => ({
+  pokemon_id: p.id,
+  name: p.name,
+  sprite_url: p.sprites.front_default,
+  types: p.types.map(t => t.type.name),
+  base_stats: {
+    hp:      p.stats[0].base_stat,
+    attack:  p.stats[1].base_stat,
+    defense: p.stats[2].base_stat,
+    speed:   p.stats[5].base_stat,
+  },
+  // saved_at would be added by the database on insert
+}));
+
+console.log(\`Found \${typeData.pokemon.length} \${TYPE}-type Pokémon total\\n\`);
+console.log("First 5 — shaped for our database schema:");
+collection.forEach(p => {
+  console.log(\`  #\${p.pokemon_id} \${p.name} [\${p.types.join(", ")}]  HP:\${p.base_stats.hp}  ATK:\${p.base_stats.attack}\`);
 });
 
-console.log("\\n=== Your Dominant Type ===");
-const dominantType = Object.entries(typeCount)
-  .sort((a, b) => b[1] - a[1])[0][0];
-console.log(\`Your spirit type: \${dominantType.toUpperCase()}!\`);
-
-// Now we'd fetch Pokémon of this type from PokeAPI:
-const typeResponse = await fetch(
-  \`https://pokeapi.co/api/v2/type/\${dominantType}\`
-);
-const typeData = await typeResponse.json();
-const matchedPokemon = typeData.pokemon.slice(0, 3);
-
-console.log(\`\\nMatched \${dominantType}-type Pokémon:\`);
-matchedPokemon.forEach(p => {
-  console.log(\`  - \${p.pokemon.name}\`);
-});`,
-          solution: `// Same as starter — this is the guided capstone`,
+console.log("\\nSample database insert (what you'd pass to Supabase):");
+console.log(JSON.stringify(collection[0], null, 2));`,
+          solution: `// Same as starter — explore by changing the TYPE variable`,
           instructions: [
-            "Run to see how music maps to Pokémon types",
-            "The energy values here are simulated — in a real app you'd assign them based on Pokémon base stats",
-            "Try adjusting the energy thresholds in energyToType()",
+            "Run to fetch real fire-type Pokémon from PokeAPI",
+            "Change the TYPE variable to any type: \"water\", \"psychic\", \"dragon\", \"ghost\"",
+            "Notice the data shape — this is exactly what you'd INSERT into a Supabase table",
+            "The base_stats object shows how you'd model game data in a real schema",
           ],
-          hint: "Find the line 'if (energy > 80)' and change 80 to 50. Now more Pokémon count as high-energy. Hit Run again to see how the type mapping changes.",
+          hint: "Change the TYPE constant at the top to \"dragon\" and run again. Dragon types tend to have much higher attack stats than fire types — that's real data from the API.",
         },
         resources: [
           {
-            title: "PokeAPI Documentation",
-            url: "https://pokeapi.co/docs/v2",
+            title: "PokeAPI — Types endpoint",
+            url: "https://pokeapi.co/docs/v2#types",
             type: "docs",
-            description: "Full reference for the PokeAPI — explore all available endpoints.",
+            description: "The /type/{name} endpoint — see what data it returns and how to use it.",
+          },
+          {
+            title: "Supabase — Inserting data",
+            url: "https://supabase.com/docs/guides/database/tables",
+            type: "docs",
+            description: "How to create a table and insert rows from your app.",
+          },
+          {
+            title: "JavaScript Promise.all explained",
+            url: "https://www.youtube.com/watch?v=zJTCnvntzdE",
+            type: "video",
+            description: "How to fetch multiple things at once — the pattern used in the exercise above.",
           },
         ],
       },
       {
         id: "5-2",
         title: "What's Next",
-        subtitle: "Your API & database journey continues",
-        readTime: 4,
+        subtitle: "Where API fluency takes you from here",
+        readTime: 5,
         narrative:
-          "Congratulations! You've gone from 'What's an API?' to building a full-stack feature that fetches, stores, and displays data. Here's where to go from here.",
+          "You started this course asking 'what even is an API?' You're finishing it knowing how to fetch data, authenticate requests, model schemas, and build features that persist. That's a real shift.",
         concepts: [
-          "REST vs GraphQL",
+          "GraphQL",
           "Webhooks",
-          "Real-time data",
-          "API design",
-          "LLMs and agents",
+          "Real-time APIs",
+          "LLM APIs",
+          "Agentic design",
         ],
-        content: `## You Did It!
+        content: `## What You Now Know
 
-Let's recap what you now understand:
+Before this course, APIs were a black box. Here's the mental model you've built:
 
-- **APIs** — How apps talk to servers (request/response)
-- **HTTP Methods** — GET, POST, PUT, DELETE
-- **Authentication** — API keys, OAuth, tokens
-- **Databases** — Tables, schemas, relationships
-- **CRUD** — Create, Read, Update, Delete
-- **Full-stack flow** — API → Transform → Database → UI
+- **APIs** are contracts — they define what you can ask for and what you'll get back
+- **HTTP methods** are verbs — GET reads, POST creates, PUT updates, DELETE removes
+- **Headers** carry context — authentication, content type, rate limit info
+- **Status codes** are signals — 200 means success, 4xx is your fault, 5xx is theirs
+- **Databases** are structured storage — tables, rows, relationships, and schemas you design
+- **CRUD** maps to HTTP — Create→POST, Read→GET, Update→PUT, Delete→DELETE
+- **Auth** protects data — API keys for services, OAuth for user identity, tokens in headers
 
-### What's Next?
+That's not beginner knowledge. That's the foundation engineers build real systems on.
 
-**For your design work:**
-- You can now read API documentation and understand what's possible
-- You can design with real data constraints in mind
-- You can prototype with real APIs using the playground
-- You can communicate more effectively with engineers
+### How This Changes Your Design Work
 
-**Topics to explore next:**
-- **GraphQL** — An alternative to REST APIs where you specify exactly what data you want
-- **Webhooks** — APIs that push data TO you (instead of you pulling it)
-- **Real-time** — Live updates using WebSockets (Supabase supports this!)
-- **LLMs & Agents** — How AI APIs work (very similar to what you've learned!)
+**Before:** "Can we show the user's history somewhere?"
+**After:** "We could add a \`created_at\` column to the saves table and query it ordered by timestamp — pretty straightforward."
 
-### The LLM Connection
+**Before:** "Why does it take so long to load those results?"
+**After:** "We're making one API call per item instead of batching — that's the N+1 problem. We could fetch the list first, then fetch details in parallel with Promise.all."
 
-Here's the exciting part: **LLM APIs work exactly like what you've learned.**
+**Before:** "Can the app update in real time?"
+**After:** "Supabase has a WebSocket subscription API — we could listen to inserts on the table and push updates without polling."
+
+The language you now speak is your engineering team's native language.
+
+### Where to Go From Here
+
+**GraphQL** — Instead of calling multiple endpoints, you write a query that specifies exactly the fields you need. The server returns a single response shaped to your request. Great for complex UIs with lots of related data.
+
+**Webhooks** — Flip the request direction. Instead of *you* polling an API, the API calls *your* endpoint when something happens. Stripe uses this to notify you of payments. GitHub uses it to trigger CI builds.
+
+**Real-time** — WebSockets keep a persistent connection open. The server can push data the moment it changes, without the client asking. Supabase's Realtime product is built on this.
+
+**LLM APIs** — Here's the exciting part for you specifically: LLM APIs are just POST requests.
 
 \`\`\`javascript
-// Calling an LLM is just another POST request!
+// This is a real Claude API call — notice the pattern
 const response = await fetch("https://api.anthropic.com/v1/messages", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "x-api-key": "your-api-key",
+    "x-api-key": "your-key",          // API key auth — Module 2
     "anthropic-version": "2023-06-01",
   },
   body: JSON.stringify({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 1024,
-    messages: [{ role: "user", content: "Hello!" }],
+    messages: [
+      { role: "user", content: "Describe Charizard in one sentence." }
+    ],
   }),
 });
+
+const data = await response.json();
+console.log(data.content[0].text); // The AI's response
 \`\`\`
 
-That's a POST request with headers and a JSON body — exactly what you learned in Module 2!
+POST request, JSON body, API key in the header, JSON response. You know every single piece of this.
 
-### Agentic Design
+### Agentic Design — Why This Matters Now
 
-As a designer working with AI agents, understanding APIs is crucial:
-- Agents make API calls to interact with the world
-- They read from and write to databases
-- They chain multiple API calls together
-- They handle errors and retry logic
+AI agents are programs that make decisions and take actions in the world. Almost every action they take is an API call:
 
-You now have the mental model to design for all of this.
+1. **Retrieve information** → GET request to a search API
+2. **Check the user's calendar** → GET request to Google Calendar API
+3. **Send a notification** → POST request to a messaging API
+4. **Save a result** → INSERT into a database
 
-**Welcome to the API-first world. You belong here.**`,
+The designers who understand this will be able to spec agent workflows with precision — which tools an agent needs, what data it reads and writes, where it needs authentication, what happens when a call fails.
+
+That's the work that matters right now, and you're equipped for it.
+
+**You belong in those conversations.**`,
         exercise: {
-          starterCode: `// One last exercise: Call an LLM API!
-// (This is just a demonstration of the pattern)
+          starterCode: `// Final exercise: the LLM API pattern
+// LLM calls look exactly like everything else you've learned
 
-console.log("=== LLM API Call Pattern ===\\n");
+console.log("=== How an LLM API works ===\\n");
 
-const llmRequest = {
-  method: "POST",
+// This is the real structure of a Claude API request
+const request = {
   url: "https://api.anthropic.com/v1/messages",
+  method: "POST",                        // POST — you're sending data
   headers: {
-    "Content-Type": "application/json",
-    "x-api-key": "your-api-key",
-    "anthropic-version": "2023-06-01",
+    "Content-Type": "application/json",  // JSON body
+    "x-api-key": "sk-ant-...",           // API key auth (Module 2!)
+    "anthropic-version": "2023-06-01",   // API versioning
   },
   body: {
     model: "claude-sonnet-4-20250514",
-    max_tokens: 1024,
+    max_tokens: 256,
     messages: [
-      { role: "user", content: "What Pokémon type matches rainy day music?" }
+      { role: "user", content: "Which starter Pokémon has the best design?" }
     ],
   },
 };
 
-console.log("URL:", llmRequest.url);
-console.log("Method:", llmRequest.method);
-console.log("Headers:", Object.keys(llmRequest.headers).join(", "));
-console.log("\\nBody:");
-console.log(JSON.stringify(llmRequest.body, null, 2));
+// Walk through each part
+console.log("Endpoint:   ", request.url);
+console.log("Method:     ", request.method);
+console.log("Auth header:", "x-api-key (same concept as any API key)");
+console.log("\\nRequest body:");
+console.log(JSON.stringify(request.body, null, 2));
 
-console.log("\\n---");
-console.log("This is the SAME pattern you learned:");
-console.log("1. URL (endpoint)");
-console.log("2. Method (POST)");
-console.log("3. Headers (auth + content type)");
-console.log("4. Body (the data you're sending)");
-console.log("5. Response (the AI's answer as JSON)");
-console.log("\\nYou already know how AI APIs work!");`,
-          solution: `// Conceptual exercise`,
+// A real response looks like this:
+const simulatedResponse = {
+  id: "msg_01XFDUDYJgAACzvnptvVoYEL",
+  type: "message",
+  role: "assistant",
+  content: [
+    {
+      type: "text",
+      text: "Charizard, without a doubt. The combination of fire and flight, the dragon-like silhouette, and the visual evolution arc from Charmander makes it iconic — even if it's technically a Flying type."
+    }
+  ],
+  model: "claude-sonnet-4-20250514",
+  stop_reason: "end_turn",
+  usage: { input_tokens: 18, output_tokens: 52 }
+};
+
+console.log("\\nSimulated response:");
+console.log("Text:", simulatedResponse.content[0].text);
+console.log("Tokens used:", simulatedResponse.usage.input_tokens + simulatedResponse.usage.output_tokens);
+console.log("\\n✓ Same pattern: endpoint + method + headers + body = JSON response");
+console.log("✓ You already know how to work with any API, including AI ones.");`,
+          solution: `// Conceptual demonstration — no changes needed`,
           instructions: [
             "Run to see how an LLM API call is structured",
-            "Notice: same pattern as every other API call!",
-            "You now have the knowledge to work with any API",
+            "Compare: it's the same POST + headers + JSON body pattern from Module 2",
+            "Notice the response structure — content[0].text is where the AI's answer lives",
+            "The usage field shows token counts — this is how LLM APIs handle billing",
           ],
-          hint: "Every API follows the same pattern: endpoint + method + headers + body = response.",
+          hint: "Look at the headers object. x-api-key is the same concept as every other API key you've used — it identifies who's making the request.",
         },
         resources: [
           {
-            title: "Anthropic API Documentation",
+            title: "Anthropic API — Getting Started",
             url: "https://docs.anthropic.com/en/api/getting-started",
             type: "docs",
-            description: "Learn how Claude's API works — you already know the basics!",
+            description: "The real Claude API docs — you'll recognise the pattern immediately.",
           },
           {
-            title: "What are AI Agents?",
+            title: "What are AI Agents? (Explained simply)",
             url: "https://www.youtube.com/watch?v=F8NKVhkZZWI",
             type: "video",
-            description: "How AI agents use APIs to interact with the world.",
+            description: "How agents chain API calls to take actions in the world.",
+          },
+          {
+            title: "GraphQL vs REST — Key differences",
+            url: "https://www.youtube.com/watch?v=PeAOEAmR0D0",
+            type: "video",
+            description: "When to use each, and why designers should care.",
           },
         ],
       },
