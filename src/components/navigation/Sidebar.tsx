@@ -365,10 +365,10 @@ export default function Sidebar() {
                         {currentName}
                       </span>
                       <span
-                        className="text-[11px] font-medium flex-shrink-0 ml-1"
+                        className="text-[11px] font-medium flex-shrink-0 ml-1 tabular-nums"
                         style={{ color: "var(--text-secondary)" }}
                       >
-                        {Math.round(progressPercent)}%
+                        {completedCount}/{totalChapters}
                       </span>
                     </div>
 
