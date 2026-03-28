@@ -68,7 +68,7 @@ An API is a **waiter** at a restaurant.
 
 In the digital world:
 - **Your browser or app** is the client
-- **A remote computer** is the server (it has data, like Pokemon info or your playlists)
+- **A remote computer** is the server (it has data, like Pokémon info or your playlists)
 - **The API** is the set of rules for how to ask for that data and what you'll get back
 
 ### The Request-Response Cycle
@@ -91,7 +91,7 @@ As a product designer, APIs define **what's possible** in your designs:
 Understanding APIs means you can design **with** the technology, not against it.`,
         exercise: {
           starterCode: `// Let's make your very first API call!
-// The PokeAPI is a free API with data about every Pokemon.
+// The PokeAPI is a free API with data about every Pokémon.
 
 // This URL is an "endpoint" — a specific address where data lives
 const url = "https://pokeapi.co/api/v2/pokemon/pikachu";
@@ -103,21 +103,21 @@ const response = await fetch(url);
 const data = await response.json();
 
 // Let's see what we got!
-console.log("Pokemon name:", data.name);
-console.log("Pokemon types:", data.types.map(t => t.type.name));
+console.log("Pokémon name:", data.name);
+console.log("Pokémon types:", data.types.map(t => t.type.name));
 console.log("Sprite URL:", data.sprites.front_default);`,
           solution: `const url = "https://pokeapi.co/api/v2/pokemon/pikachu";
 const response = await fetch(url);
 const data = await response.json();
-console.log("Pokemon name:", data.name);
-console.log("Pokemon types:", data.types.map(t => t.type.name));
+console.log("Pokémon name:", data.name);
+console.log("Pokémon types:", data.types.map(t => t.type.name));
 console.log("Sprite URL:", data.sprites.front_default);`,
           instructions: [
             "Click the Run button to execute your first API call",
             "Look at the output — you just fetched real data from a server!",
-            "Try changing 'pikachu' to another Pokemon name like 'charizard' or 'eevee'",
+            "Try changing 'pikachu' to another Pokémon name like 'charizard' or 'eevee'",
           ],
-          hint: "Pokemon names must be lowercase. Try 'bulbasaur', 'charmander', or 'squirtle'.",
+          hint: "Pokémon names must be lowercase. Try 'bulbasaur', 'charmander', or 'squirtle'.",
         },
         quiz: [
           {
@@ -160,7 +160,7 @@ console.log("Sprite URL:", data.sprites.front_default);`,
       {
         id: "1-2",
         title: "Your First API Call",
-        subtitle: "Fetching real Pokemon data with code",
+        subtitle: "Fetching real Pokémon data with code",
         readTime: 6,
         narrative:
           "Now that you understand the concept, let's actually do it. We're going to call the PokeAPI and get real data. Don't worry if the code looks unfamiliar — I'll walk you through every line.",
@@ -212,13 +212,13 @@ JSON is just a way to structure data — think of it like a really organized spr
 
 Press **Cmd + Option + I** (Mac) to open your browser's Developer Tools. Click the **Network** tab. Now when you run API calls, you'll see the actual requests flying back and forth. This is one of the most powerful tools for understanding how apps work.`,
         exercise: {
-          starterCode: `// TODO: Fetch data for 3 different Pokemon and display their info
+          starterCode: `// TODO: Fetch data for 3 different Pokémon and display their info
 // Hint: Use a for...of loop with an array of names
 
 const pokemonNames = ["bulbasaur", "charmander", "squirtle"];
 
 for (const name of pokemonNames) {
-  // TODO: Fetch each Pokemon's data
+  // TODO: Fetch each Pokémon's data
   const response = await fetch(\`https://pokeapi.co/api/v2/pokemon/\${name}\`);
   const data = await response.json();
 
@@ -240,8 +240,8 @@ for (const name of pokemonNames) {
   console.log("");
 }`,
           instructions: [
-            "Run the code to fetch data for 3 starter Pokemon",
-            "Try adding more Pokemon names to the array",
+            "Run the code to fetch data for 3 starter Pokémon",
+            "Try adding more Pokémon names to the array",
             "Try accessing different properties — what about data.sprites?",
           ],
           hint: "Add console.log(data) right after the 'const data = ...' line, then hit Run. Look for 'sprites', 'stats', and 'types' in the output — those are all the properties you can use.",
@@ -274,7 +274,7 @@ for (const name of pokemonNames) {
             title: "PokeAPI Documentation",
             url: "https://pokeapi.co/docs/v2",
             type: "docs",
-            description: "Explore all the endpoints available in the Pokemon API.",
+            description: "Explore all the endpoints available in the Pokémon API.",
           },
           {
             title: "JavaScript Fetch API (MDN)",
@@ -314,8 +314,8 @@ https://pokeapi.co/api/v2
 
 **2. Endpoints** — The paths you can add to the base URL:
 \`\`\`
-/pokemon          → List of Pokemon
-/pokemon/{id}     → A specific Pokemon
+/pokemon          → List of Pokémon
+/pokemon/{id}     → A specific Pokémon
 /type             → List of types
 /ability          → List of abilities
 \`\`\`
@@ -336,7 +336,7 @@ The \`?\` starts parameters, and \`&\` separates them.
 Let's look at a real endpoint: \`/pokemon/{id or name}\`
 
 The docs tell us this returns:
-- \`name\` — The Pokemon's name
+- \`name\` — The Pokémon's name
 - \`height\` — Height in decimeters
 - \`weight\` — Weight in hectograms
 - \`types\` — Array of type objects
@@ -344,13 +344,13 @@ The docs tell us this returns:
 - \`stats\` — Array of stat objects (HP, Attack, etc.)
 - \`abilities\` — Array of ability objects
 
-This tells you as a designer: "I can show name, image, types, stats, and abilities on a Pokemon card."
+This tells you as a designer: "I can show name, image, types, stats, and abilities on a Pokémon card."
 
 ### Rate Limits
 
 Most APIs have a limit on how many requests you can make. PokeAPI is generous (100 requests per minute), but most paid APIs like GitHub or Stripe limit you to a certain number per second. Always check this in the docs!`,
         exercise: {
-          starterCode: `// Let's use query parameters to browse Pokemon
+          starterCode: `// Let's use query parameters to browse Pokémon
 // The /pokemon endpoint returns a list, not just one
 
 // First, let's see what the list endpoint looks like
@@ -359,9 +359,9 @@ const listResponse = await fetch(
 );
 const listData = await listResponse.json();
 
-console.log("Total Pokemon in API:", listData.count);
+console.log("Total Pokémon in API:", listData.count);
 console.log("Results returned:", listData.results.length);
-console.log("\\nFirst 5 Pokemon:");
+console.log("\\nFirst 5 Pokémon:");
 listData.results.forEach((p, i) => {
   console.log(\`  \${i + 1}. \${p.name}\`);
 });
@@ -372,19 +372,19 @@ listData.results.forEach((p, i) => {
   "https://pokeapi.co/api/v2/pokemon?limit=5&offset=0"
 );
 const listData = await listResponse.json();
-console.log("Total Pokemon in API:", listData.count);
+console.log("Total Pokémon in API:", listData.count);
 console.log("Results returned:", listData.results.length);
-console.log("\\nFirst 5 Pokemon:");
+console.log("\\nFirst 5 Pokémon:");
 listData.results.forEach((p, i) => {
   console.log(\`  \${i + 1}. \${p.name}\`);
 });`,
           instructions: [
             "Run the code to see the list endpoint in action",
             "Change limit=5 to limit=10 to get more results",
-            "Change offset=0 to offset=150 to see later Pokemon",
+            "Change offset=0 to offset=150 to see later Pokémon",
             "Notice how the API gives you 'next' and 'previous' URLs for pagination",
           ],
-          hint: "Add console.log(listData) right after the 'const listData = ...' line, then hit Run. Look for a 'next' URL in the output — that's how the API lets you page through all 1350 Pokemon.",
+          hint: "Add console.log(listData) right after the 'const listData = ...' line, then hit Run. Look for a 'next' URL in the output — that's how the API lets you page through all 1350 Pokémon.",
         },
         resources: [
           {
@@ -407,7 +407,7 @@ listData.results.forEach((p, i) => {
         subtitle: "Exploring APIs visually with Postman",
         readTime: 6,
         narrative:
-          "Your PM just asked you to design a new Pokemon detail page and wants to know exactly what data is available. Instead of pinging the dev team, you open Postman, type in the API URL, and in 30 seconds you have the full picture. This is how designers work at API-first companies.",
+          "Your PM just asked you to design a new Pokémon detail page and wants to know exactly what data is available. Instead of pinging the dev team, you open Postman, type in the API URL, and in 30 seconds you have the full picture. This is how designers work at API-first companies.",
         concepts: ["Postman", "API clients", "Collections", "Environments", "Variables"],
         content: `## What is Postman?
 
@@ -460,7 +460,7 @@ As a designer, Body is your goldmine. You can see exactly what fields exist and 
 
 ## Building a Collection
 
-A **Collection** is a folder for saving API requests. Create one called **"Pokemon Companion App"** and save your requests there.
+A **Collection** is a folder for saving API requests. Create one called **"Pokémon Companion App"** and save your requests there.
 
 Collections are how teams share API knowledge. When you export yours, devs know exactly what endpoints your feature needs — no guesswork.
 
@@ -474,7 +474,7 @@ Instead of hardcoding \`pikachu\` in every URL, Postman lets you use variables:
 https://pokeapi.co/api/v2/pokemon/{{pokemonName}}
 \`\`\`
 
-Set \`pokemonName = charizard\` in your environment and all your requests update at once. This mirrors how real apps work — the Pokemon name comes from user input, not the code.
+Set \`pokemonName = charizard\` in your environment and all your requests update at once. This mirrors how real apps work — the Pokémon name comes from user input, not the code.
 
 ## The Designer Workflow
 
@@ -515,7 +515,7 @@ console.log("First Ability:", pikachu.abilities[0].ability.name);`,
           instructions: [
             "Hit Run to see the fields Postman helped you discover",
             "Uncomment the TODO line and change it to pikachu.abilities[0].ability.name",
-            "Try swapping 'pikachu' for another Pokemon you searched in Postman",
+            "Try swapping 'pikachu' for another Pokémon you searched in Postman",
             "Notice how knowing the field names from Postman makes writing code much faster",
           ],
           hint: "Open Postman, search for pikachu, then click into the 'abilities' array in the response. You'll see ability.name right there — then type it into the code.",
@@ -525,7 +525,7 @@ console.log("First Ability:", pikachu.abilities[0].ability.name);`,
             id: "1-4-1",
             question: "What is a Postman Collection?",
             options: [
-              "A list of all Pokemon types",
+              "A list of all Pokémon types",
               "A saved folder of API requests you can share with your team",
               "A database of API documentation",
               "A type of HTTP method",
@@ -554,7 +554,7 @@ console.log("First Ability:", pikachu.abilities[0].ability.name);`,
             description: "A full walkthrough of Postman from scratch — great companion to this chapter.",
           },
           {
-            title: "Download the Pokemon Companion Collection",
+            title: "Download the Pokémon Companion Collection",
             url: "/downloads/pokemon-companion.postman_collection.json",
             type: "interactive",
             description: "Import this into Postman to get every API request from this course, pre-organised by module.",
@@ -897,7 +897,7 @@ async function fetchPokemon(name) {
 
     if (!response.ok) {
       throw new Error(
-        \`Pokemon "\${name}" not found (HTTP \${response.status})\`
+        \`Pokémon "\${name}" not found (HTTP \${response.status})\`
       );
     }
 
@@ -915,7 +915,7 @@ await fetchPokemon("pikachu");
 // This should fail (404 Not Found)
 await fetchPokemon("not-a-real-pokemon");
 
-// TODO: Try other Pokemon names — real and fake!
+// TODO: Try other Pokémon names — real and fake!
 await fetchPokemon("mewtwo");`,
           solution: `async function fetchPokemon(name) {
   try {
@@ -932,7 +932,7 @@ await fetchPokemon("not-a-real-pokemon");`,
           instructions: [
             "Run the code to see how success and failure look different",
             "Notice the 200 vs 404 status codes",
-            "Try typing a real Pokemon name and a fake one",
+            "Try typing a real Pokémon name and a fake one",
           ],
           hint: "Try triggering the error on purpose — change 'pikachu' to a random word like 'banana'. The catch block will handle it gracefully and show your error message instead of crashing.",
         },
@@ -948,7 +948,7 @@ await fetchPokemon("not-a-real-pokemon");`,
             ],
             correctIndex: 1,
             explanation:
-              "404 means the resource you asked for doesn't exist — like searching for a Pokemon that isn't in the database.",
+              "404 means the resource you asked for doesn't exist — like searching for a Pokémon that isn't in the database.",
           },
           {
             id: "2-3-q2",
@@ -989,7 +989,7 @@ await fetchPokemon("not-a-real-pokemon");`,
         subtitle: "Databases are just organized spreadsheets",
         readTime: 4,
         narrative:
-          "Your PM just asked you to save users' favorite Pokemon. Where does that data go? Not the API — that's someone else's data. You need your own database. And it's simpler than you think.",
+          "Your PM just asked you to save users' favorite Pokémon. Where does that data go? Not the API — that's someone else's data. You need your own database. And it's simpler than you think.",
         concepts: [
           "Database",
           "Table",
@@ -1006,10 +1006,10 @@ If you've ever used Excel or Google Sheets, you already understand databases. Se
 
 | Spreadsheet | Database | Example |
 |------------|----------|---------|
-| Workbook | Database | "My Pokemon App" |
+| Workbook | Database | "My Pokémon App" |
 | Sheet | Table | "saved_pokemon" |
 | Column header | Column/Field | "name", "type", "level" |
-| Row | Record | One specific Pokemon |
+| Row | Record | One specific Pokémon |
 | Cell | Value | "Pikachu" |
 
 ### A Real Example
@@ -1047,17 +1047,17 @@ We'll use **Supabase** — it gives you a real PostgreSQL database with a beauti
           starterCode: `// Let's think about database design!
 // No code to run yet — this is a planning exercise.
 
-// Imagine you're designing a "My Pokemon Team" feature.
+// Imagine you're designing a "My Pokémon Team" feature.
 // What data would you need to store?
 
 const teamTableDesign = {
   tableName: "my_team",
   columns: {
     id: "UUID (auto-generated, primary key)",
-    pokemon_id: "Integer (the Pokemon's ID from PokeAPI)",
-    name: "Text (Pokemon's name)",
+    pokemon_id: "Integer (the Pokémon's ID from PokeAPI)",
+    name: "Text (Pokémon's name)",
     nickname: "Text (optional — user's custom name)",
-    sprite_url: "Text (URL to the Pokemon's image)",
+    sprite_url: "Text (URL to the Pokémon's image)",
     types: "Text[] (array of type names)",
     position: "Integer (1-6, position in team)",
     added_at: "Timestamp (auto-generated)",
@@ -1189,10 +1189,10 @@ console.log("4. ✓ Add them to .env.local");
 console.log("5. ✓ Create the saved_pokemon table");
 console.log("");
 console.log("Once connected, we'll be able to:");
-console.log("  - INSERT new Pokemon (save favorites)");
-console.log("  - SELECT Pokemon (read your list)");
-console.log("  - UPDATE Pokemon (edit details)");
-console.log("  - DELETE Pokemon (remove from favorites)");
+console.log("  - INSERT new Pokémon (save favorites)");
+console.log("  - SELECT Pokémon (read your list)");
+console.log("  - UPDATE Pokémon (edit details)");
+console.log("  - DELETE Pokémon (remove from favorites)");
 console.log("");
 console.log("Head to /setup in the app for the full setup guide!");`,
           solution: `console.log("Set up Supabase and add your keys to .env.local");`,
@@ -1249,12 +1249,12 @@ const { data, error } = await supabase
 ### Read (SELECT)
 Fetching data from the database.
 \`\`\`javascript
-// Get all saved Pokemon
+// Get all saved Pokémon
 const { data } = await supabase
   .from('saved_pokemon')
   .select('*')
 
-// Get one specific Pokemon
+// Get one specific Pokémon
 const { data } = await supabase
   .from('saved_pokemon')
   .select('*')
@@ -1308,7 +1308,7 @@ Map your screens to CRUD:
 
 let myTeam = [];
 
-// CREATE — Save a Pokemon
+// CREATE — Save a Pokémon
 function savePokemon(pokemon) {
   const entry = { ...pokemon, id: Date.now(), saved_at: new Date() };
   myTeam.push(entry);
@@ -1316,12 +1316,12 @@ function savePokemon(pokemon) {
   return entry;
 }
 
-// READ — Get all saved Pokemon
+// READ — Get all saved Pokémon
 function getTeam() {
   return myTeam;
 }
 
-// UPDATE — Rename a Pokemon
+// UPDATE — Rename a Pokémon
 function renamePokemon(id, nickname) {
   const pokemon = myTeam.find(p => p.id === id);
   if (pokemon) {
@@ -1331,7 +1331,7 @@ function renamePokemon(id, nickname) {
   return pokemon;
 }
 
-// DELETE — Remove a Pokemon
+// DELETE — Remove a Pokémon
 function removePokemon(id) {
   const index = myTeam.findIndex(p => p.id === id);
   if (index > -1) {
@@ -1357,8 +1357,8 @@ console.log("\\nTeam after removal:", getTeam().map(p => p.name));`,
           solution: `// Same as starter — the exercise is about understanding the operations`,
           instructions: [
             "Run the code to see all four CRUD operations in action",
-            "Try adding more Pokemon to the team",
-            "Try renaming different Pokemon",
+            "Try adding more Pokémon to the team",
+            "Try renaming different Pokémon",
           ],
           hint: "Once you set up Supabase, these same operations will persist data in a real database!",
         },
@@ -1386,7 +1386,7 @@ console.log("\\nTeam after removal:", getTeam().map(p => p.name));`,
         subtitle: "Connecting tables with foreign keys",
         readTime: 6,
         narrative:
-          "Real apps have data that connects to other data. A trainer has Pokemon. A playlist has songs. Let's learn how tables relate to each other.",
+          "Real apps have data that connects to other data. A trainer has Pokémon. A playlist has songs. Let's learn how tables relate to each other.",
         concepts: [
           "Foreign key",
           "One-to-many",
@@ -1396,11 +1396,11 @@ console.log("\\nTeam after removal:", getTeam().map(p => p.name));`,
         ],
         content: `## How Tables Relate
 
-In a real app, data is connected. A **Trainer** has many **Pokemon**. A **Playlist** has many **Songs**. These connections are called **relationships**.
+In a real app, data is connected. A **Trainer** has many **Pokémon**. A **Playlist** has many **Songs**. These connections are called **relationships**.
 
 ### One-to-Many
 
-The most common relationship. One trainer → many Pokemon.
+The most common relationship. One trainer → many Pokémon.
 
 **trainers table:**
 | id | name | badge_count |
@@ -1437,7 +1437,7 @@ CREATE TABLE team_pokemon (
 ### Querying Related Data with Supabase
 
 \`\`\`javascript
-// Get a trainer with all their Pokemon
+// Get a trainer with all their Pokémon
 const { data } = await supabase
   .from('trainers')
   .select(\`
@@ -1466,8 +1466,8 @@ const { data } = await supabase
 
 Understanding relationships helps you design better:
 - **Profile page** → Show the trainer AND their team (one-to-many query)
-- **Team builder** → Add/remove Pokemon from a trainer's team (INSERT/DELETE with foreign key)
-- **Leaderboard** → Count each trainer's Pokemon (aggregate query)`,
+- **Team builder** → Add/remove Pokémon from a trainer's team (INSERT/DELETE with foreign key)
+- **Leaderboard** → Count each trainer's Pokémon (aggregate query)`,
         exercise: {
           starterCode: `// Let's model relationships with our simulated database
 
@@ -1484,7 +1484,7 @@ const teamPokemon = [
   { id: 5, trainer_id: 2, pokemon_name: "Psyduck", level: 30 },
 ];
 
-// "JOIN" — Get a trainer with their Pokemon
+// "JOIN" — Get a trainer with their Pokémon
 function getTrainerWithTeam(trainerName) {
   const trainer = trainers.find(t => t.name === trainerName);
   if (!trainer) return null;
@@ -1497,7 +1497,7 @@ function getTrainerWithTeam(trainerName) {
 const ash = getTrainerWithTeam("Ash");
 console.log(\`=== \${ash.name}'s Profile ===\`);
 console.log(\`Badges: \${ash.badge_count}\`);
-console.log(\`Team (\${ash.team.length} Pokemon):\`);
+console.log(\`Team (\${ash.team.length} Pokémon):\`);
 ash.team.forEach(p => {
   console.log(\`  - \${p.pokemon_name} (Lv. \${p.level})\`);
 });
@@ -1507,14 +1507,14 @@ console.log("");
 const misty = getTrainerWithTeam("Misty");
 console.log(\`=== \${misty.name}'s Profile ===\`);
 console.log(\`Badges: \${misty.badge_count}\`);
-console.log(\`Team (\${misty.team.length} Pokemon):\`);
+console.log(\`Team (\${misty.team.length} Pokémon):\`);
 misty.team.forEach(p => {
   console.log(\`  - \${p.pokemon_name} (Lv. \${p.level})\`);
 });`,
           solution: `// Same as starter — demonstrates relationship concepts`,
           instructions: [
             "Run the code to see how related data comes together",
-            "Notice how trainer_id connects Pokemon to their trainer",
+            "Notice how trainer_id connects Pokémon to their trainer",
             "This is exactly how Supabase joins work!",
           ],
           hint: "The key insight: foreign keys let you connect rows across different tables.",
@@ -1828,7 +1828,7 @@ const { data, error } = await supabase
 
 This "fetch → transform → save → display" pattern is behind almost every feature:
 - **Instagram**: Fetch posts from API → Save to cache → Display in feed
-- **Your app**: Fetch Pokemon → Aggregate by type → Display your collection`,
+- **Your app**: Fetch Pokémon → Aggregate by type → Display your collection`,
         exercise: {
           starterCode: `// Let's simulate the full API → Database → UI loop
 
@@ -1893,7 +1893,7 @@ console.log("\\nThis data now persists in your Supabase database!");`,
       {
         id: "5-1",
         title: "Putting It All Together",
-        subtitle: "Your final project: Pokemon Explorer Dashboard",
+        subtitle: "Your final project: Pokémon Explorer Dashboard",
         readTime: 8,
         narrative:
           "You've learned APIs, databases, HTTP methods, OAuth, and CRUD. Now let's combine everything into one project that shows off your new skills.",
@@ -1903,22 +1903,22 @@ console.log("\\nThis data now persists in your Supabase database!");`,
           "API integration",
           "UI data flow",
         ],
-        content: `## Capstone: Pokemon Explorer Dashboard
+        content: `## Capstone: Pokémon Explorer Dashboard
 
-The idea: **Build a personal Pokemon collection app using everything you've learned.**
+The idea: **Build a personal Pokémon collection app using everything you've learned.**
 
 ### How It Works
 
-1. **Fetch Pokemon** → Call PokeAPI for Pokemon data
+1. **Fetch Pokémon** → Call PokeAPI for Pokémon data
 2. **Filter by type** → Let users browse by Fire, Water, Electric, etc.
 3. **Save favourites** → Store their collection in Supabase
 4. **Display beautifully** → Show cards with sprites, types, and stats
-5. **Track history** → Show when each Pokemon was saved
+5. **Track history** → Show when each Pokémon was saved
 
 ### The Data Flow
 
 \`\`\`
-PokeAPI → Pokemon by Type → User selects favourite
+PokeAPI → Pokémon by Type → User selects favourite
                                       ↓
                             Supabase Database → "My Collection"
                                       ↓
@@ -1944,7 +1944,7 @@ const myTopTracks = [
   { name: "Uptown Funk", artist: "Bruno Mars", energy: 0.93 },
 ];
 
-// Map energy to Pokemon type
+// Map energy to Pokémon type
 function energyToType(energy) {
   if (energy >= 0.8) return { type: "fire", reason: "High energy!" };
   if (energy >= 0.6) return { type: "electric", reason: "Upbeat vibes" };
@@ -1953,7 +1953,7 @@ function energyToType(energy) {
   return { type: "ghost", reason: "Dark and moody" };
 }
 
-console.log("=== Music → Pokemon Type Mapping ===\\n");
+console.log("=== Music → Pokémon Type Mapping ===\\n");
 
 const typeCount = {};
 myTopTracks.forEach(track => {
@@ -1967,24 +1967,24 @@ const dominantType = Object.entries(typeCount)
   .sort((a, b) => b[1] - a[1])[0][0];
 console.log(\`Your spirit type: \${dominantType.toUpperCase()}!\`);
 
-// Now we'd fetch Pokemon of this type from PokeAPI:
+// Now we'd fetch Pokémon of this type from PokeAPI:
 const typeResponse = await fetch(
   \`https://pokeapi.co/api/v2/type/\${dominantType}\`
 );
 const typeData = await typeResponse.json();
 const matchedPokemon = typeData.pokemon.slice(0, 3);
 
-console.log(\`\\nMatched \${dominantType}-type Pokemon:\`);
+console.log(\`\\nMatched \${dominantType}-type Pokémon:\`);
 matchedPokemon.forEach(p => {
   console.log(\`  - \${p.pokemon.name}\`);
 });`,
           solution: `// Same as starter — this is the guided capstone`,
           instructions: [
-            "Run to see how music maps to Pokemon types",
-            "The energy values here are simulated — in a real app you'd assign them based on Pokemon base stats",
+            "Run to see how music maps to Pokémon types",
+            "The energy values here are simulated — in a real app you'd assign them based on Pokémon base stats",
             "Try adjusting the energy thresholds in energyToType()",
           ],
-          hint: "Find the line 'if (energy > 80)' and change 80 to 50. Now more Pokemon count as high-energy. Hit Run again to see how the type mapping changes.",
+          hint: "Find the line 'if (energy > 80)' and change 80 to 50. Now more Pokémon count as high-energy. Hit Run again to see how the type mapping changes.",
         },
         resources: [
           {
@@ -2086,7 +2086,7 @@ const llmRequest = {
     model: "claude-sonnet-4-20250514",
     max_tokens: 1024,
     messages: [
-      { role: "user", content: "What Pokemon type matches rainy day music?" }
+      { role: "user", content: "What Pokémon type matches rainy day music?" }
     ],
   },
 };

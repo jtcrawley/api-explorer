@@ -2,18 +2,55 @@
 
 import type { Resource } from "@/content/modules";
 
-const typeIcons: Record<string, string> = {
-  video: "\u25B6",
-  article: "\u2709",
-  docs: "\u2630",
-  interactive: "\u26A1",
-};
-
 const typeLabels: Record<string, string> = {
   video: "Video",
   article: "Article",
   docs: "Documentation",
   interactive: "Interactive",
+};
+
+function VideoIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="5 3 19 12 5 21 5 3" />
+    </svg>
+  );
+}
+
+function ArticleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <polyline points="10 9 9 9 8 9" />
+    </svg>
+  );
+}
+
+function DocsIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+    </svg>
+  );
+}
+
+function InteractiveIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+  );
+}
+
+const TYPE_ICONS: Record<string, React.ReactNode> = {
+  video:       <VideoIcon />,
+  article:     <ArticleIcon />,
+  docs:        <DocsIcon />,
+  interactive: <InteractiveIcon />,
 };
 
 function getYouTubeId(url: string): string | null {
@@ -71,8 +108,8 @@ export default function ResourceList({ resources }: ResourceListProps) {
                   <span
                     className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full"
                     style={{
-                      backgroundColor: "var(--bg-tertiary)",
-                      color: "var(--text-tertiary)",
+                      backgroundColor: "var(--accent-light)",
+                      color: "var(--accent)",
                     }}
                   >
                     Video
@@ -101,17 +138,18 @@ export default function ResourceList({ resources }: ResourceListProps) {
               }}
             >
               <span
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                 style={{
                   backgroundColor: "var(--accent-light)",
+                  color: "var(--accent)",
                 }}
               >
-                {typeIcons[resource.type]}
+                {TYPE_ICONS[resource.type]}
               </span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h4
-                    className="text-sm font-medium group-hover:text-accent-600 transition-colors truncate"
+                    className="text-sm font-medium transition-colors truncate group-hover:opacity-80"
                     style={{ color: "var(--text-primary)" }}
                   >
                     {resource.title}
@@ -119,8 +157,8 @@ export default function ResourceList({ resources }: ResourceListProps) {
                   <span
                     className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full flex-shrink-0"
                     style={{
-                      backgroundColor: "var(--bg-tertiary)",
-                      color: "var(--text-tertiary)",
+                      backgroundColor: "var(--accent-light)",
+                      color: "var(--accent)",
                     }}
                   >
                     {typeLabels[resource.type]}

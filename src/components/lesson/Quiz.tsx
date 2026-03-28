@@ -64,7 +64,7 @@ export default function Quiz({ questions }: QuizProps) {
           src={SPRITE(perfect ? PERFECT_POKEMON : PARTIAL_POKEMON)}
           alt={perfect ? "Gengar celebrating" : "Snorlax relaxing"}
           className="mx-auto mb-3"
-          style={{ imageRendering: "pixelated", height: 80 }}
+          style={{ imageRendering: "auto", height: 80 }}
         />
         <h3
           className="text-lg font-semibold mb-2"
@@ -148,7 +148,7 @@ export default function Quiz({ questions }: QuizProps) {
             <img
               src={SPRITE(reactionPokemon)}
               alt={reactionPokemon}
-              style={{ imageRendering: "pixelated", height: 56, flexShrink: 0 }}
+              style={{ imageRendering: "auto", height: 56, flexShrink: 0 }}
             />
             <div>
               <p className="text-xs font-semibold mb-1"
@@ -163,7 +163,8 @@ export default function Quiz({ questions }: QuizProps) {
           </div>
           <button
             onClick={handleNext}
-            className="text-sm font-medium px-4 py-2 rounded-xl bg-accent-600 text-white hover:bg-accent-700 transition-colors"
+            className="text-sm font-medium px-4 py-2 rounded-xl text-white hover:opacity-90 transition-opacity"
+            style={{ backgroundColor: "var(--accent)" }}
           >
             {isLast ? "See Results" : "Next Question"}
           </button>

@@ -109,18 +109,12 @@
     --warning-light: #451a03;
   }
 
-  html {
-    overflow-x: hidden;
-  }
-
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    max-width: 100%;
   }
 
   ::selection {

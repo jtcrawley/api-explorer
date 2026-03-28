@@ -229,90 +229,89 @@ export default function HomePage() {
           className="px-4 sm:px-6 py-6 rounded-2xl border"
           style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border)" }}
         >
-          <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
           {/* Fixed-height row — nothing moves when Pokémon changes */}
-          <div className="flex items-center justify-center gap-0" style={{ minWidth: 416 }}>
+          <div className="flex items-center justify-center gap-0">
 
             {/* Stage 0 — base form */}
-            <div className="flex flex-col items-center gap-2" style={{ width: 80 }}>
+            <div className="flex flex-col items-center gap-2 w-14 sm:w-20">
               {/* Fixed sprite box */}
-              <div className="flex items-center justify-center" style={{ width: 80, height: 72 }}>
+              <div className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-[72px]">
                 <img
                   src={spriteUrl(evoLine[0])}
                   alt={evoNames[0]}
-                  width={64}
-                  height={64}
-                  style={{ imageRendering: "auto", objectFit: "contain", maxWidth: 64, maxHeight: 64 }}
+                  width={56}
+                  height={56}
+                  className="w-full h-full"
+                  style={{ imageRendering: "auto", objectFit: "contain" }}
                 />
               </div>
               {/* Fixed-height label */}
-              <div style={{ height: 18 }} className="flex items-center justify-center">
-                <span className="text-xs font-semibold text-center" style={{ color: "var(--accent)" }}>
+              <div className="h-[18px] flex items-center justify-center">
+                <span className="text-[10px] sm:text-xs font-semibold text-center" style={{ color: "var(--accent)" }}>
                   {evoNames[0]}
                 </span>
               </div>
             </div>
 
             {/* Segment 1 — XP bar connector */}
-            <div className="flex flex-col items-center gap-1.5 px-3" style={{ width: 88, marginBottom: 18 }}>
-              <span className="text-[10px] font-medium text-center" style={{ color: "var(--text-secondary)" }}>
+            <div className="flex flex-col items-center gap-1.5 px-1.5 sm:px-3 w-12 sm:w-[88px] mb-[18px]">
+              <span className="text-[9px] sm:text-[10px] font-medium text-center" style={{ color: "var(--text-secondary)" }}>
                 Level up
               </span>
               <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--bg-tertiary)" }}>
                 <div className="h-full rounded-full evo-xp-bar" style={{ backgroundColor: "var(--accent)" }} />
               </div>
-              <svg className="w-3.5 h-3.5" style={{ color: "var(--text-secondary)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: "var(--text-secondary)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </div>
 
             {/* Stage 1 — silhouette */}
-            <div className="flex flex-col items-center gap-2" style={{ width: 80 }}>
-              <div className="flex items-center justify-center" style={{ width: 80, height: 72 }}>
+            <div className="flex flex-col items-center gap-2 w-14 sm:w-20">
+              <div className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-[72px]">
                 <img
                   src={spriteUrl(evoLine[1])}
                   alt="???"
-                  width={64}
-                  height={64}
-                  className="evo-silhouette-1"
-                  style={{ imageRendering: "auto", objectFit: "contain", maxWidth: 64, maxHeight: 64 }}
+                  width={56}
+                  height={56}
+                  className="w-full h-full evo-silhouette-1"
+                  style={{ imageRendering: "auto", objectFit: "contain" }}
                 />
               </div>
-              <div style={{ height: 18 }} className="flex items-center justify-center">
-                <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>???</span>
+              <div className="h-[18px] flex items-center justify-center">
+                <span className="text-[10px] sm:text-xs font-medium" style={{ color: "var(--text-secondary)" }}>???</span>
               </div>
             </div>
 
             {/* Segment 2 — XP bar connector (delayed) */}
-            <div className="flex flex-col items-center gap-1.5 px-3" style={{ width: 88, marginBottom: 18 }}>
-              <span className="text-[10px] font-medium text-center" style={{ color: "var(--text-secondary)" }}>
+            <div className="flex flex-col items-center gap-1.5 px-1.5 sm:px-3 w-12 sm:w-[88px] mb-[18px]">
+              <span className="text-[9px] sm:text-[10px] font-medium text-center" style={{ color: "var(--text-secondary)" }}>
                 Level up
               </span>
               <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--bg-tertiary)" }}>
                 <div className="h-full rounded-full evo-xp-bar-delayed" style={{ backgroundColor: "var(--accent)" }} />
               </div>
-              <svg className="w-3.5 h-3.5" style={{ color: "var(--text-secondary)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: "var(--text-secondary)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </div>
 
             {/* Stage 2 — silhouette */}
-            <div className="flex flex-col items-center gap-2" style={{ width: 80 }}>
-              <div className="flex items-center justify-center" style={{ width: 80, height: 72 }}>
+            <div className="flex flex-col items-center gap-2 w-14 sm:w-20">
+              <div className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-[72px]">
                 <img
                   src={spriteUrl(evoLine[2])}
                   alt="???"
-                  width={64}
-                  height={64}
-                  className="evo-silhouette-2"
-                  style={{ imageRendering: "auto", objectFit: "contain", maxWidth: 64, maxHeight: 64 }}
+                  width={56}
+                  height={56}
+                  className="w-full h-full evo-silhouette-2"
+                  style={{ imageRendering: "auto", objectFit: "contain" }}
                 />
               </div>
-              <div style={{ height: 18 }} className="flex items-center justify-center">
-                <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>???</span>
+              <div className="h-[18px] flex items-center justify-center">
+                <span className="text-[10px] sm:text-xs font-medium" style={{ color: "var(--text-secondary)" }}>???</span>
               </div>
             </div>
-          </div>
           </div>
 
           <p

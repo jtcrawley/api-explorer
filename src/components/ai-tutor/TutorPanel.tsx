@@ -75,7 +75,8 @@ export default function TutorPanel({ lessonContext }: TutorPanelProps) {
       {/* FAB */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-accent-600 text-white shadow-lg hover:bg-accent-700 transition-all hover:scale-105 flex items-center justify-center z-50"
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full text-white shadow-lg hover:opacity-90 transition-all hover:scale-105 flex items-center justify-center z-50"
+        style={{ backgroundColor: "var(--accent)" }}
         title="AI Tutor"
       >
         {isOpen ? (
@@ -178,16 +179,16 @@ export default function TutorPanel({ lessonContext }: TutorPanelProps) {
                 <div
                   className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                     msg.role === "user"
-                      ? "bg-accent-600 text-white rounded-br-sm"
+                      ? "text-white rounded-br-sm"
                       : "rounded-bl-sm"
                   }`}
                   style={
-                    msg.role === "assistant"
-                      ? {
+                    msg.role === "user"
+                      ? { backgroundColor: "var(--accent)" }
+                      : {
                           backgroundColor: "var(--bg-secondary)",
                           color: "var(--text-primary)",
                         }
-                      : undefined
                   }
                 >
                   {msg.content}
@@ -239,7 +240,8 @@ export default function TutorPanel({ lessonContext }: TutorPanelProps) {
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || isLoading}
-                className="w-10 h-10 rounded-xl bg-accent-600 text-white flex items-center justify-center hover:bg-accent-700 disabled:opacity-50 transition-colors"
+                className="w-10 h-10 rounded-xl text-white flex items-center justify-center hover:opacity-90 disabled:opacity-50 transition-opacity"
+                style={{ backgroundColor: "var(--accent)" }}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
