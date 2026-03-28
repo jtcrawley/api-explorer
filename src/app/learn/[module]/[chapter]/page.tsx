@@ -46,7 +46,7 @@ const COMPLETE_MESSAGES = (name: string): string[] => [
 ];
 
 const COURSE_COMPLETE_SUBTITLES = (finalName: string): string[] => [
-  `You went from "What's an API?" to building real features. That's not nothing — that's everything.`,
+  `You went from "What's an API?" to building real features. That's not nothing. That's everything.`,
   `Most designers never get here. You did. ${finalName} is proof of every chapter you showed up for.`,
   `API-fluent. Database-aware. Dangerously good collaborator. You've earned it.`,
   `The gap between you and your engineering team just got a whole lot smaller. Well done.`,

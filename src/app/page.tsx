@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Logo from "@/components/ui/Logo";
 import Button from "@/components/ui/Button";
-import Card from "@/components/ui/Card";
+import StarterCard from "@/components/home/StarterCard";
+import ModuleCard from "@/components/home/ModuleCard";
 import { modules, getTotalChapters, getFlatChapterList } from "@/content/modules";
 import { getCompletedCount, getCompletedChapterIds } from "@/lib/progress";
 import { useTheme, type PokemonTheme } from "@/components/ui/ThemeProvider";
@@ -81,6 +82,11 @@ export default function HomePage() {
   const evoLine = EVOLUTION_LINES[pokemon];
   const evoNames = EVOLUTION_NAMES[pokemon];
 
+  // Derive type color from the selected starter
+  const currentStarter = STARTERS.find((s) => s.id === pokemon)!;
+  const typeColor  = mode === "dark" ? currentStarter.typeDarkColor : currentStarter.typeColor;
+  const typeBg     = mode === "dark" ? currentStarter.typeDarkBg   : currentStarter.typeBg;
+
   // Silhouette opacity — more visible in dark mode
   const silhouetteOpacity = mode === "dark" ? 0.45 : 0.28;
 
@@ -145,7 +151,7 @@ export default function HomePage() {
               : "Choose your starter Pokémon"}
           </h2>
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-            Your Pokémon earns XP as you complete chapters — and evolves at ⅓ and ⅔ of the course.
+            Earn XP by completing chapters and watch your Pokémon evolve over time.
           </p>
         </div>
 
@@ -153,177 +159,180 @@ export default function HomePage() {
         <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
           {STARTERS.map((starter) => {
             const option = POKEMON_OPTIONS.find((p) => p.id === starter.id)!;
-            const isActive = pokemon === starter.id;
-            const typeColor = mode === "dark" ? starter.typeDarkColor : starter.typeColor;
-            const typeBg = mode === "dark" ? starter.typeDarkBg : starter.typeBg;
-            const accentColor = mode === "dark" ? option.accentDark : option.accent;
-
             return (
-              <button
+              <StarterCard
                 key={starter.id}
+                starter={starter}
+                option={option}
+                isActive={pokemon === starter.id}
+                mode={mode}
                 onClick={() => {
                   setPokemon(starter.id);
                   setHasExplicitlyChosen(true);
                 }}
-                className="relative flex flex-col items-center gap-2 sm:gap-3 px-2 sm:px-4 py-4 sm:py-6 rounded-2xl border-2 transition-colors duration-200 text-center"
-                style={{
-                  borderColor: isActive ? accentColor : "var(--border)",
-                  backgroundColor: isActive ? "var(--accent-light)" : "var(--bg-secondary)",
-                }}
-              >
-                {/* Checkmark — always reserved space so layout doesn't shift */}
-                <span
-                  className="absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white transition-opacity duration-200"
-                  style={{
-                    backgroundColor: accentColor,
-                    opacity: isActive ? 1 : 0,
-                    pointerEvents: "none",
-                  }}
-                >
-                  ✓
-                </span>
-
-                {/* Fixed sprite box — same size for all three */}
-                <div className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 flex-shrink-0">
-                  <img
-                    src={option.sprite}
-                    alt={option.label}
-                    width={64}
-                    height={64}
-                    className="w-full h-full"
-                    style={{ imageRendering: "auto", objectFit: "contain" }}
-                  />
-                </div>
-
-                <div className="w-full">
-                  <p
-                    className="text-xs sm:text-base font-bold mb-1 transition-colors duration-200"
-                    style={{ color: isActive ? accentColor : "var(--text-primary)" }}
-                  >
-                    {option.label}
-                  </p>
-
-                  <span
-                    className="inline-block text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full mb-2"
-                    style={{ backgroundColor: typeBg, color: typeColor }}
-                  >
-                    {starter.type}
-                  </span>
-
-                  <p
-                    className="text-[10px] sm:text-xs font-medium mb-1 transition-colors duration-200 hidden sm:block"
-                    style={{ color: isActive ? accentColor : "var(--text-secondary)" }}
-                  >
-                    {starter.tagline}
-                  </p>
-                  <p
-                    className="text-[10px] sm:text-xs leading-relaxed hidden sm:block"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
-                    {starter.description}
-                  </p>
-                </div>
-              </button>
+              />
             );
           })}
         </div>
 
-        {/* Evolution preview strip — animated XP bars */}
+        {/* Evolution preview strip — TCG card treatment */}
         <div
-          className="px-4 sm:px-6 py-6 rounded-2xl border"
-          style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border)" }}
+          key={`evo-card-${pokemon}`}
+          className="rounded-2xl border-2 overflow-hidden evo-strip-enter"
+          style={{
+            backgroundColor: "var(--bg-secondary)",
+            borderColor: `${typeColor}40`,
+          }}
         >
-          {/* Fixed-height row — nothing moves when Pokémon changes */}
-          <div className="flex items-center justify-center gap-0">
+          {/* ── TCG Header strip ── */}
+          <div
+            className="flex items-center justify-between px-3 sm:px-5 pt-2.5 pb-2"
+            style={{ borderBottom: `1px solid ${typeColor}22` }}
+          >
+            <span
+              className="text-[10px] sm:text-xs font-bold uppercase tracking-widest"
+              style={{ color: typeColor }}
+            >
+              Evolution Line
+            </span>
+            <span
+              className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full leading-none"
+              style={{ backgroundColor: typeBg, color: typeColor }}
+            >
+              {currentStarter.type}
+            </span>
+          </div>
 
-            {/* Stage 0 — base form */}
-            <div className="flex flex-col items-center gap-2 w-14 sm:w-20">
-              {/* Fixed sprite box */}
-              <div className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-[72px]">
-                <img
-                  src={spriteUrl(evoLine[0])}
-                  alt={evoNames[0]}
-                  width={56}
-                  height={56}
-                  className="w-full h-full"
-                  style={{ imageRendering: "auto", objectFit: "contain" }}
-                />
+          {/* ── Sprite row ── */}
+          <div className="px-3 sm:px-5 py-5">
+            <div key={pokemon} className="flex items-center justify-center gap-0 evo-strip-enter">
+
+              {/* Stage 0 — base form artwork window */}
+              <div className="flex flex-col items-center gap-2 w-16 sm:w-[84px]">
+                <div
+                  className="relative flex items-center justify-center w-16 h-16 sm:w-[84px] sm:h-[84px] rounded-xl overflow-hidden"
+                  style={{
+                    background: `radial-gradient(ellipse at 50% 35%, ${typeColor}30 0%, ${typeColor}12 55%, transparent 80%)`,
+                    border: `1px solid ${typeColor}40`,
+                  }}
+                >
+                  {/* Corner brackets */}
+                  <span className="absolute top-1 left-1 w-2.5 h-2.5 pointer-events-none" style={{ borderTop: `1.5px solid ${typeColor}45`, borderLeft: `1.5px solid ${typeColor}45`, borderRadius: "2px 0 0 0" }} />
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 pointer-events-none" style={{ borderTop: `1.5px solid ${typeColor}45`, borderRight: `1.5px solid ${typeColor}45`, borderRadius: "0 2px 0 0" }} />
+                  <span className="absolute bottom-1 left-1 w-2.5 h-2.5 pointer-events-none" style={{ borderBottom: `1.5px solid ${typeColor}45`, borderLeft: `1.5px solid ${typeColor}45`, borderRadius: "0 0 0 2px" }} />
+                  <span className="absolute bottom-1 right-1 w-2.5 h-2.5 pointer-events-none" style={{ borderBottom: `1.5px solid ${typeColor}45`, borderRight: `1.5px solid ${typeColor}45`, borderRadius: "0 0 2px 0" }} />
+                  <img
+                    src={spriteUrl(evoLine[0])}
+                    alt={evoNames[0]}
+                    width={64}
+                    height={64}
+                    className="w-12 h-12 sm:w-[60px] sm:h-[60px]"
+                    style={{
+                      imageRendering: "auto",
+                      objectFit: "contain",
+                      filter: `drop-shadow(0 2px 6px ${typeColor}55)`,
+                    }}
+                  />
+                </div>
+                <div className="h-[18px] flex items-center justify-center">
+                  <span className="text-[10px] sm:text-xs font-semibold text-center" style={{ color: typeColor }}>
+                    {evoNames[0]}
+                  </span>
+                </div>
               </div>
-              {/* Fixed-height label */}
-              <div className="h-[18px] flex items-center justify-center">
-                <span className="text-[10px] sm:text-xs font-semibold text-center" style={{ color: "var(--accent)" }}>
-                  {evoNames[0]}
+
+              {/* Connector 1 */}
+              <div className="flex flex-col items-center gap-1.5 px-2 sm:px-3 w-12 sm:w-[80px] mb-[18px]">
+                <span className="text-[9px] sm:text-[10px] font-medium text-center" style={{ color: "var(--text-secondary)" }}>
+                  Level up
                 </span>
+                <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--bg-tertiary)" }}>
+                  <div className="h-full rounded-full evo-xp-bar" style={{ backgroundColor: typeColor }} />
+                </div>
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: typeColor, opacity: 0.6 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                </svg>
               </div>
-            </div>
 
-            {/* Segment 1 — XP bar connector */}
-            <div className="flex flex-col items-center gap-1.5 px-1.5 sm:px-3 w-12 sm:w-[88px] mb-[18px]">
-              <span className="text-[9px] sm:text-[10px] font-medium text-center" style={{ color: "var(--text-secondary)" }}>
-                Level up
-              </span>
-              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--bg-tertiary)" }}>
-                <div className="h-full rounded-full evo-xp-bar" style={{ backgroundColor: "var(--accent)" }} />
+              {/* Stage 1 — silhouette artwork window */}
+              <div className="flex flex-col items-center gap-2 w-16 sm:w-[84px]">
+                <div
+                  className="relative flex items-center justify-center w-16 h-16 sm:w-[84px] sm:h-[84px] rounded-xl overflow-hidden"
+                  style={{
+                    background: `${typeColor}08`,
+                    border: `1px solid ${typeColor}20`,
+                  }}
+                >
+                  <span className="absolute top-1 left-1 w-2.5 h-2.5 pointer-events-none" style={{ borderTop: `1.5px solid ${typeColor}25`, borderLeft: `1.5px solid ${typeColor}25`, borderRadius: "2px 0 0 0" }} />
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 pointer-events-none" style={{ borderTop: `1.5px solid ${typeColor}25`, borderRight: `1.5px solid ${typeColor}25`, borderRadius: "0 2px 0 0" }} />
+                  <span className="absolute bottom-1 left-1 w-2.5 h-2.5 pointer-events-none" style={{ borderBottom: `1.5px solid ${typeColor}25`, borderLeft: `1.5px solid ${typeColor}25`, borderRadius: "0 0 0 2px" }} />
+                  <span className="absolute bottom-1 right-1 w-2.5 h-2.5 pointer-events-none" style={{ borderBottom: `1.5px solid ${typeColor}25`, borderRight: `1.5px solid ${typeColor}25`, borderRadius: "0 0 2px 0" }} />
+                  <img
+                    src={spriteUrl(evoLine[1])}
+                    alt="???"
+                    width={64}
+                    height={64}
+                    className="w-12 h-12 sm:w-[60px] sm:h-[60px] evo-silhouette-1"
+                    style={{ imageRendering: "auto", objectFit: "contain" }}
+                  />
+                </div>
+                <div className="h-[18px] flex items-center justify-center">
+                  <span className="text-[10px] sm:text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>???</span>
+                </div>
               </div>
-              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: "var(--text-secondary)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
 
-            {/* Stage 1 — silhouette */}
-            <div className="flex flex-col items-center gap-2 w-14 sm:w-20">
-              <div className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-[72px]">
-                <img
-                  src={spriteUrl(evoLine[1])}
-                  alt="???"
-                  width={56}
-                  height={56}
-                  className="w-full h-full evo-silhouette-1"
-                  style={{ imageRendering: "auto", objectFit: "contain" }}
-                />
+              {/* Connector 2 */}
+              <div className="flex flex-col items-center gap-1.5 px-2 sm:px-3 w-12 sm:w-[80px] mb-[18px]">
+                <span className="text-[9px] sm:text-[10px] font-medium text-center" style={{ color: "var(--text-secondary)" }}>
+                  Level up
+                </span>
+                <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--bg-tertiary)" }}>
+                  <div className="h-full rounded-full evo-xp-bar-delayed" style={{ backgroundColor: typeColor }} />
+                </div>
+                <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: typeColor, opacity: 0.6 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                </svg>
               </div>
-              <div className="h-[18px] flex items-center justify-center">
-                <span className="text-[10px] sm:text-xs font-medium" style={{ color: "var(--text-secondary)" }}>???</span>
-              </div>
-            </div>
 
-            {/* Segment 2 — XP bar connector (delayed) */}
-            <div className="flex flex-col items-center gap-1.5 px-1.5 sm:px-3 w-12 sm:w-[88px] mb-[18px]">
-              <span className="text-[9px] sm:text-[10px] font-medium text-center" style={{ color: "var(--text-secondary)" }}>
-                Level up
-              </span>
-              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--bg-tertiary)" }}>
-                <div className="h-full rounded-full evo-xp-bar-delayed" style={{ backgroundColor: "var(--accent)" }} />
+              {/* Stage 2 — silhouette artwork window */}
+              <div className="flex flex-col items-center gap-2 w-16 sm:w-[84px]">
+                <div
+                  className="relative flex items-center justify-center w-16 h-16 sm:w-[84px] sm:h-[84px] rounded-xl overflow-hidden"
+                  style={{
+                    background: `${typeColor}08`,
+                    border: `1px solid ${typeColor}20`,
+                  }}
+                >
+                  <span className="absolute top-1 left-1 w-2.5 h-2.5 pointer-events-none" style={{ borderTop: `1.5px solid ${typeColor}25`, borderLeft: `1.5px solid ${typeColor}25`, borderRadius: "2px 0 0 0" }} />
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 pointer-events-none" style={{ borderTop: `1.5px solid ${typeColor}25`, borderRight: `1.5px solid ${typeColor}25`, borderRadius: "0 2px 0 0" }} />
+                  <span className="absolute bottom-1 left-1 w-2.5 h-2.5 pointer-events-none" style={{ borderBottom: `1.5px solid ${typeColor}25`, borderLeft: `1.5px solid ${typeColor}25`, borderRadius: "0 0 0 2px" }} />
+                  <span className="absolute bottom-1 right-1 w-2.5 h-2.5 pointer-events-none" style={{ borderBottom: `1.5px solid ${typeColor}25`, borderRight: `1.5px solid ${typeColor}25`, borderRadius: "0 0 2px 0" }} />
+                  <img
+                    src={spriteUrl(evoLine[2])}
+                    alt="???"
+                    width={64}
+                    height={64}
+                    className="w-12 h-12 sm:w-[60px] sm:h-[60px] evo-silhouette-2"
+                    style={{ imageRendering: "auto", objectFit: "contain" }}
+                  />
+                </div>
+                <div className="h-[18px] flex items-center justify-center">
+                  <span className="text-[10px] sm:text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>???</span>
+                </div>
               </div>
-              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: "var(--text-secondary)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
 
-            {/* Stage 2 — silhouette */}
-            <div className="flex flex-col items-center gap-2 w-14 sm:w-20">
-              <div className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-[72px]">
-                <img
-                  src={spriteUrl(evoLine[2])}
-                  alt="???"
-                  width={56}
-                  height={56}
-                  className="w-full h-full evo-silhouette-2"
-                  style={{ imageRendering: "auto", objectFit: "contain" }}
-                />
-              </div>
-              <div className="h-[18px] flex items-center justify-center">
-                <span className="text-[10px] sm:text-xs font-medium" style={{ color: "var(--text-secondary)" }}>???</span>
-              </div>
             </div>
           </div>
 
-          <p
-            className="text-xs text-center mt-4"
-            style={{ color: "var(--text-secondary)" }}
+          {/* ── TCG footer strip ── */}
+          <div
+            className="px-3 sm:px-5 py-2.5 flex items-center justify-center"
+            style={{ borderTop: `1px solid ${typeColor}18` }}
           >
-            Complete chapters to unlock evolved forms
-          </p>
+            <p className="text-[10px] sm:text-xs text-center" style={{ color: "var(--text-secondary)" }}>
+              Complete chapters to unlock evolved forms
+            </p>
+          </div>
         </div>
       </section>
 
@@ -347,47 +356,17 @@ export default function HomePage() {
         </h3>
         <div className="space-y-4">
           {modules.map((module, i) => (
-            <Card
+            <ModuleCard
               key={module.id}
-              hover
+              moduleId={module.id}
+              title={module.title}
+              description={module.description}
+              chapterCount={module.chapters.length}
+              icon={moduleIcons[i]}
               onClick={() =>
                 router.push(`/learn/${module.id}/${module.chapters[0].id}`)
               }
-            >
-              <div className="flex items-start gap-5">
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: "var(--accent-light)", color: "var(--accent)" }}
-                >
-                  {moduleIcons[i]}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>
-                      Module {module.id}
-                    </span>
-                    <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                      {module.chapters.length} chapters
-                    </span>
-                  </div>
-                  <h4 className="text-lg font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
-                    {module.title}
-                  </h4>
-                  <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                    {module.description}
-                  </p>
-                </div>
-                <svg
-                  className="w-5 h-5 flex-shrink-0 mt-4"
-                  style={{ color: "var(--text-tertiary)" }}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </Card>
+            />
           ))}
         </div>
       </section>
