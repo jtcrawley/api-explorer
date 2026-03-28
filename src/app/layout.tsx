@@ -6,6 +6,21 @@ export const metadata: Metadata = {
   title: "API Trainer",
   description:
     "A story-driven interactive learning platform for product designers to learn APIs and databases.",
+  metadataBase: new URL("https://apitrainer.vercel.app"),
+  openGraph: {
+    title: "API Trainer",
+    description:
+      "A story-driven interactive learning platform for product designers to learn APIs and databases.",
+    url: "https://apitrainer.vercel.app",
+    siteName: "API Trainer",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "API Trainer",
+    description:
+      "A story-driven interactive learning platform for product designers to learn APIs and databases.",
+  },
 };
 
 export default function RootLayout({
