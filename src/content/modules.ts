@@ -187,11 +187,7 @@ Let's break down the anatomy of an API call. There are three key pieces:
 
 ### 1. The Endpoint (URL)
 
-\`\`\`
-https://pokeapi.co/api/v2/pokemon/pikachu
-\`\`\`
-
-This is the **address** where the data lives. Let's break it apart:
+The address for this call is \`https://pokeapi.co/api/v2/pokemon/pikachu\`. Let's break it apart:
 - \`https://pokeapi.co\`: The server (like a restaurant's address)
 - \`/api/v2\`: The version of the API (like a menu edition)
 - \`/pokemon\`: The type of data (the section of the menu)
@@ -328,23 +324,18 @@ API documentation is your **map**. It tells you:
 
 ### Key Sections in API Docs
 
-**1. Base URL:** The root address of the API:
-\`\`\`
-https://pokeapi.co/api/v2
-\`\`\`
+**1. Base URL:** The root address of the API — \`https://pokeapi.co/api/v2\`
 
 **2. Endpoints:** The paths you can add to the base URL:
-\`\`\`
+
+:::endpoints
 /pokemon          → List of Pokémon
 /pokemon/{id}     → A specific Pokémon
 /type             → List of types
 /ability          → List of abilities
-\`\`\`
+:::
 
-**3. Parameters:** Ways to customize your request:
-\`\`\`
-/pokemon?limit=10&offset=20
-\`\`\`
+**3. Parameters:** Ways to customize your request — \`https://pokeapi.co/api/v2/pokemon?limit=10&offset=20\`
 - \`limit=10\` means "give me 10 results"
 - \`offset=20\` means "start from the 20th item"
 
@@ -487,11 +478,7 @@ Let's make the same call you wrote in code, fetching Pikachu.
 
 **Step 1:** Make sure the method dropdown says **GET**
 
-**Step 2:** Paste this URL into the address bar:
-
-\`\`\`
-https://pokeapi.co/api/v2/pokemon/pikachu
-\`\`\`
+**Step 2:** Paste this URL into the address bar: \`https://pokeapi.co/api/v2/pokemon/pikachu\`
 
 **Step 3:** Hit **Send**
 
@@ -517,11 +504,7 @@ Collections are how teams share API knowledge. When you export yours, devs know 
 
 ## Using Variables
 
-Instead of hardcoding \`pikachu\` in every URL, Postman lets you use variables:
-
-\`\`\`
-https://pokeapi.co/api/v2/pokemon/{{pokemonName}}
-\`\`\`
+Instead of hardcoding \`pikachu\` in every URL, Postman lets you use variables: \`https://pokeapi.co/api/v2/pokemon/{{pokemonName}}\`
 
 Set \`pokemonName = charizard\` in your environment and all your requests update at once. This mirrors how real apps work: the Pokémon name comes from user input, not the code.
 
@@ -976,14 +959,13 @@ try {
 
 One of the most common (and confusing) browser errors you'll encounter when building or prototyping with APIs is **CORS**.
 
-\`\`\`
-Access to fetch at 'https://api.example.com' from origin
-'http://localhost:3000' has been blocked by CORS policy.
-\`\`\`
+:::warning
+**Access to fetch at 'https://api.example.com' from origin 'http://localhost:3000' has been blocked by CORS policy.**
 
-**What it means:** Browsers have a security rule that blocks JavaScript on one domain from reading responses from a different domain, unless the server explicitly allows it. CORS stands for Cross-Origin Resource Sharing.
+This is a server-side setting, not a frontend bug. The API server needs to add your app's URL to its allowlist — it's a backend config change, not something fixable in the browser.
+:::
 
-**The important thing to know:** CORS is a **server-side setting**, not a frontend bug. If you see this error, the API server needs to add your app's URL to its allowlist. It's a backend config change, not something fixable in your design or in the browser.
+CORS (Cross-Origin Resource Sharing) is a browser security rule that blocks JavaScript on one domain from reading responses from a different domain unless the server explicitly allows it.
 
 **When you'll hit it:**
 - Building a prototype that calls a private or internal API directly from the browser
@@ -1126,11 +1108,9 @@ The request has been sent but no response yet.
 - **Progress indicators:** for operations the user deliberately triggers (a button loading state, a progress bar)
 - **Disable interactive elements:** prevent double-submits by disabling buttons while a request is in flight
 
-\`\`\`
-Instead of:  [spinner]
-Design:      [░░░░░░░░] [░░░░░]
-             [░░░░░░░░░░░░░░░░]   ← skeleton that matches your card layout
-\`\`\`
+:::tip
+Design a skeleton that mirrors your card layout — same number of lines, same proportions. A blank rectangle that matches nothing feels just as jarring as a spinner.
+:::
 
 ### 2. Success State
 The request returned data. This is the screen you usually design first.
@@ -1147,10 +1127,10 @@ Something went wrong: network failure, 500, timeout, or 403.
 - A **retry action:** most errors are transient
 - Context-sensitive copy: "Couldn't load your team" is better than "Something went wrong"
 
-\`\`\`
+:::compare
 ✗ "An error occurred."
-✓ "Couldn't load Pokémon, check your connection and try again."  [Retry]
-\`\`\`
+✓ "Couldn't load Pokémon — check your connection and try again." [Retry]
+:::
 
 ### 4. Empty State
 The request succeeded but returned zero results. This is **not** the same as an error.
@@ -1160,11 +1140,11 @@ The request succeeded but returned zero results. This is **not** the same as an 
 - A **call to action** that gets the user out of the empty state
 - Avoid dead ends
 
-\`\`\`
-✗ (blank screen)
+:::compare
+✗ (blank screen — user has no idea what happened)
 ✓ "No Pokémon match 'zzzz'. Try a different name."
-✓ "Your team is empty. Search for a Pokémon to add your first one."  [Search]
-\`\`\`
+✓ "Your team is empty. Search for a Pokémon to add your first one." [Search]
+:::
 
 ### Mapping to HTTP Status Codes
 
@@ -1328,12 +1308,12 @@ Not all APIs work the same way. The three patterns you'll encounter most are RES
 
 REST (Representational State Transfer) is what you've been using all along. Each URL is a resource, and you use HTTP methods to act on it.
 
-\`\`\`
+:::endpoints
 GET    /pokemon/25       → fetch Pikachu
 POST   /pokemon          → create a new Pokémon
 PUT    /pokemon/25       → update Pikachu
 DELETE /pokemon/25       → delete Pikachu
-\`\`\`
+:::
 
 **The tradeoff:** REST responses return a fixed shape. If you only need the name and sprite, you still get the full object with 30 fields. On slow connections, that extra data adds up.
 
@@ -1369,10 +1349,10 @@ The server returns only those three fields — nothing more.
 
 REST and GraphQL are both "pull" patterns — your app asks the server for data. Webhooks flip that around. The server calls your app when something happens.
 
-\`\`\`
-Normal API:  Your app → "Any new orders?"  → Server: "Not yet"  (every 30s)
-Webhook:     Server → "Hey, new order just came in!" → Your app
-\`\`\`
+:::compare
+✗ Normal API (polling): Your app asks "Any new orders?" every 30 seconds — server says "Not yet" every time.
+✓ Webhook (push): Server calls your app the instant a new order arrives — no waiting, no wasted requests.
+:::
 
 **Real examples:**
 - Stripe sends a webhook when a payment succeeds
@@ -2696,22 +2676,15 @@ Your code calls the real PokeAPI URL. MSW intercepts it and returns your fake da
 
 ## The Designer's Mocking Workflow
 
-\`\`\`
-1. Agree on the API contract with your engineer
-   (what endpoints, what fields, what status codes)
-
-2. Build a mock that returns data in that agreed shape
-
-3. Design and test all four states:
-   → Loading: delay the mock response by 1-2 seconds
-   → Success: return the expected data
-   → Error: return a 500 status
-   → Empty: return an empty array []
-
-4. Sign off on the design using real (mocked) interactions
-
-5. When the real API ships: swap the mock, QA the real data
-\`\`\`
+1. **Agree on the API contract** with your engineer — what endpoints, what fields, what status codes
+2. **Build a mock** that returns data in that agreed shape
+3. **Design and test all four states:**
+   - Loading: delay the mock response by 1–2 seconds
+   - Success: return the expected data
+   - Error: return a 500 status
+   - Empty: return an empty array \`[]\`
+4. **Sign off on the design** using real (mocked) interactions
+5. **When the real API ships:** swap the mock, QA against real data
 
 ---
 
@@ -2886,25 +2859,6 @@ The app: a personal Pokémon collection where users browse by type, view stats, 
 
 Here's how data moves through the whole system:
 
-\`\`\`
-Browser (Your UI)
-      │
-      │  1. GET /type/fire  (PokeAPI)
-      ▼
-  PokeAPI ──────────────────────► JSON: list of Pokémon
-      │
-      │  2. GET /pokemon/charizard  (PokeAPI)
-      ▼
-  PokeAPI ──────────────────────► JSON: stats, sprite, moves
-      │
-      │  3. POST (Supabase)
-      ▼
-  Your Database ────────────────► Row saved with timestamp
-      │
-      │  4. SELECT (Supabase)
-      ▼
-  "My Collection" UI ───────────► Your saved Pokémon cards
-\`\`\`
 
 ### Connecting the Concepts
 

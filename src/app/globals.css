@@ -216,6 +216,145 @@
     color: var(--text-primary);
     font-weight: 600;
   }
+
+  /* ─── Callout blocks (:::tip, :::warning) ─── */
+  .prose-custom .callout {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid;
+    margin: 1.25rem 0;
+    align-items: flex-start;
+  }
+
+  .prose-custom .callout-tip {
+    background-color: var(--accent-light);
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  .prose-custom .callout-warning {
+    background-color: color-mix(in srgb, #f59e0b 8%, transparent);
+    border-color: color-mix(in srgb, #f59e0b 35%, transparent);
+  }
+
+  .prose-custom .callout-note {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border);
+  }
+
+  .prose-custom .callout-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .prose-custom .callout-tip .callout-icon   { color: var(--accent); }
+  .prose-custom .callout-warning .callout-icon { color: #f59e0b; }
+  .prose-custom .callout-note .callout-icon  { color: var(--text-tertiary); }
+
+  .prose-custom .callout-body {
+    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+
+  .prose-custom .callout-body p {
+    margin: 0 0 0.5rem;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+  }
+
+  .prose-custom .callout-body p:last-child { margin-bottom: 0; }
+
+  /* ─── Compare blocks (:::compare) ─── */
+  .prose-custom .callout-compare {
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin: 1.25rem 0;
+    background: var(--bg-secondary);
+  }
+
+  .prose-custom .compare-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .prose-custom .compare-row:last-child { border-bottom: none; }
+
+  .prose-custom .compare-bad  { background-color: color-mix(in srgb, #ef4444 6%, transparent); }
+  .prose-custom .compare-good { background-color: color-mix(in srgb, var(--success) 6%, transparent); }
+
+  .prose-custom .compare-marker {
+    font-weight: 700;
+    flex-shrink: 0;
+    width: 14px;
+  }
+
+  .prose-custom .compare-bad  .compare-marker { color: #ef4444; }
+  .prose-custom .compare-good .compare-marker { color: var(--success); }
+
+  /* ─── Endpoint list blocks (:::endpoints) ─── */
+  .prose-custom .endpoints-block {
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin: 1.25rem 0;
+    background: var(--bg-secondary);
+  }
+
+  .prose-custom .endpoint-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .prose-custom .endpoint-row:last-child { border-bottom: none; }
+
+  .prose-custom .endpoint-method {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 0.375rem;
+    flex-shrink: 0;
+    color: white;
+    background: transparent;
+  }
+
+  .prose-custom .endpoint-get    { background-color: #3b82f6; }
+  .prose-custom .endpoint-post   { background-color: #22c55e; }
+  .prose-custom .endpoint-put    { background-color: #f59e0b; }
+  .prose-custom .endpoint-patch  { background-color: #f59e0b; }
+  .prose-custom .endpoint-delete { background-color: #ef4444; }
+
+  .prose-custom .endpoint-path {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.8125rem;
+    color: var(--accent);
+    background: transparent !important;
+    padding: 0 !important;
+    flex-shrink: 0;
+  }
+
+  .prose-custom .endpoint-desc {
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    margin-left: auto;
+  }
 }
 
 /* ─── Evolution strip animations ─── */

@@ -65,13 +65,17 @@ export default function LessonContent({ content }: LessonContentProps) {
 function renderMarkdown(md: string): string {
   let html = md;
 
-  // Code blocks with language
+  // ── Custom blocks (:::type\n...\n:::) — parsed before code blocks ──
   html = html.replace(
-    /```(\w+)?\n([\s\S]*?)```/g,
+    /:::(tip|note|warning|compare|endpoints)\n([\s\S]*?):::/g,
+    (_, type, rawContent) => buildCustomBlock(type, rawContent.trim())
+  );
+
+  // Code blocks with language (only actual code — no bare ``` blocks)
+  html = html.replace(
+    /```(\w+)\n([\s\S]*?)```/g,
     (_, lang, code) =>
-      `<pre class="code-block"><div class="code-toolbar flex items-center justify-between px-4 py-3 border-b" style="border-color: var(--border)"><span class="text-xs font-medium tracking-wider uppercase" style="color: var(--text-tertiary)">${
-        lang || "code"
-      }</span></div><code>${escapeHtml(
+      `<pre class="code-block"><div class="code-toolbar flex items-center justify-between px-4 py-3 border-b" style="border-color: var(--border)"><span class="text-xs font-medium tracking-wider uppercase" style="color: var(--text-tertiary)">${lang}</span></div><code>${escapeHtml(
         code.trim()
       )}</code></pre>`
   );
@@ -156,6 +160,63 @@ function renderMarkdown(md: string): string {
   );
 
   return html;
+}
+
+// ── Icons for callout blocks ──────────────────────────────────────────────
+const CALLOUT_ICONS: Record<string, string> = {
+  tip: `<svg class="callout-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>`,
+  warning: `<svg class="callout-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>`,
+  note: `<svg class="callout-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+};
+
+function buildCustomBlock(type: string, content: string): string {
+  // ── :::compare ──
+  if (type === "compare") {
+    const rows = content
+      .split("\n")
+      .filter((l) => l.trim())
+      .map((line) => {
+        if (line.startsWith("✗")) {
+          return `<div class="compare-row compare-bad"><span class="compare-marker">✗</span><span>${escapeHtml(line.slice(1).trim())}</span></div>`;
+        }
+        if (line.startsWith("✓")) {
+          return `<div class="compare-row compare-good"><span class="compare-marker">✓</span><span>${escapeHtml(line.slice(1).trim())}</span></div>`;
+        }
+        return `<div class="compare-row" style="color:var(--text-tertiary);font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em">${escapeHtml(line)}</div>`;
+      })
+      .join("");
+    return `<div class="callout-compare">${rows}</div>`;
+  }
+
+  // ── :::endpoints ──
+  if (type === "endpoints") {
+    const rows = content
+      .split("\n")
+      .filter((l) => l.trim())
+      .map((line) => {
+        const [pathPart, desc] = line.split("→").map((s) => s.trim());
+        const methodMatch = pathPart.match(/^(GET|POST|PUT|PATCH|DELETE)\s+(.+)$/);
+        if (methodMatch) {
+          const [, method, path] = methodMatch;
+          return `<div class="endpoint-row"><span class="endpoint-method endpoint-${method.toLowerCase()}">${method}</span><code class="endpoint-path">${escapeHtml(path.trim())}</code>${desc ? `<span class="endpoint-desc">${escapeHtml(desc)}</span>` : ""}</div>`;
+        }
+        return `<div class="endpoint-row"><code class="endpoint-path">${escapeHtml(pathPart)}</code>${desc ? `<span class="endpoint-desc">${escapeHtml(desc)}</span>` : ""}</div>`;
+      })
+      .join("");
+    return `<div class="endpoints-block">${rows}</div>`;
+  }
+
+  // ── :::tip / :::note / :::warning ──
+  const icon = CALLOUT_ICONS[type] ?? CALLOUT_ICONS.note;
+  // Run basic inline formatting on callout body
+  const body = content
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .split("\n\n")
+    .map((para) => `<p>${para.replace(/\n/g, " ")}</p>`)
+    .join("");
+  return `<div class="callout callout-${type}">${icon}<div class="callout-body">${body}</div></div>`;
 }
 
 function escapeHtml(text: string): string {
