@@ -51,11 +51,11 @@ export const modules: Module[] = [
       {
         id: "1-0",
         title: "Welcome to API Trainer",
-        subtitle: "Why every designer on an engineering team needs this",
-        readTime: 3,
+        subtitle: "Your role is evolving. This is how you keep up.",
+        readTime: 4,
         narrative:
           "Every great trainer starts somewhere. Before you learn to catch Pokémon, you need to understand the world you're entering. This chapter is your map.",
-        concepts: ["Course Overview", "APIs in Practice", "Designer × Engineer"],
+        concepts: ["Course Overview", "Designer × Engineer", "Agentic Design"],
         content: `## You're on an engineering team. The backend is a black box.
 
 You design the product. Engineers build it. Between your Figma file and the shipped feature, something gets lost in translation every single time.
@@ -78,6 +78,20 @@ You don't need to become an engineer. A little fluency goes a long way:
 
 ---
 
+## The age of Agentic Design
+
+Something bigger is happening. AI agents don't just generate text. They call APIs, query databases, chain tools together, and take actions in the world. The products we design are increasingly built on top of these systems.
+
+This changes what it means to be a product designer.
+
+When a user asks an AI assistant to "book me a flight," an agent is making API calls, handling authentication, processing responses, and deciding what to do when things fail. Someone has to design the permissions screen, the loading state, the error message when the API is down, the confirmation flow when it succeeds. That someone is you.
+
+If you don't understand how an API works, you can't design the trust signals, the failure states, or the moments where the agent needs to pause and ask a human. You're designing interfaces for systems you can't see.
+
+The designers shaping what agentic products do and how they behave are the ones who understand the backend. Not at an engineering level. At a fluency level.
+
+---
+
 ## Five modules, fifteen chapters
 
 The course follows a narrative: you've joined a team building a Pokémon companion app and need to understand the backend to do your job.
@@ -88,7 +102,9 @@ The course follows a narrative: you've joined a team building a Pokémon compani
 - **Module 4:** OAuth, Spotify, combining APIs with your own database.
 - **Module 5:** A capstone project that pulls everything together.
 
-Each module has interactive exercises. You write real code in the browser, call real APIs, and see real results. Your trainer journey starts in the next chapter.`,
+Each module has interactive exercises. You write real code in the browser, call real APIs, and see real results.
+
+Your role is evolving. Time to become the very best.`,
         resources: [],
       },
       {
