@@ -22,26 +22,29 @@ export default function OAuthFlowDiagram() {
         {steps.map((step) => (
           <div
             key={step.num}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl"
+            className="flex items-center gap-2 px-3 py-3 rounded-xl min-w-0"
             style={{ backgroundColor: "var(--bg-primary)", border: "1px solid var(--border)" }}
           >
+            {/* Step number */}
             <span
-              className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+              className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0"
               style={{ backgroundColor: step.color, color: "white" }}
             >
               {step.num}
             </span>
-            <span className="text-xs font-medium flex-shrink-0" style={{ color: "var(--text-secondary)" }}>
+            {/* Actor labels hidden on smallest screens to save space */}
+            <span className="text-xs font-medium flex-shrink-0 hidden sm:inline" style={{ color: "var(--text-secondary)" }}>
               {step.from}
             </span>
-            <span className="text-xs" style={{ color: step.color }}>
+            <span className="text-xs flex-shrink-0" style={{ color: step.color }}>
               {step.dir === "right" ? "→" : "←"}
             </span>
-            <span className="text-xs font-medium flex-shrink-0" style={{ color: "var(--text-secondary)" }}>
+            <span className="text-xs font-medium flex-shrink-0 hidden sm:inline" style={{ color: "var(--text-secondary)" }}>
               {step.to}
             </span>
-            <span className="text-xs ml-1" style={{ color: "var(--text-tertiary)" }}>
-              — {step.label}
+            {/* Label truncates on mobile rather than overflowing */}
+            <span className="text-xs min-w-0 truncate" style={{ color: "var(--text-tertiary)" }}>
+              {step.label}
             </span>
           </div>
         ))}

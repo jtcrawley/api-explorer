@@ -109,13 +109,18 @@
     --warning-light: #451a03;
   }
 
+  html {
+    overflow-x: hidden;
+  }
+
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: clip;
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   ::selection {
@@ -132,16 +137,23 @@
   }
 
   .code-block {
-    @apply font-mono text-sm rounded-xl overflow-hidden;
+    @apply font-mono text-sm rounded-xl;
     background: var(--bg-code);
     border: 1px solid var(--border);
     color: #e2e8f0;
     line-height: 1.75;
+    /* overflow-x: auto on the pre so long code lines scroll within the block
+       rather than expanding the page. overflow: hidden is intentionally removed
+       — modern browsers still clip border-radius without it, and it was
+       preventing the child <code> from scrolling. */
+    overflow-x: auto;
+    max-width: 100%;
   }
 
   .code-block code {
     padding: 1.25rem 1.25rem !important;
     display: block;
+    min-width: max-content; /* keeps code on one line so scroll is meaningful */
   }
 
   .prose-custom h1 {

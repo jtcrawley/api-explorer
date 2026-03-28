@@ -112,7 +112,8 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
           <button
             onClick={runCode}
             disabled={isRunning}
-            className="text-xs px-3 py-1 rounded-lg bg-accent-600 text-white hover:bg-accent-700 disabled:opacity-50 transition-colors font-medium"
+            className="text-xs px-3 py-1 rounded-lg text-white disabled:opacity-50 hover:opacity-90 transition-opacity font-medium"
+            style={{ backgroundColor: "var(--accent)" }}
           >
             {isRunning ? "Running..." : "Run"}
           </button>
@@ -216,43 +217,6 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
                 </div>
               ))}
 
-              {postmanUrl && (
-                <div
-                  className="mt-4 p-3 rounded-xl flex items-center gap-3"
-                  style={{ backgroundColor: "var(--bg-tertiary)", borderLeft: "3px solid #FF6C37" }}
-                >
-                  <span className="text-sm flex-shrink-0" style={{ color: "#FF6C37" }}>🔶</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold mb-1" style={{ color: "#FF6C37" }}>Try in Postman</p>
-                    <p className="text-xs font-mono truncate" style={{ color: "var(--text-secondary)" }}>
-                      <span className="font-bold" style={{ color: "var(--text-primary)" }}>{httpMethod}</span>{" "}
-                      {postmanUrl}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <button
-                      onClick={copyUrlToClipboard}
-                      className="text-xs px-2 py-1 rounded-lg transition-colors"
-                      style={{
-                        backgroundColor: urlCopied ? "var(--success-light)" : "var(--bg-secondary)",
-                        color: urlCopied ? "var(--success)" : "var(--text-tertiary)",
-                      }}
-                    >
-                      {urlCopied ? "Copied!" : "Copy URL"}
-                    </button>
-                    <a
-                      href="https://web.postman.co/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs px-2 py-1 rounded-lg transition-colors"
-                      style={{ backgroundColor: "#FF6C37", color: "white" }}
-                    >
-                      Open ↗
-                    </a>
-                  </div>
-                </div>
-              )}
-
               {exercise.hint && (
                 <div className="mt-4">
                   <button
@@ -273,6 +237,43 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
                       {exercise.hint}
                     </p>
                   )}
+                </div>
+              )}
+
+              {postmanUrl && (
+                <div
+                  className="mt-4 p-3 rounded-xl"
+                  style={{ backgroundColor: "var(--bg-tertiary)", borderLeft: "3px solid #FF6C37" }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm flex-shrink-0" style={{ color: "#FF6C37" }}>🔶</span>
+                    <p className="text-xs font-semibold" style={{ color: "#FF6C37" }}>Try in Postman</p>
+                  </div>
+                  <p className="text-xs font-mono truncate mb-2" style={{ color: "var(--text-secondary)" }}>
+                    <span className="font-bold" style={{ color: "var(--text-primary)" }}>{httpMethod}</span>{" "}
+                    {postmanUrl}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={copyUrlToClipboard}
+                      className="text-xs px-2 py-1 rounded-lg transition-colors"
+                      style={{
+                        backgroundColor: urlCopied ? "var(--success-light)" : "var(--bg-secondary)",
+                        color: urlCopied ? "var(--success)" : "var(--text-tertiary)",
+                      }}
+                    >
+                      {urlCopied ? "Copied!" : "Copy URL"}
+                    </button>
+                    <a
+                      href="https://web.postman.co/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs px-2 py-1 rounded-lg transition-colors"
+                      style={{ backgroundColor: "#FF6C37", color: "white" }}
+                    >
+                      Open ↗
+                    </a>
+                  </div>
                 </div>
               )}
             </div>

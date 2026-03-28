@@ -27,7 +27,10 @@ export default function RequestResponseDiagram() {
         The Request–Response Cycle
       </p>
 
-      <div className="flex items-center justify-center gap-0">
+      {/* overflow-x-auto so the diagram scrolls on narrow screens
+          instead of breaking the page layout */}
+      <div style={{ overflowX: "auto", margin: "0 -8px", padding: "0 8px" }}>
+      <div className="flex items-center justify-center gap-0" style={{ minWidth: 480 }}>
         {/* Client */}
         <Node icon="💻" label="Client" sub="Your browser" />
 
@@ -52,6 +55,7 @@ export default function RequestResponseDiagram() {
 
         {/* Server */}
         <Node icon="🗄️" label="Server" sub="The kitchen" />
+      </div>
       </div>
     </div>
   );
