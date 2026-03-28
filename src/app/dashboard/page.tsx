@@ -81,11 +81,11 @@ function ExpandableModuleCard({ module, moduleIndex, completedIds }: ExpandableC
           : "none",
       }}
     >
-      {/* Hex texture */}
+      {/* Dot grid texture */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none"
         style={{
-          zIndex: -1,
+          zIndex: 0,
           opacity: isHovered ? 1 : 0,
           transition: "opacity 0.3s ease",
           maskImage: `radial-gradient(ellipse at ${mouse.x * 100}% ${mouse.y * 100}%, rgba(0,0,0,0.13) 0%, rgba(0,0,0,0.03) 35%, transparent 65%)`,
