@@ -161,32 +161,38 @@ export default function HomePage() {
                   setPokemon(starter.id);
                   setHasExplicitlyChosen(true);
                 }}
-                className="relative flex flex-col items-center gap-3 px-4 py-6 rounded-2xl border-2 transition-all duration-200 text-center group"
+                className="relative flex flex-col items-center gap-3 px-4 py-6 rounded-2xl border-2 transition-colors duration-200 text-center"
                 style={{
                   borderColor: isActive ? accentColor : "var(--border)",
                   backgroundColor: isActive ? "var(--accent-light)" : "var(--bg-secondary)",
                 }}
               >
-                {isActive && (
-                  <span
-                    className="absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
-                    style={{ backgroundColor: accentColor }}
-                  >
-                    ✓
-                  </span>
-                )}
+                {/* Checkmark — always reserved space so layout doesn't shift */}
+                <span
+                  className="absolute top-3 right-3 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white transition-opacity duration-200"
+                  style={{
+                    backgroundColor: accentColor,
+                    opacity: isActive ? 1 : 0,
+                    pointerEvents: "none",
+                  }}
+                >
+                  ✓
+                </span>
 
-                <img
-                  src={option.sprite}
-                  alt={option.label}
-                  width={80}
-                  height={80}
-                  style={{ imageRendering: "auto", objectFit: "contain" }}
-                />
+                {/* Fixed sprite box — same size for all three */}
+                <div className="flex items-center justify-center" style={{ width: 80, height: 80 }}>
+                  <img
+                    src={option.sprite}
+                    alt={option.label}
+                    width={80}
+                    height={80}
+                    style={{ imageRendering: "auto", objectFit: "contain", maxWidth: 80, maxHeight: 80 }}
+                  />
+                </div>
 
-                <div>
+                <div className="w-full">
                   <p
-                    className="text-base font-bold mb-1"
+                    className="text-base font-bold mb-1 transition-colors duration-200"
                     style={{ color: isActive ? accentColor : "var(--text-primary)" }}
                   >
                     {option.label}
@@ -200,13 +206,13 @@ export default function HomePage() {
                   </span>
 
                   <p
-                    className="text-xs font-medium"
+                    className="text-xs font-medium mb-1 transition-colors duration-200"
                     style={{ color: isActive ? accentColor : "var(--text-secondary)" }}
                   >
                     {starter.tagline}
                   </p>
                   <p
-                    className="text-xs mt-1 leading-relaxed"
+                    className="text-xs leading-relaxed"
                     style={{ color: "var(--text-secondary)" }}
                   >
                     {starter.description}
@@ -222,100 +228,87 @@ export default function HomePage() {
           className="px-6 py-6 rounded-2xl border"
           style={{ backgroundColor: "var(--bg-secondary)", borderColor: "var(--border)" }}
         >
-          <div className="flex items-end justify-center gap-0">
+          {/* Fixed-height row — nothing moves when Pokémon changes */}
+          <div className="flex items-center justify-center gap-0">
 
-            {/* Stage 0 — base form, fully visible */}
-            <div className="flex flex-col items-center gap-2">
-              <img
-                src={spriteUrl(evoLine[0])}
-                alt={evoNames[0]}
-                width={52}
-                height={52}
-                style={{ imageRendering: "auto", objectFit: "contain" }}
-              />
-              <span className="text-xs font-semibold" style={{ color: "var(--accent)" }}>
-                {evoNames[0]}
-              </span>
-            </div>
-
-            {/* Segment 1: animated XP bar + milestone label */}
-            <div className="flex flex-col items-center gap-1.5 px-3 pb-6 w-24">
-              <span
-                className="text-[10px] font-medium text-center"
-                style={{ color: "var(--text-secondary)" }}
-              >
-                Level up
-              </span>
-              <div
-                className="w-full h-1.5 rounded-full overflow-hidden"
-                style={{ backgroundColor: "var(--bg-tertiary)" }}
-              >
-                <div
-                  className="h-full rounded-full evo-xp-bar"
-                  style={{ backgroundColor: "var(--accent)" }}
+            {/* Stage 0 — base form */}
+            <div className="flex flex-col items-center gap-2" style={{ width: 80 }}>
+              {/* Fixed sprite box */}
+              <div className="flex items-center justify-center" style={{ width: 80, height: 72 }}>
+                <img
+                  src={spriteUrl(evoLine[0])}
+                  alt={evoNames[0]}
+                  width={64}
+                  height={64}
+                  style={{ imageRendering: "auto", objectFit: "contain", maxWidth: 64, maxHeight: 64 }}
                 />
               </div>
-              <svg className="w-3.5 h-3.5 mt-0.5" style={{ color: "var(--text-secondary)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {/* Fixed-height label */}
+              <div style={{ height: 18 }} className="flex items-center justify-center">
+                <span className="text-xs font-semibold text-center" style={{ color: "var(--accent)" }}>
+                  {evoNames[0]}
+                </span>
+              </div>
+            </div>
+
+            {/* Segment 1 — XP bar connector */}
+            <div className="flex flex-col items-center gap-1.5 px-3" style={{ width: 88, marginBottom: 18 }}>
+              <span className="text-[10px] font-medium text-center" style={{ color: "var(--text-secondary)" }}>
+                Level up
+              </span>
+              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--bg-tertiary)" }}>
+                <div className="h-full rounded-full evo-xp-bar" style={{ backgroundColor: "var(--accent)" }} />
+              </div>
+              <svg className="w-3.5 h-3.5" style={{ color: "var(--text-secondary)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </div>
 
-            {/* Stage 1 — silhouette with glow animation */}
-            <div className="flex flex-col items-center gap-2">
-              <img
-                src={spriteUrl(evoLine[1])}
-                alt="???"
-                width={60}
-                height={60}
-                className="evo-silhouette-1"
-                style={{ imageRendering: "auto", objectFit: "contain" }}
-              />
-              <span
-                className="text-xs font-medium"
-                style={{ color: "var(--text-secondary)" }}
-              >
-                ???
-              </span>
-            </div>
-
-            {/* Segment 2: animated XP bar + milestone label (delayed) */}
-            <div className="flex flex-col items-center gap-1.5 px-3 pb-6 w-24">
-              <span
-                className="text-[10px] font-medium text-center"
-                style={{ color: "var(--text-secondary)" }}
-              >
-                Level up
-              </span>
-              <div
-                className="w-full h-1.5 rounded-full overflow-hidden"
-                style={{ backgroundColor: "var(--bg-tertiary)" }}
-              >
-                <div
-                  className="h-full rounded-full evo-xp-bar-delayed"
-                  style={{ backgroundColor: "var(--accent)" }}
+            {/* Stage 1 — silhouette */}
+            <div className="flex flex-col items-center gap-2" style={{ width: 80 }}>
+              <div className="flex items-center justify-center" style={{ width: 80, height: 72 }}>
+                <img
+                  src={spriteUrl(evoLine[1])}
+                  alt="???"
+                  width={64}
+                  height={64}
+                  className="evo-silhouette-1"
+                  style={{ imageRendering: "auto", objectFit: "contain", maxWidth: 64, maxHeight: 64 }}
                 />
               </div>
-              <svg className="w-3.5 h-3.5 mt-0.5" style={{ color: "var(--text-secondary)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div style={{ height: 18 }} className="flex items-center justify-center">
+                <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>???</span>
+              </div>
+            </div>
+
+            {/* Segment 2 — XP bar connector (delayed) */}
+            <div className="flex flex-col items-center gap-1.5 px-3" style={{ width: 88, marginBottom: 18 }}>
+              <span className="text-[10px] font-medium text-center" style={{ color: "var(--text-secondary)" }}>
+                Level up
+              </span>
+              <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: "var(--bg-tertiary)" }}>
+                <div className="h-full rounded-full evo-xp-bar-delayed" style={{ backgroundColor: "var(--accent)" }} />
+              </div>
+              <svg className="w-3.5 h-3.5" style={{ color: "var(--text-secondary)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </div>
 
-            {/* Stage 2 — silhouette with delayed glow animation */}
-            <div className="flex flex-col items-center gap-2">
-              <img
-                src={spriteUrl(evoLine[2])}
-                alt="???"
-                width={68}
-                height={68}
-                className="evo-silhouette-2"
-                style={{ imageRendering: "auto", objectFit: "contain" }}
-              />
-              <span
-                className="text-xs font-medium"
-                style={{ color: "var(--text-secondary)" }}
-              >
-                ???
-              </span>
+            {/* Stage 2 — silhouette */}
+            <div className="flex flex-col items-center gap-2" style={{ width: 80 }}>
+              <div className="flex items-center justify-center" style={{ width: 80, height: 72 }}>
+                <img
+                  src={spriteUrl(evoLine[2])}
+                  alt="???"
+                  width={64}
+                  height={64}
+                  className="evo-silhouette-2"
+                  style={{ imageRendering: "auto", objectFit: "contain", maxWidth: 64, maxHeight: 64 }}
+                />
+              </div>
+              <div style={{ height: 18 }} className="flex items-center justify-center">
+                <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>???</span>
+              </div>
             </div>
           </div>
 
