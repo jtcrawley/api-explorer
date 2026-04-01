@@ -66,7 +66,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       primary: "relative overflow-hidden",
       secondary: "border transition-colors duration-200 text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]",
       ghost: "transition-colors duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]",
-      danger: "bg-red-600 text-white hover:bg-red-700 transition-colors duration-200 focus:ring-red-500",
+      danger: "text-white transition-colors duration-200 focus:ring-[var(--error)]",
     };
 
     const sizes = {
@@ -75,25 +75,34 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       lg: "text-base px-6 py-3 gap-2",
     };
 
+    const dangerStyle: React.CSSProperties = variant === "danger"
+      ? { backgroundColor: "var(--error)" }
+      : {};
+
+    const isDisabled = !!props.disabled;
+    const canHover = isHovered && !isDisabled;
+
     const primaryStyle: React.CSSProperties = isPrimary
       ? {
           border: "1.5px solid var(--accent)",
-          color: isHovered ? "#fff" : "var(--accent)",
-          backgroundColor: isHovered
+          color: canHover ? "#fff" : "var(--accent)",
+          backgroundColor: canHover
             ? "var(--accent)"
             : "transparent",
-          boxShadow: isHovered
+          boxShadow: canHover
             ? "0 0 28px -6px color-mix(in srgb, var(--accent) 55%, transparent)"
             : "none",
-          transform: isHovered ? "scale(1.02)" : "scale(1)",
+          transform: canHover ? "scale(1.02) translateZ(0)" : "scale(1) translateZ(0)",
           transition:
             "color 0.2s ease, background-color 0.2s ease, box-shadow 0.25s ease, transform 0.2s cubic-bezier(0.34, 1.4, 0.64, 1)",
+          ...(isDisabled ? { filter: "saturate(0.4)" } : {}),
         }
       : {};
 
     const inlineStyle: React.CSSProperties = {
       ...(variant === "secondary" ? { borderColor: "var(--border)" } : {}),
       ...primaryStyle,
+      ...dangerStyle,
       ...style,
     };
 

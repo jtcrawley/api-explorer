@@ -26,6 +26,24 @@
     --error-light:   #fef2f2;
     --warning:       #d97706;
     --warning-light: #fefce8;
+
+    /* ── Radius tokens ── */
+    --radius-sm:   0.375rem;
+    --radius-md:   0.75rem;
+    --radius-lg:   1rem;
+    --radius-xl:   1.25rem;
+    --radius-2xl:  1.5rem;
+    --radius-full: 9999px;
+
+    /* ── HTTP method brand colours ── */
+    --http-get:    #3b82f6;
+    --http-post:   #22c55e;
+    --http-put:    #f59e0b;
+    --http-patch:  #f59e0b;
+    --http-delete: #ef4444;
+
+    /* ── External brand ── */
+    --postman-brand: #FF6C37;
   }
 
   /* ── Bulbasaur Light (green) — 5.1:1 on white ── */
@@ -212,6 +230,45 @@
     word-break: break-word;
   }
 
+  .prose-custom hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  .prose-custom .checklist {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .prose-custom .checklist-item {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .prose-custom .checklist-item label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    cursor: pointer;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .prose-custom .checklist-checkbox {
+    margin-top: 3px;
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
   .prose-custom strong {
     color: var(--text-primary);
     font-weight: 600;
@@ -269,6 +326,59 @@
   }
 
   .prose-custom .callout-body p:last-child { margin-bottom: 0; }
+
+  /* ─── Standalone Callout (used outside prose, e.g. CodePlayground) ─── */
+  .callout {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid;
+    margin: 1.25rem 0;
+    align-items: flex-start;
+  }
+
+  .callout-tip {
+    background-color: var(--accent-light);
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  .callout-warning {
+    background-color: color-mix(in srgb, #f59e0b 8%, transparent);
+    border-color: color-mix(in srgb, #f59e0b 35%, transparent);
+  }
+
+  .callout-note {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border);
+  }
+
+  .callout-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .callout-tip .callout-icon    { color: var(--accent); }
+  .callout-warning .callout-icon { color: #f59e0b; }
+  .callout-note .callout-icon   { color: var(--text-tertiary); }
+
+  .callout-body {
+    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+
+  .callout-body p {
+    margin: 0 0 0.5rem;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+  }
+
+  .callout-body p:last-child { margin-bottom: 0; }
 
   /* ─── Compare blocks (:::compare) ─── */
   .prose-custom .callout-compare {
@@ -335,11 +445,11 @@
     background: transparent;
   }
 
-  .prose-custom .endpoint-get    { background-color: #3b82f6; }
-  .prose-custom .endpoint-post   { background-color: #22c55e; }
-  .prose-custom .endpoint-put    { background-color: #f59e0b; }
-  .prose-custom .endpoint-patch  { background-color: #f59e0b; }
-  .prose-custom .endpoint-delete { background-color: #ef4444; }
+  .prose-custom .endpoint-get    { background-color: var(--http-get); }
+  .prose-custom .endpoint-post   { background-color: var(--http-post); }
+  .prose-custom .endpoint-put    { background-color: var(--http-put); }
+  .prose-custom .endpoint-patch  { background-color: var(--http-patch); }
+  .prose-custom .endpoint-delete { background-color: var(--http-delete); }
 
   .prose-custom .endpoint-path {
     font-family: var(--font-mono, ui-monospace, monospace);
@@ -505,6 +615,17 @@
   animation: evoFadeIn 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
+/* ─── Checkmark fade-in ─── */
+
+@keyframes checkmarkFadeIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.checkmark-enter {
+  animation: checkmarkFadeIn 0.3s ease-out;
+}
+
 /* ─── Modal animations ─── */
 
 @keyframes overlayIn {
@@ -551,7 +672,31 @@
   }
 }
 
+/* Table scroll fade indicator */
+.table-scroll-wrapper {
+  position: relative;
+}
+.table-scroll-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 32px;
+  background: linear-gradient(to right, transparent, var(--bg-primary));
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
 /* Scrollbar styling */
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) transparent;
+}
+
+/* Webkit scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -570,9 +715,23 @@
   background: var(--text-tertiary);
 }
 
-/* Smooth transitions for theme toggle */
-* {
+/* Smooth transitions for theme toggle — scoped to interactive/themed elements */
+a, button, input, select, textarea,
+[role="button"], [role="tab"],
+nav a, nav button,
+aside, main, header, footer, section,
+.glass-panel {
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+}
+
+/* Reduced motion: respect user preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Monaco editor overrides */

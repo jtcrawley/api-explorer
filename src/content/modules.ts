@@ -18,6 +18,23 @@ export interface CodeExercise {
   solution: string;
   instructions: string[];
   hint: string;
+  playgroundNote?: string;
+  errorHint?: string;
+  readOnly?: boolean;
+}
+
+export interface PostmanStep {
+  instruction: string;
+  detail?: string;
+}
+
+export interface PostmanExercise {
+  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  url: string;
+  steps: PostmanStep[];
+  expectedOutput?: string;
+  body?: string;
+  headers?: { key: string; value: string }[];
 }
 
 export interface Chapter {
@@ -29,6 +46,7 @@ export interface Chapter {
   concepts: string[];
   content: string;
   exercise?: CodeExercise;
+  postmanExercise?: PostmanExercise;
   quiz?: QuizQuestion[];
   resources: Resource[];
 }
@@ -45,7 +63,7 @@ export const modules: Module[] = [
   {
     id: "1",
     title: "What Even Is an API?",
-    description: "Discover how apps talk to servers. No code experience needed.",
+    description: "Understand how apps talk to servers and explore real APIs with Postman — no code required.",
     icon: "Zap",
     chapters: [
       {
@@ -56,7 +74,15 @@ export const modules: Module[] = [
         narrative:
           "Every great trainer starts somewhere. Before you learn to catch Pokémon, you need to understand the world you're entering. This chapter is your map.",
         concepts: ["Course Overview", "Designer × Engineer", "Agentic Design"],
-        content: ``,
+        content: `This isn't a coding course.
+
+By the end you'll be able to read a ticket, spot what's technically impossible in your own designs, and have informed conversations with your engineering team. No production code required.
+
+Every chapter is built around one question: **how does understanding this change how I design?** That's the only lens that matters here.
+
+:::tip
+You're not here to become an engineer. You're here to become the designer that engineers actually want in the room.
+:::`,
         resources: [],
       },
       {
@@ -65,7 +91,7 @@ export const modules: Module[] = [
         subtitle: "Understanding APIs through everyday life",
         readTime: 4,
         narrative:
-          "Welcome to your first day on the team! Before we dive into building, let's understand the invisible conversations happening between every app and server. Think of it like ordering at a restaurant...",
+          "Your team is building a Pokémon companion app, and your PM wants you to understand how it talks to servers. Before we dive in, let's make sense of the invisible conversations happening between every app and server. Think of it like ordering at a restaurant...",
         concepts: ["API", "Client", "Server", "Request", "Response"],
         content: `## What is an API?
 
@@ -73,13 +99,13 @@ export const modules: Module[] = [
 
 An API is a **waiter** at a restaurant.
 
-- **You** (the client) sit at a table and look at the menu
+- **You** (the customer) sit at a table and look at the menu
 - **The kitchen** (the server) has all the food, but you can't walk in and grab it yourself
 - **The waiter** (the API) takes your order to the kitchen and brings back your food
 
 In the digital world:
 - **Your browser or app** is the client
-- **A remote computer** is the server (it has data, like Pokémon info or your playlists)
+- **A remote computer** is the server (it has data, like Pokémon stats or a trainer's battle history)
 - **The API** is the set of rules for how to ask for that data and what you'll get back
 
 ### The Request-Response Cycle
@@ -99,48 +125,22 @@ As a product designer, APIs define **what's possible** in your designs:
 - How fast does it load? (The API response time)
 - What can users do? (The API endpoints available)
 
-Understanding APIs means you can design **with** the technology, not against it.`,
-        exercise: {
-          starterCode: `// Let's make your very first API call!
-// The PokeAPI is a free API with data about every Pokémon.
+Understanding APIs means you can design **with** the technology, not against it.
 
-// This URL is an "endpoint" — a specific address where data lives
-const url = "https://pokeapi.co/api/v2/pokemon/pikachu";
-
-// fetch() is how browsers ask for data from APIs
-const response = await fetch(url);
-
-// The response comes as JSON (a data format — we'll learn more soon)
-const data = await response.json();
-
-// Let's see what we got!
-console.log("Pokémon name:", data.name);
-console.log("Pokémon types:", data.types.map(t => t.type.name));
-console.log("Sprite URL:", data.sprites.front_default);`,
-          solution: `const url = "https://pokeapi.co/api/v2/pokemon/pikachu";
-const response = await fetch(url);
-const data = await response.json();
-console.log("Pokémon name:", data.name);
-console.log("Pokémon types:", data.types.map(t => t.type.name));
-console.log("Sprite URL:", data.sprites.front_default);`,
-          instructions: [
-            "Click the Run button to execute your first API call",
-            "Look at the output. You just fetched real data from a server!",
-            "Try changing 'pikachu' to another Pokémon name like 'charizard' or 'eevee'",
-          ],
-          hint: "Pokémon names must be lowercase. Try 'bulbasaur', 'charmander', or 'squirtle'.",
-        },
+:::tip
+Next time you're in a design review, ask: does this design account for what the API actually returns — or is it assuming data that may not exist?
+:::`,
         quiz: [
           {
             id: "1-1-q1",
             question: "Your team wants to add a Pokémon search to the app. The designs are ready and the data exists on PokeAPI's servers. What problem does the API solve?",
             options: [
               "It stores Pikachu's data permanently inside the app",
-              "It lets your app request specific data from the server and get it back",
               "It converts JSON into something the browser can display visually",
               "It handles the visual design of the Pokémon card",
+              "It lets your app request specific data from the server and get it back",
             ],
-            correctIndex: 1,
+            correctIndex: 3,
             explanation:
               "The API is the bridge. Your app can't access the server's database directly — the API receives your request, fetches the right data, and sends it back in a usable format.",
           },
@@ -148,22 +148,22 @@ console.log("Sprite URL:", data.sprites.front_default);`,
             id: "1-1-q2",
             question: "A user taps 'Search' and 200ms later a Pokémon card appears. What two-part exchange made that happen?",
             options: [
-              "Upload and download",
-              "Compile and execute",
               "Request and response",
+              "Compile and execute",
+              "Upload and download",
               "Push and pull",
             ],
-            correctIndex: 2,
+            correctIndex: 0,
             explanation:
               "Every API interaction is a request-response cycle. The app sent a request ('give me Pikachu'), the server processed it and sent a response ('here's Pikachu's data').",
           },
         ],
         resources: [
           {
-            title: "APIs for Beginners: Full Course",
-            url: "https://www.youtube.com/watch?v=GZvSYJDk-us",
+            title: "What is an API? (Postman)",
+            url: "https://www.youtube.com/watch?v=-0MmWEYR2a8",
             type: "video",
-            description: "A free 2-hour YouTube course explaining APIs from scratch.",
+            description: "Postman's own short explainer — what an API is and how it works, in plain language.",
           },
           {
             title: "What is an API? (MDN Web Docs)",
@@ -175,11 +175,154 @@ console.log("Sprite URL:", data.sprites.front_default);`,
       },
       {
         id: "1-2",
-        title: "Your First API Call",
-        subtitle: "Fetching real Pokémon data with code",
+        title: "The Designer's API Toolkit",
+        subtitle: "Exploring APIs visually with Postman",
         readTime: 6,
         narrative:
-          "Now that you understand the concept, let's actually do it. We're going to call the PokeAPI and get real data. Don't worry if the code looks unfamiliar. I'll walk you through every line.",
+          "Your PM just asked you to design a new Pokémon detail page and wants to know exactly what data is available. Instead of pinging the dev team, you open Postman, type in the API URL, and in 30 seconds you have the full picture. This chapter is your hands-on introduction to Postman — the tool you'll use throughout this entire course.",
+        concepts: ["Postman", "API clients", "Collections", "Environments", "Variables"],
+        content: `## What is Postman?
+
+Postman is the most popular tool for exploring and testing APIs. Think of it as a browser built specifically for APIs. Instead of navigating to a URL and seeing a webpage, you send requests and see raw data come back.
+
+Every developer you work with uses it. Learning Postman means you can explore APIs yourself, without writing a single line of code.
+
+## Why Designers Should Know Postman
+
+At an API-first company, Postman changes what you can do as a designer:
+
+- **Explore independently:** see exactly what data exists before designing a feature
+- **Speak confidently:** know what's technically possible without asking engineering
+- **Design with real data:** use actual API responses to inform your layouts and copy
+- **Share intent:** export a collection that shows devs exactly what API calls your feature needs
+
+## Getting Started
+
+1. Go to **postman.com** and create a free account
+2. Open the web app at **web.postman.co**
+3. Click **New → HTTP Request**
+
+That's it. No install required.
+
+## Making Your First Request
+
+Let's fetch Pikachu — the same URL you'll use throughout this course.
+
+1. Make sure the method dropdown says **GET**
+2. Paste this URL into the address bar: \`https://pokeapi.co/api/v2/pokemon/pikachu\`
+3. Hit **Send**
+
+You'll see Pikachu's full JSON response: 200+ fields including stats, sprites, abilities, moves, and types. This is the real data your designs would be working with.
+
+## Reading the Response
+
+Postman breaks the response into three tabs:
+
+- **Body:** the actual JSON data — this is what your app code reads
+- **Headers:** metadata about the response (content-type, cache settings, server)
+- **Status:** the status code (200 = success, 404 = not found, 500 = server error)
+
+As a designer, Body is your goldmine. You can see exactly what fields exist and what format they're in before designing the UI.
+
+## Building a Collection
+
+A **Collection** is a folder for saving API requests. Create one called **"Pokémon Companion App"** and save your requests there.
+
+Collections are how teams share API knowledge. When you export yours, devs know exactly what endpoints your feature needs, with no guesswork.
+
+**To save a request:** After sending it, click the **Save** button and choose your collection.
+
+## Using Variables
+
+Instead of hardcoding \`pikachu\` in every URL, Postman lets you use variables: \`https://pokeapi.co/api/v2/pokemon/{{pokemonName}}\`
+
+Set \`pokemonName = charizard\` in your environment and all your requests update at once. This mirrors how real apps work: the Pokémon name comes from user input, not the code.
+
+## The Designer Workflow
+
+Here's how Postman fits into your process:
+
+1. **Discover:** explore the API to understand what data exists
+2. **Design:** make UI decisions based on real fields and real values
+3. **Specify:** export your collection so devs know exactly what to build
+4. **Validate:** when devs ship, test the endpoints yourself without asking for a build
+
+## Download the Course Collection
+
+We've pre-built a Postman collection with every API request from this course, organised by module. Import it once and every endpoint is ready to explore.
+
+:::tip
+Before your next feature kickoff, open Postman, hit the relevant endpoint, and look at the real response. You'll catch design assumptions in ten minutes that would otherwise surface two weeks into development.
+:::`,
+        postmanExercise: {
+          method: "GET",
+          url: "https://pokeapi.co/api/v2/pokemon/pikachu",
+          steps: [
+            { instruction: "Create a new Collection called \"Pokémon Companion App\"", detail: "In the left sidebar, click Collections → \"+\" → name it." },
+            { instruction: "Send a GET request to https://pokeapi.co/api/v2/pokemon/pikachu" },
+            { instruction: "Save the request to your collection", detail: "Click Save (Ctrl/Cmd+S), choose your collection, name it \"Get Pikachu\"." },
+            { instruction: "Set up an environment variable", detail: "Click Environments (left sidebar) → Create → add a variable called \"baseUrl\" with value \"https://pokeapi.co/api/v2\"." },
+            { instruction: "Update your request URL to use the variable: {{baseUrl}}/pokemon/pikachu", detail: "Select your environment from the dropdown top-right, then replace the hardcoded URL." },
+            { instruction: "Send again — same result, but now the base URL is reusable across all requests" },
+            { instruction: "Add two more requests to your collection", detail: "Try GET {{baseUrl}}/type/fire and GET {{baseUrl}}/ability/static. Save both." },
+          ],
+          expectedOutput: "A collection with 3 saved requests, all using the {{baseUrl}} variable. Change the variable once and all requests update.",
+        },
+        quiz: [
+          {
+            id: "1-2-q1",
+            question: "A new designer joins the team and needs the same PokeAPI setup you've been using — 12 saved requests with custom headers and variables. What's the fastest way to share it?",
+            options: [
+              "Send them the base URL and let them rebuild the requests",
+              "Screen-share your Postman window while they watch",
+              "Export and share your Postman Collection so they have everything ready to use",
+              "Write all the URLs and headers in a Slack message",
+            ],
+            correctIndex: 2,
+            explanation:
+              "Collections bundle all your saved requests, headers, and variables into one exportable file. Your teammate imports it once and has your entire setup instantly — no rebuilding required.",
+          },
+          {
+            id: "1-2-q2",
+            question: "What does {{pokemonName}} mean in a Postman URL?",
+            options: [
+              "An environment variable you can change in one place to update all requests",
+              "A required field that Postman fills in automatically",
+              "A broken URL that needs fixing",
+              "A comment telling you what to type",
+            ],
+            correctIndex: 0,
+            explanation: "Double curly braces are Postman variables. Set pokemonName = 'charizard' in your environment and every request using {{pokemonName}} updates at once.",
+          },
+        ],
+        resources: [
+          {
+            title: "Postman Beginner's Course",
+            url: "https://www.youtube.com/watch?v=VywxIQ2ZXw4",
+            type: "video",
+            description: "A full walkthrough of Postman from scratch, and a great companion to this chapter.",
+          },
+          {
+            title: "Download the Pokémon Companion Collection",
+            url: "/downloads/pokemon-companion.postman_collection.json",
+            type: "interactive",
+            description: "Import this into Postman to get every API request from this course, pre-organised by module.",
+          },
+          {
+            title: "Postman Learning Center",
+            url: "https://learning.postman.com/docs/getting-started/overview/",
+            type: "docs",
+            description: "Official Postman docs, covering everything from basics to advanced testing.",
+          },
+        ],
+      },
+      {
+        id: "1-3",
+        title: "Your First API Call",
+        subtitle: "Seeing real Pokémon data come back from a server",
+        readTime: 6,
+        narrative:
+          "Now that you understand the concept, let's actually do it. We're going to call the PokeAPI and get real data. Don't worry if the code looks unfamiliar. You've already explored this data in Postman — now let's see what the code behind it looks like.",
         concepts: ["fetch()", "JSON", "Endpoint", "URL", "async/await"],
         content: `## Making Your First API Call
 
@@ -220,47 +363,34 @@ The server sends back data in **JSON** format. JSON looks like this:
 
 JSON is just a way to structure data. Think of it like a really organized spreadsheet in text form.
 
+:::note
+You'll see \`const\` and \`await\` throughout the examples — these are JavaScript keywords, not API concepts. Think of \`const\` as "store this value" and \`await\` as "wait for the result before moving on." You don't need to memorise them; just know they're scaffolding around the part that actually matters: the URL and the data.
+:::
+
 ### Pro Tip: Open Your DevTools!
 
-Press **Cmd + Option + I** (Mac) to open your browser's Developer Tools. Click the **Network** tab. Now when you run API calls, you'll see the actual requests flying back and forth. This is one of the most powerful tools for understanding how apps work.`,
-        exercise: {
-          starterCode: `// TODO: Fetch data for 3 different Pokémon and display their info
-// Hint: Use a for...of loop with an array of names
+Press **Cmd + Option + I** (Mac) to open your browser's Developer Tools. Click the **Network** tab. Now when you run API calls, you'll see the actual requests flying back and forth. This is one of the most powerful tools for understanding how apps work.
 
-const pokemonNames = ["bulbasaur", "charmander", "squirtle"];
-
-for (const name of pokemonNames) {
-  // TODO: Fetch each Pokémon's data
-  const response = await fetch(\`https://pokeapi.co/api/v2/pokemon/\${name}\`);
-  const data = await response.json();
-
-  // TODO: Log the name, types, and height
-  console.log(\`--- \${data.name.toUpperCase()} ---\`);
-  console.log("Types:", data.types.map(t => t.type.name).join(", "));
-  console.log("Height:", data.height);
-  console.log("Weight:", data.weight);
-  console.log("");
-}`,
-          solution: `const pokemonNames = ["bulbasaur", "charmander", "squirtle"];
-for (const name of pokemonNames) {
-  const response = await fetch(\`https://pokeapi.co/api/v2/pokemon/\${name}\`);
-  const data = await response.json();
-  console.log(\`--- \${data.name.toUpperCase()} ---\`);
-  console.log("Types:", data.types.map(t => t.type.name).join(", "));
-  console.log("Height:", data.height);
-  console.log("Weight:", data.weight);
-  console.log("");
-}`,
-          instructions: [
-            "Run the code to fetch data for 3 starter Pokémon",
-            "Try adding more Pokémon names to the array",
-            "Try accessing different properties. What about data.sprites?",
+:::tip
+When an engineer says "that field isn't in the response", you now know exactly what they mean — and you know to check the API docs before designing with that data.
+:::`,
+        postmanExercise: {
+          method: "GET",
+          url: "https://pokeapi.co/api/v2/pokemon/bulbasaur",
+          steps: [
+            { instruction: "Open a new request tab in Postman", detail: "Click the \"+\" tab at the top, or use Ctrl/Cmd+T." },
+            { instruction: "Make sure the method is GET" },
+            { instruction: "Paste this URL: https://pokeapi.co/api/v2/pokemon/bulbasaur" },
+            { instruction: "Click Send" },
+            { instruction: "Find the \"types\" field in the response", detail: "Scroll down or use Ctrl/Cmd+F to search. You'll see an array with \"grass\" and \"poison\"." },
+            { instruction: "Now try fetching three Pokémon in a row", detail: "Change the name to \"charmander\", send, then \"squirtle\", send. Compare the types and stats between them." },
+            { instruction: "Look at the \"sprites\" object", detail: "It contains image URLs. Copy one and paste it in your browser to see the actual sprite." },
           ],
-          hint: "Add console.log(data) right after the 'const data = ...' line, then hit Run. Look for 'sprites', 'stats', and 'types' in the output. Those are all the properties you can use.",
+          expectedOutput: "Bulbasaur's full profile — 'grass' and 'poison' types, sprites, stats (HP: 45, Attack: 49, etc.).",
         },
         quiz: [
           {
-            id: "1-2-q1",
+            id: "1-3-q1",
             question: "Your engineer shares the raw API response: {\"name\": \"pikachu\", \"id\": 25, \"height\": 4}. You need to show the name in your design component. What format is this, and which key do you read?",
             options: [
               "HTML — use the <name> tag",
@@ -273,15 +403,15 @@ for (const name of pokemonNames) {
               "That's JSON (JavaScript Object Notation). To get the name, you read data.name — the key in quotes on the left side of the colon.",
           },
           {
-            id: "1-2-q2",
+            id: "1-3-q2",
             question: "Your design needs to show Charizard's stats. The base URL is https://pokeapi.co/api/v2/ and Charizard's ID is 6. Which URL fetches the right data?",
             options: [
               "https://pokeapi.co/api/v2/",
               "https://pokeapi.co/api/v2/pokemon",
-              "https://pokeapi.co/api/v2/pokemon/6",
               "https://pokeapi.co/api/v2/6",
+              "https://pokeapi.co/api/v2/pokemon/6",
             ],
-            correctIndex: 2,
+            correctIndex: 3,
             explanation:
               "An endpoint is the base URL plus a specific path. /pokemon is the resource type, and /6 is the specific Pokémon. Different IDs give you different Pokémon.",
           },
@@ -302,7 +432,7 @@ for (const name of pokemonNames) {
         ],
       },
       {
-        id: "1-3",
+        id: "1-4",
         title: "Reading the Menu (API Docs)",
         subtitle: "How to navigate API documentation like a pro",
         readTime: 5,
@@ -360,47 +490,27 @@ This tells you as a designer: "I can show name, image, types, stats, and abiliti
 
 ### Rate Limits
 
-Most APIs have a limit on how many requests you can make. PokeAPI is generous (100 requests per minute), but most paid APIs like GitHub or Stripe limit you to a certain number per second. Always check this in the docs!`,
-        exercise: {
-          starterCode: `// Let's use query parameters to browse Pokémon
-// The /pokemon endpoint returns a list, not just one
+Most APIs have a limit on how many requests you can make. PokeAPI is generous (100 requests per minute), but most paid APIs like GitHub or Stripe limit you to a certain number per second. Always check this in the docs!
 
-// First, let's see what the list endpoint looks like
-const listResponse = await fetch(
-  "https://pokeapi.co/api/v2/pokemon?limit=5&offset=0"
-);
-const listData = await listResponse.json();
-
-console.log("Total Pokémon in API:", listData.count);
-console.log("Results returned:", listData.results.length);
-console.log("\\nFirst 5 Pokémon:");
-listData.results.forEach((p, i) => {
-  console.log(\`  \${i + 1}. \${p.name}\`);
-});
-
-// TODO: Try changing limit and offset!
-// What happens with limit=10&offset=150?`,
-          solution: `const listResponse = await fetch(
-  "https://pokeapi.co/api/v2/pokemon?limit=5&offset=0"
-);
-const listData = await listResponse.json();
-console.log("Total Pokémon in API:", listData.count);
-console.log("Results returned:", listData.results.length);
-console.log("\\nFirst 5 Pokémon:");
-listData.results.forEach((p, i) => {
-  console.log(\`  \${i + 1}. \${p.name}\`);
-});`,
-          instructions: [
-            "Run the code to see the list endpoint in action",
-            "Change limit=5 to limit=10 to get more results",
-            "Change offset=0 to offset=150 to see later Pokémon",
-            "Notice how the API gives you 'next' and 'previous' URLs for pagination",
+:::tip
+Before speccing a filter, search, or sort feature, check the API docs to confirm the parameters actually exist. If they don't, it's a backend task — flag it before sprint planning.
+:::`,
+        postmanExercise: {
+          method: "GET",
+          url: "https://pokeapi.co/api/v2/pokemon?limit=5&offset=0",
+          steps: [
+            { instruction: "Open a new request tab in Postman" },
+            { instruction: "Set the method to GET and paste this URL: https://pokeapi.co/api/v2/pokemon?limit=5&offset=0" },
+            { instruction: "Click Send and look at the response", detail: "You'll see a \"count\" field (total Pokémon) and a \"results\" array with 5 names." },
+            { instruction: "Find the \"next\" field in the response", detail: "It contains a URL for the next page of results. Copy it, paste it into the URL bar, and send again — that's pagination." },
+            { instruction: "Now try changing the parameters", detail: "Edit the URL to limit=10&offset=150 and send. You'll get 10 Pokémon starting from #151 — the Johto region." },
+            { instruction: "Check the Params tab below the URL bar", detail: "Postman breaks query parameters into a visual table. You can edit limit and offset here instead of typing in the URL." },
           ],
-          hint: "Add console.log(listData) right after the 'const listData = ...' line, then hit Run. Look for a 'next' URL in the output. That's how the API lets you page through all 1350 Pokémon.",
+          expectedOutput: "A list of 5 Pokémon names with a total count of 1302+. The \"next\" field gives you the URL for the next page.",
         },
         quiz: [
           {
-            id: "1-3-q1",
+            id: "1-4-q1",
             question: "You're designing a Pokédex with pagination — 20 Pokémon per page. Page 2 should start at result #21. Which URL is correct?",
             options: [
               "https://pokeapi.co/api/v2/pokemon/page/2",
@@ -413,15 +523,15 @@ listData.results.forEach((p, i) => {
               "Query parameters start with ? and are separated by &. limit=20 means 'give me 20 results', offset=20 means 'skip the first 20 and start there' — giving you results 21-40.",
           },
           {
-            id: "1-3-q2",
+            id: "1-4-q2",
             question: "Your Pokédex prototype fetches all 1,000 Pokémon on page load — one request each. After a few test runs, the API stops responding with errors. No code changed. What's the most likely cause?",
             options: [
-              "The PokeAPI server went down for maintenance",
-              "Your internet connection dropped",
               "You exceeded the API's rate limit by sending too many requests too quickly",
+              "Your internet connection dropped",
+              "The PokeAPI server went down for maintenance",
               "The Pokémon database has a corrupted record",
             ],
-            correctIndex: 2,
+            correctIndex: 0,
             explanation:
               "Rate limits cap how many requests you can send in a time window. Sending 1,000 requests at once will trigger that limit. The fix: fetch fewer at a time, or cache results so you're not re-fetching.",
           },
@@ -441,171 +551,12 @@ listData.results.forEach((p, i) => {
           },
         ],
       },
-      {
-        id: "1-4",
-        title: "The Designer's API Toolkit",
-        subtitle: "Exploring APIs visually with Postman",
-        readTime: 6,
-        narrative:
-          "Your PM just asked you to design a new Pokémon detail page and wants to know exactly what data is available. Instead of pinging the dev team, you open Postman, type in the API URL, and in 30 seconds you have the full picture. This is how designers work at API-first companies.",
-        concepts: ["Postman", "API clients", "Collections", "Environments", "Variables"],
-        content: `## What is Postman?
-
-Postman is the most popular tool for exploring and testing APIs. Think of it as a browser built specifically for APIs. Instead of navigating to a URL and seeing a webpage, you send requests and see raw data come back.
-
-Every developer you work with uses it. Learning Postman means you can explore APIs yourself, without writing a single line of code.
-
-## Why Designers Should Know Postman
-
-At an API-first company, Postman changes what you can do as a designer:
-
-- **Explore independently:** see exactly what data exists before designing a feature
-- **Speak confidently:** know what's technically possible without asking engineering
-- **Design with real data:** use actual API responses to inform your layouts and copy
-- **Share intent:** export a collection that shows devs exactly what API calls your feature needs
-
-## Getting Started
-
-1. Go to **postman.com** and create a free account
-2. Open the web app at **web.postman.co**
-3. Click **New → HTTP Request**
-
-That's it. No install required.
-
-## Making Your First Request
-
-Let's make the same call you wrote in code, fetching Pikachu.
-
-**Step 1:** Make sure the method dropdown says **GET**
-
-**Step 2:** Paste this URL into the address bar: \`https://pokeapi.co/api/v2/pokemon/pikachu\`
-
-**Step 3:** Hit **Send**
-
-You'll see Pikachu's full JSON response: 200+ fields including stats, sprites, abilities, moves, and types. This is the real data your designs would be working with.
-
-## Reading the Response
-
-Postman breaks the response into three tabs:
-
-- **Body:** the actual JSON data (what you've been using in code)
-- **Headers:** metadata about the response (content-type, cache settings, server)
-- **Status:** the status code (200 = success, 404 = not found, 500 = server error)
-
-As a designer, Body is your goldmine. You can see exactly what fields exist and what format they're in before designing the UI.
-
-## Building a Collection
-
-A **Collection** is a folder for saving API requests. Create one called **"Pokémon Companion App"** and save your requests there.
-
-Collections are how teams share API knowledge. When you export yours, devs know exactly what endpoints your feature needs, with no guesswork.
-
-**To save a request:** After sending it, click the **Save** button and choose your collection.
-
-## Using Variables
-
-Instead of hardcoding \`pikachu\` in every URL, Postman lets you use variables: \`https://pokeapi.co/api/v2/pokemon/{{pokemonName}}\`
-
-Set \`pokemonName = charizard\` in your environment and all your requests update at once. This mirrors how real apps work: the Pokémon name comes from user input, not the code.
-
-## The Designer Workflow
-
-Here's how Postman fits into your process:
-
-1. **Discover:** explore the API to understand what data exists
-2. **Design:** make UI decisions based on real fields and real values
-3. **Specify:** export your collection so devs know exactly what to build
-4. **Validate:** when devs ship, test the endpoints yourself without asking for a build
-
-## Download the Course Collection
-
-We've pre-built a Postman collection with every API request from this course, organised by module. Import it once and every endpoint is ready to explore.`,
-        exercise: {
-          starterCode: `// You've been exploring in Postman — now let's use what you found.
-// Postman showed you Pikachu's full data object.
-// Let's pull out some fields you might not have known existed.
-
-const response = await fetch("https://pokeapi.co/api/v2/pokemon/pikachu");
-const pikachu = await response.json();
-
-// Fields you found in Postman:
-console.log("Name:", pikachu.name);
-console.log("Base Experience:", pikachu.base_experience);
-console.log("Height:", pikachu.height, "(in decimetres)");
-console.log("Weight:", pikachu.weight, "(in hectograms)");
-console.log("Order (Pokedex number):", pikachu.order);
-
-// TODO: Add one more field you spotted in Postman
-// Try: pikachu.abilities[0].ability.name`,
-          solution: `const response = await fetch("https://pokeapi.co/api/v2/pokemon/pikachu");
-const pikachu = await response.json();
-console.log("Name:", pikachu.name);
-console.log("Base Experience:", pikachu.base_experience);
-console.log("Height:", pikachu.height);
-console.log("Weight:", pikachu.weight);
-console.log("First Ability:", pikachu.abilities[0].ability.name);`,
-          instructions: [
-            "Hit Run to see the fields Postman helped you discover",
-            "Uncomment the TODO line and change it to pikachu.abilities[0].ability.name",
-            "Try swapping 'pikachu' for another Pokémon you searched in Postman",
-            "Notice how knowing the field names from Postman makes writing code much faster",
-          ],
-          hint: "Open Postman, search for pikachu, then click into the 'abilities' array in the response. You'll see ability.name right there. Then type it into the code.",
-        },
-        quiz: [
-          {
-            id: "1-4-1",
-            question: "A new designer joins the team and needs the same PokeAPI setup you've been using — 12 saved requests with custom headers and variables. What's the fastest way to share it?",
-            options: [
-              "Send them the base URL and let them rebuild the requests",
-              "Screen-share your Postman window while they watch",
-              "Export and share your Postman Collection so they have everything ready to use",
-              "Write all the URLs and headers in a Slack message",
-            ],
-            correctIndex: 2,
-            explanation:
-              "Collections bundle all your saved requests, headers, and variables into one exportable file. Your teammate imports it once and has your entire setup instantly — no rebuilding required.",
-          },
-          {
-            id: "1-4-2",
-            question: "What does {{pokemonName}} mean in a Postman URL?",
-            options: [
-              "A broken URL that needs fixing",
-              "A required field that Postman fills in automatically",
-              "An environment variable you can change in one place to update all requests",
-              "A comment telling you what to type",
-            ],
-            correctIndex: 2,
-            explanation: "Double curly braces are Postman variables. Set pokemonName = 'charizard' in your environment and every request using {{pokemonName}} updates at once.",
-          },
-        ],
-        resources: [
-          {
-            title: "Postman Beginner's Course",
-            url: "https://www.youtube.com/watch?v=VywxIQ2ZXw4",
-            type: "video",
-            description: "A full walkthrough of Postman from scratch, and a great companion to this chapter.",
-          },
-          {
-            title: "Download the Pokémon Companion Collection",
-            url: "/downloads/pokemon-companion.postman_collection.json",
-            type: "interactive",
-            description: "Import this into Postman to get every API request from this course, pre-organised by module.",
-          },
-          {
-            title: "Postman Learning Center",
-            url: "https://learning.postman.com/docs/getting-started/overview/",
-            type: "docs",
-            description: "Official Postman docs, covering everything from basics to advanced testing.",
-          },
-        ],
-      },
     ],
   },
   {
     id: "2",
     title: "Speaking the Language",
-    description: "HTTP methods, headers, status codes: the grammar of APIs.",
+    description: "Read HTTP methods, headers, and status codes like a pro — and know what they mean for your designs.",
     icon: "MessageSquare",
     chapters: [
       {
@@ -672,58 +623,28 @@ Each screen in your app maps to one or more HTTP methods:
 - **Edit form** → PUT (update existing data)
 - **Delete button** → DELETE (remove data)
 
-When your engineer says "that's a POST endpoint," you'll know they mean it creates new data.`,
-        exercise: {
-          starterCode: `// Let's see how different HTTP methods work
-// We'll use JSONPlaceholder — a free test API for practicing
+When your engineer says "that's a POST endpoint," you'll know they mean it creates new data.
 
-// GET — Fetching data (reading)
-console.log("=== GET Request ===");
-const getResponse = await fetch(
-  "https://jsonplaceholder.typicode.com/posts/1"
-);
-const post = await getResponse.json();
-console.log("Title:", post.title);
-console.log("");
+:::note
+These four are the most common and the ones you'll encounter most as a designer. There are others (like PATCH for partial updates, HEAD for metadata-only checks, and OPTIONS for CORS preflight) — but GET, POST, PUT, and DELETE will cover 95% of what you'll see in the wild.
+:::
 
-// POST — Creating new data (writing)
-console.log("=== POST Request ===");
-const postResponse = await fetch(
-  "https://jsonplaceholder.typicode.com/posts",
-  {
-    method: "POST",
-    body: JSON.stringify({
-      title: "My First API Post",
-      body: "I'm learning APIs!",
-      userId: 1,
-    }),
-    headers: { "Content-Type": "application/json" },
-  }
-);
-const newPost = await postResponse.json();
-console.log("Created post with ID:", newPost.id);
-console.log("Title:", newPost.title);`,
-          solution: `const getResponse = await fetch("https://jsonplaceholder.typicode.com/posts/1");
-const post = await getResponse.json();
-console.log("Title:", post.title);
-
-const postResponse = await fetch("https://jsonplaceholder.typicode.com/posts", {
-  method: "POST",
-  body: JSON.stringify({
-    title: "My First API Post",
-    body: "I'm learning APIs!",
-    userId: 1,
-  }),
-  headers: { "Content-Type": "application/json" },
-});
-const newPost = await postResponse.json();
-console.log("Created post with ID:", newPost.id);`,
-          instructions: [
-            "Run the code to see both GET and POST in action",
-            "Notice how POST requires a 'body'. That's the data you're sending.",
-            "Try changing the title and body of the POST request",
+:::tip
+When writing a design ticket, include the HTTP method your feature needs. "This screen reads data (GET)" or "This form creates a record (POST)" tells an engineer immediately what's needed.
+:::`,
+        postmanExercise: {
+          method: "GET",
+          url: "https://jsonplaceholder.typicode.com/posts/1",
+          steps: [
+            { instruction: "Send a GET request to https://jsonplaceholder.typicode.com/posts/1" },
+            { instruction: "Read the response — you just fetched a blog post" },
+            { instruction: "Now switch the method to POST and the URL to https://jsonplaceholder.typicode.com/posts" },
+            { instruction: "Go to the Body tab → select \"raw\" → choose JSON from the dropdown" },
+            { instruction: "Paste this body and hit Send", detail: "{\"title\": \"My First Post\", \"body\": \"Learning APIs!\", \"userId\": 1}" },
+            { instruction: "Compare the two responses — GET reads data, POST creates data" },
           ],
-          hint: "JSONPlaceholder doesn't actually save your data. It just pretends to. But the response shows what would be created!",
+          body: "{\n  \"title\": \"My First Post\",\n  \"body\": \"Learning APIs!\",\n  \"userId\": 1\n}",
+          expectedOutput: "GET returns an existing post (id: 1). POST returns a new post with id: 101 — the server created it from your body.",
         },
         quiz: [
           {
@@ -772,6 +693,10 @@ Every API request carries **headers:** extra information about the request itsel
 
 ### Common Headers
 
+:::note
+You won't need to write this code yourself — this is just showing you what headers look like in JavaScript. In Postman, you add headers visually in the **Headers** tab without touching any code.
+:::
+
 \`\`\`javascript
 fetch(url, {
   headers: {
@@ -785,6 +710,10 @@ fetch(url, {
 ### Authentication: Proving Who You Are
 
 There are several ways APIs verify your identity:
+
+:::note
+The examples below show what authentication looks like in code — for reference only. In Postman, you set these up in the **Authorization** tab with a dropdown and text field. No code required.
+:::
 
 **1. API Key:** A unique code (like a membership card)
 \`\`\`javascript
@@ -818,53 +747,35 @@ fetch("https://api.github.com/user", {
 When designing features that use authenticated APIs, consider:
 - What happens when the token expires? (Show a re-login prompt)
 - What if the user hasn't connected their account yet? (Show an empty state with "Connect" CTA)
-- What data do we need permission to access? (Consent screens)`,
-        exercise: {
-          starterCode: `// Let's see how headers work in practice
-// We'll inspect what headers look like in a request
+- What data do we need permission to access? (Consent screens)
 
-// First, a simple request (no special headers)
-const simpleResponse = await fetch(
-  "https://pokeapi.co/api/v2/pokemon/pikachu"
-);
-console.log("=== Simple Request ===");
-console.log("Status:", simpleResponse.status);
-console.log("Content-Type:", simpleResponse.headers.get("content-type"));
-console.log("");
-
-// Now let's see what happens when we add headers
-// This is how you'd call an authenticated API
-console.log("=== Request With Headers ===");
-const headers = {
-  "Content-Type": "application/json",
-  "Accept": "application/json",
-  // "Authorization": "Bearer your-token-here"  // Uncomment for real APIs
-};
-console.log("Headers we'd send:", JSON.stringify(headers, null, 2));
-console.log("");
-console.log("Pro tip: Open DevTools (Cmd+Opt+I) > Network tab");
-console.log("to see all headers on every request!");`,
-          solution: `const simpleResponse = await fetch("https://pokeapi.co/api/v2/pokemon/pikachu");
-console.log("Status:", simpleResponse.status);
-console.log("Content-Type:", simpleResponse.headers.get("content-type"));`,
-          instructions: [
-            "Run the code to see how response headers work",
-            "Open DevTools (Cmd+Option+I) and go to the Network tab",
-            "Click on a request to see both request and response headers",
+:::tip
+If your design has a "Connect your account" flow or shows user-specific data, ask early: is there an authenticated endpoint for this, and what happens when the token expires?
+:::`,
+        postmanExercise: {
+          method: "GET",
+          url: "https://pokeapi.co/api/v2/pokemon/pikachu",
+          steps: [
+            { instruction: "Send a GET to https://pokeapi.co/api/v2/pokemon/pikachu" },
+            { instruction: "Click the Headers tab in the response panel", detail: "You'll see headers like Content-Type, Cache-Control, and Server." },
+            { instruction: "Find Content-Type — it should say application/json", detail: "This tells you the response is JSON, not HTML or plain text." },
+            { instruction: "Now check the request headers — click the Headers tab above the URL bar" },
+            { instruction: "Add a custom header: key = Accept, value = application/json", detail: "This tells the server you want JSON back. Most APIs default to JSON, but it's good practice." },
+            { instruction: "Send again — same result, but now you're explicitly requesting JSON" },
           ],
-          hint: "Add console.log(response.headers.get('content-type')) after the fetch line, then hit Run. You should see 'application/json', which confirms the API is sending JSON, not HTML or plain text.",
+          expectedOutput: "The response headers show Content-Type: application/json. Your request headers now include Accept: application/json.",
         },
         quiz: [
           {
             id: "2-2-q1",
             question: "You're spec-ing a 'My Saved Pokémon' feature. The API only returns results for the logged-in user. How does the server know which user is making the request?",
             options: [
-              "The user's email is included in the URL as a query parameter",
-              "The server looks up the user by their IP address",
               "A token in the Authorization header tells the server which user is authenticated",
+              "The server looks up the user by their IP address",
+              "The user's email is included in the URL as a query parameter",
               "The frontend sends the user's ID in the request body",
             ],
-            correctIndex: 2,
+            correctIndex: 0,
             explanation:
               "The Authorization header carries a token (API key or Bearer token) that proves who's making the request. The server validates it and returns only that user's data.",
           },
@@ -874,10 +785,10 @@ console.log("Content-Type:", simpleResponse.headers.get("content-type"));`,
             options: [
               "API Key in the URL",
               "No auth needed; repos are public",
-              "Bearer token obtained via OAuth",
               "Basic username/password",
+              "Bearer token obtained via OAuth",
             ],
-            correctIndex: 2,
+            correctIndex: 3,
             explanation:
               "OAuth grants your app a Bearer token that represents the user's permission. The user never shares their GitHub password. They approve access on GitHub's consent screen.",
           },
@@ -908,33 +819,7 @@ console.log("Content-Type:", simpleResponse.headers.get("content-type"));`,
         ],
         content: `## Status Codes: The Server's Report Card
 
-Every API response comes with a **status code:** a number that tells you how things went.
-
-### The Good
-
-| Code | Meaning | Analogy |
-|------|---------|---------|
-| **200** | OK. Everything worked | "Here's your food!" |
-| **201** | Created. New thing made | "Your order has been placed!" |
-| **204** | No Content. Nothing to return | "Your plate has been cleared." |
-
-### The "You Messed Up"
-
-| Code | Meaning | Analogy |
-|------|---------|---------|
-| **400** | Bad Request. Something wrong with your request | "That's not on the menu" |
-| **401** | Unauthorized. You need to log in | "Can I see your ID?" |
-| **403** | Forbidden. Logged in but not allowed | "VIP section only" |
-| **404** | Not Found. It doesn't exist | "We don't have that dish" |
-| **429** | Too Many Requests. Slow down | "One order at a time, please" |
-
-### The "Server Messed Up"
-
-| Code | Meaning | Analogy |
-|------|---------|---------|
-| **500** | Internal Server Error | "The kitchen is on fire" |
-| **502** | Bad Gateway | "The delivery truck broke down" |
-| **503** | Service Unavailable | "We're closed for maintenance" |
+The diagram above shows the full range of status codes you'll encounter. The key insight: **2xx means it worked, 4xx means you made a mistake, 5xx means the server broke.** Everything else is a variation on these three themes.
 
 ### Handling Errors in Code
 
@@ -958,6 +843,10 @@ try {
 ### The CORS Error
 
 One of the most common (and confusing) browser errors you'll encounter when building or prototyping with APIs is **CORS**.
+
+:::note
+This is a simulated error example — not a real broken request. CORS errors look exactly like this in your browser console. Read it as a reference for when you see it in the wild.
+:::
 
 :::warning
 **Access to fetch at 'https://api.example.com' from origin 'http://localhost:3000' has been blocked by CORS policy.**
@@ -984,59 +873,23 @@ Every API call can fail. For each feature, design:
 - **Loading state:** While waiting for the response
 - **Success state:** Data loaded correctly
 - **Error state:** Something went wrong (with a clear message and retry option)
-- **Empty state:** No data found (different from an error!)`,
-        exercise: {
-          starterCode: `// Let's intentionally trigger different error codes!
+- **Empty state:** No data found (different from an error!)
 
-async function fetchPokemon(name) {
-  try {
-    console.log(\`Fetching "\${name}"...\`);
-    const response = await fetch(
-      \`https://pokeapi.co/api/v2/pokemon/\${name}\`
-    );
-
-    console.log("Status:", response.status, response.ok ? "✓" : "✗");
-
-    if (!response.ok) {
-      throw new Error(
-        \`Pokémon "\${name}" not found (HTTP \${response.status})\`
-      );
-    }
-
-    const data = await response.json();
-    console.log("Found:", data.name, "— Type:", data.types[0].type.name);
-  } catch (error) {
-    console.error("Error:", error.message);
-  }
-  console.log("");
-}
-
-// This should work (200 OK)
-await fetchPokemon("pikachu");
-
-// This should fail (404 Not Found)
-await fetchPokemon("not-a-real-pokemon");
-
-// TODO: Try other Pokémon names — real and fake!
-await fetchPokemon("mewtwo");`,
-          solution: `async function fetchPokemon(name) {
-  try {
-    const response = await fetch(\`https://pokeapi.co/api/v2/pokemon/\${name}\`);
-    if (!response.ok) throw new Error(\`HTTP \${response.status}\`);
-    const data = await response.json();
-    console.log("Found:", data.name);
-  } catch (error) {
-    console.error("Error:", error.message);
-  }
-}
-await fetchPokemon("pikachu");
-await fetchPokemon("not-a-real-pokemon");`,
-          instructions: [
-            "Run the code to see how success and failure look different",
-            "Notice the 200 vs 404 status codes",
-            "Try typing a real Pokémon name and a fake one",
+:::tip
+Every screen you design should have an error state. The status code tells you which kind — a 404 needs different copy than a 500. Design both.
+:::`,
+        postmanExercise: {
+          method: "GET",
+          url: "https://pokeapi.co/api/v2/pokemon/pikachu",
+          steps: [
+            { instruction: "Send a GET to https://pokeapi.co/api/v2/pokemon/pikachu — note the 200 OK status" },
+            { instruction: "Change the URL to https://pokeapi.co/api/v2/pokemon/pikachuuu and send" },
+            { instruction: "Check the status code — you'll see 404 Not Found", detail: "The orange/red badge next to the response time." },
+            { instruction: "Now try https://pokeapi.co/api/v2/pokemon/ (no name) — 404 again, different reason" },
+            { instruction: "Try https://pokeapi.co/api/v2/invalidendpoint — this tests a completely wrong path" },
+            { instruction: "Note how each error gives a different response body", detail: "Some return JSON, some return \"Not Found\". Your error state designs should handle both." },
           ],
-          hint: "Try triggering the error on purpose. Change 'pikachu' to a random word like 'banana'. The catch block will handle it gracefully and show your error message instead of crashing.",
+          expectedOutput: "200 for valid Pokémon, 404 for typos and invalid paths. Different errors return different response bodies.",
         },
         quiz: [
           {
@@ -1058,10 +911,10 @@ await fetchPokemon("not-a-real-pokemon");`,
             options: [
               "The frontend has a bug — fix the JavaScript",
               "Users need to log out and back in — it's an auth issue",
-              "The server itself has a problem — it's not a frontend or user error",
               "The database query returned too many results",
+              "The server itself has a problem — it's not a frontend or user error",
             ],
-            correctIndex: 2,
+            correctIndex: 3,
             explanation:
               "5xx codes mean the server encountered an error. It's not a bug in your frontend code and it's not the user's fault. The team needs to look at server logs. Design your error state to say 'Something went wrong on our end' rather than blaming the user.",
           },
@@ -1098,51 +951,17 @@ await fetchPokemon("not-a-real-pokemon");`,
         ],
         content: `## The Four States Every Feature Needs
 
-Every screen that fetches API data can be in one of four states. You need to design all of them, not just the success state.
+The diagram above breaks down all four states with what to design for each. The most important takeaway: **every screen you design that touches an API needs all four states, not just the success state.**
 
-### 1. Loading State
-The request has been sent but no response yet.
-
-**What to design:**
-- **Skeleton screens:** placeholder shapes that mimic the layout of the loaded content. Much better than spinners because they set layout expectations.
-- **Progress indicators:** for operations the user deliberately triggers (a button loading state, a progress bar)
-- **Disable interactive elements:** prevent double-submits by disabling buttons while a request is in flight
-
-:::tip
-Design a skeleton that mirrors your card layout — same number of lines, same proportions. A blank rectangle that matches nothing feels just as jarring as a spinner.
-:::
-
-### 2. Success State
-The request returned data. This is the screen you usually design first.
-
-**What to design:**
-- The happy path layout with real data
-- Edge cases: very long names, missing optional fields, max results
-
-### 3. Error State
-Something went wrong: network failure, 500, timeout, or 403.
-
-**What to design:**
-- A clear, human-readable message (not "Error 500")
-- A **retry action:** most errors are transient
-- Context-sensitive copy: "Couldn't load your team" is better than "Something went wrong"
+The biggest mistake in most design specs is only designing the happy path. If your handoff only shows the populated screen, an engineer has to invent the loading, error, and empty experiences themselves — and they will be ugly.
 
 :::compare
 ✗ "An error occurred."
 ✓ "Couldn't load Pokémon — check your connection and try again." [Retry]
 :::
 
-### 4. Empty State
-The request succeeded but returned zero results. This is **not** the same as an error.
-
-**What to design:**
-- Explain *why* it's empty (no results for this search vs. you haven't saved anything yet)
-- A **call to action** that gets the user out of the empty state
-- Avoid dead ends
-
 :::compare
 ✗ (blank screen — user has no idea what happened)
-✓ "No Pokémon match 'zzzz'. Try a different name."
 ✓ "Your team is empty. Search for a Pokémon to add your first one." [Search]
 :::
 
@@ -1164,8 +983,14 @@ For every feature that calls an API, ask:
 - [ ] What if the data takes 5 seconds? 30 seconds?
 - [ ] What's the error message and is there a retry?
 - [ ] What does zero results look like, and how does the user get out of it?
-- [ ] What if only some fields are missing (e.g. a Pokémon with no sprite)?`,
+- [ ] What if only some fields are missing (e.g. a Pokémon with no sprite)?
+
+:::tip
+Before your next handoff, run through the four states checklist. If any screen only shows the success state, the design is incomplete — and an engineer will have to make it up.
+:::`,
         exercise: {
+          playgroundNote: "This is a design spec exercise — fill in the TODO values with your own copy decisions. There's no right answer, just think through each state.",
+          errorHint: "Something went wrong parsing the spec object. Make sure all TODO values are wrapped in quotes.",
           starterCode: `// You're designing a Pokémon search feature.
 // For each state, write the copy and actions you'd design.
 // This is a spec exercise — no right answer, but think it through!
@@ -1245,12 +1070,12 @@ Object.entries(searchFeatureSpec).forEach(([state, spec]) => {
             id: "2-4-q1",
             question: "The API returns a 200 status with an empty array. What state should the UI show?",
             options: [
-              "Error state: something went wrong",
-              "Loading state: wait for more data",
               "Empty state: request succeeded but no results",
+              "Loading state: wait for more data",
+              "Error state: something went wrong",
               "Success state: hide the content area",
             ],
-            correctIndex: 2,
+            correctIndex: 0,
             explanation:
               "An empty array is a successful response. The API worked perfectly. Show an empty state with a helpful message and a way to take action. Never show an error for a 200.",
           },
@@ -1300,13 +1125,13 @@ Object.entries(searchFeatureSpec).forEach(([state, spec]) => {
         ],
         content: `## Three Ways APIs Communicate
 
-Not all APIs work the same way. The three patterns you'll encounter most are REST, GraphQL, and Webhooks. Each solves a different problem.
+The diagram above compares all three patterns side by side — how they work, what the requests and responses look like, when to use each, and the tradeoffs. Refer back to it as you read the detail below.
 
 ---
 
-## REST: The Most Common Pattern
+## REST: The Pattern You've Been Using
 
-REST (Representational State Transfer) is what you've been using all along. Each URL is a resource, and you use HTTP methods to act on it.
+REST is what you've been working with throughout this course. Every PokeAPI call you've made is REST — a URL, an HTTP method, a predictable response.
 
 :::endpoints
 GET    /pokemon/25       → fetch Pikachu
@@ -1315,15 +1140,13 @@ PUT    /pokemon/25       → update Pikachu
 DELETE /pokemon/25       → delete Pikachu
 :::
 
-**The tradeoff:** REST responses return a fixed shape. If you only need the name and sprite, you still get the full object with 30 fields. On slow connections, that extra data adds up.
-
-**Best for:** Most products. Standard CRUD operations. Public APIs. When your team wants something predictable.
+The key limitation: REST always returns the **full object**. If you only need name and sprite, you still get 30+ fields. On mobile connections, that adds up.
 
 ---
 
-## GraphQL: Ask for Exactly What You Need
+## GraphQL: Precision Queries
 
-GraphQL is a query language for APIs. Instead of hitting a fixed URL, you send a query describing exactly what you want.
+GraphQL lets the client specify exactly which fields it wants:
 
 \`\`\`graphql
 query {
@@ -1335,23 +1158,19 @@ query {
 }
 \`\`\`
 
-The server returns only those three fields — nothing more.
+Three fields requested, three fields returned. Nothing more.
 
-**Why designers care:** GraphQL is often faster on mobile because responses are smaller. It also lets frontend teams move faster without waiting for backend changes — if the data exists, you can query it without a new API endpoint.
-
-**The tradeoff:** More complex to set up. Harder to cache. Requires more coordination between design, frontend, and backend.
-
-**Best for:** Large products with complex data needs. Mobile apps where payload size matters. Teams where frontend and backend move at different speeds.
+**Why designers care:** GraphQL lets frontend teams move faster without waiting for new backend endpoints. If the data exists somewhere in the system, you can query it.
 
 ---
 
 ## Webhooks: The Server Calls You
 
-REST and GraphQL are both "pull" patterns — your app asks the server for data. Webhooks flip that around. The server calls your app when something happens.
+REST and GraphQL are "pull" — your app asks. Webhooks are "push" — the server tells you when something happens.
 
 :::compare
-✗ Normal API (polling): Your app asks "Any new orders?" every 30 seconds — server says "Not yet" every time.
-✓ Webhook (push): Server calls your app the instant a new order arrives — no waiting, no wasted requests.
+✗ Polling: Your app asks "Any new orders?" every 30 seconds — server says "Not yet" every time.
+✓ Webhook: Server calls your app the instant a new order arrives.
 :::
 
 **Real examples:**
@@ -1359,60 +1178,23 @@ REST and GraphQL are both "pull" patterns — your app asks the server for data.
 - GitHub sends a webhook when someone pushes code
 - A delivery service sends a webhook when a package is scanned
 
-**Why designers care:** Webhooks power real-time features. If a design requires instant notifications, live order tracking, or a dashboard that updates without refreshing — you're probably looking at webhooks (or a similar push technology like WebSockets).
+**Why designers care:** If your design requires instant updates (notifications, live tracking, collaborative editing), it probably needs webhooks. "Refresh to see updates" is not a real-time experience — flag it early.
 
-**The tradeoff:** Harder to test and debug. The server needs a public URL to send to, which complicates local development.
-
-**Best for:** Event-driven features. Payment confirmations. Status updates. Anything that needs to react to something that happened somewhere else.
-
----
-
-## Choosing the Right Pattern
-
-| Situation | Best Pattern |
-|-----------|-------------|
-| Standard app features | REST |
-| Complex data, mobile performance matters | GraphQL |
-| Real-time updates, event notifications | Webhooks |
-| "Refresh every 5 seconds to check for updates" | Webhooks (polling is a workaround, not a solution) |
-
-**As a designer:** You don't need to implement any of these. But if you're speccing a feature that needs real-time updates (live chat, order tracking, collaborative editing), flag it early. "Refresh to see updates" is not a real-time experience — and switching from REST polling to webhooks mid-sprint is a big engineering change.`,
-        exercise: {
-          starterCode: `// REST gives you the full object every time.
-// Let's see what a Pokémon response actually contains.
-
-const response = await fetch("https://pokeapi.co/api/v2/pokemon/pikachu");
-const pokemon = await response.json();
-
-// This is everything REST sends back:
-console.log("All top-level fields:", Object.keys(pokemon));
-
-// If we only needed name, id, and types — we got a lot more than that.
-console.log("Fields we actually needed: name, id, types");
-console.log("Fields returned:", Object.keys(pokemon).length);
-
-// With GraphQL you'd only get what you asked for.
-// That's the core tradeoff.
-
-// TODO: Count how many fields you'd save with GraphQL
-const fieldsWeNeed = ["name", "id", "types"];
-const extraFields = Object.keys(pokemon).filter(
-  (k) => !fieldsWeNeed.includes(k)
-);
-console.log("Extra fields GraphQL would skip:", extraFields.length);`,
-          solution: `const response = await fetch("https://pokeapi.co/api/v2/pokemon/pikachu");
-const pokemon = await response.json();
-const fieldsWeNeed = ["name", "id", "types"];
-const extraFields = Object.keys(pokemon).filter(k => !fieldsWeNeed.includes(k));
-console.log("Total fields:", Object.keys(pokemon).length);
-console.log("Fields we need:", fieldsWeNeed.length);
-console.log("Extra fields:", extraFields.length);`,
-          instructions: [
-            "Run the code to see how many fields the PokeAPI returns",
-            "Look at the 'extra fields' count — that's data REST always sends, even if you don't use it",
-            "Think: for a mobile app showing just a Pokémon name and image, is that overhead worth it?",
+:::tip
+If you're designing a feature that needs real-time updates (live scores, chat, notifications), flag it before sprint planning — it likely needs a Webhook or WebSocket, not a standard REST call.
+:::`,
+        postmanExercise: {
+          method: "GET",
+          url: "https://pokeapi.co/api/v2/pokemon/pikachu",
+          steps: [
+            { instruction: "Send a GET to https://pokeapi.co/api/v2/pokemon/pikachu" },
+            { instruction: "Scroll through the response — count how many top-level fields there are", detail: "You'll find around 20+ fields: name, id, types, stats, sprites, abilities, moves, and more." },
+            { instruction: "Now think: if your UI only needs name, sprite, and types — that's 3 fields out of 20+" },
+            { instruction: "This is the REST tradeoff. GraphQL would let you request just those 3 fields and nothing else." },
+            { instruction: "Open the types endpoint: GET https://pokeapi.co/api/v2/type/electric", detail: "This returns every electric-type Pokémon — but only names and URLs, no stats. You'd need to follow each URL for details." },
+            { instruction: "That's the N+1 problem: one call for the list, then one call per Pokémon for details" },
           ],
-          hint: "The Object.keys() function returns an array of all the property names on an object. You can use .length to count them and .filter() to separate the ones you need from the ones you don't.",
+          expectedOutput: "Pikachu's full response with 20+ fields. The type endpoint returns a list but no detail — you need extra calls.",
         },
         quiz: [
           {
@@ -1421,10 +1203,10 @@ console.log("Extra fields:", extraFields.length);`,
             options: [
               "REST — poll the payments endpoint every 5 seconds",
               "GraphQL — query for the latest payment status",
-              "Webhook — have the payment service push a notification when it's done",
               "REST DELETE — remove the pending payment and recreate it",
+              "Webhook — have the payment service push a notification when it's done",
             ],
-            correctIndex: 2,
+            correctIndex: 3,
             explanation:
               "Webhooks are event-driven: the server calls your app when something happens. Polling (asking repeatedly) wastes requests and adds latency. For instant payment confirmation, a webhook is the right tool.",
           },
@@ -1462,7 +1244,7 @@ console.log("Extra fields:", extraFields.length);`,
   {
     id: "3",
     title: "Databases: Where Data Lives",
-    description: "Tables, queries, and CRUD: the foundation of every app.",
+    description: "Understand what databases are, how to read an ERD, and what database design means for your UI.",
     icon: "Database",
     chapters: [
       {
@@ -1471,7 +1253,7 @@ console.log("Extra fields:", extraFields.length);`,
         subtitle: "Databases are just organized spreadsheets",
         readTime: 4,
         narrative:
-          "Your PM just asked you to save users' favorite Pokémon. Where does that data go? Not the API. That's someone else's data. You need your own database. And it's simpler than you think.",
+          "Your PM just asked you to save users' favourite Pokémon. Where does that data go? Not the API — that's someone else's data. Understanding what databases are and how they're structured will fundamentally change how you approach every data-heavy design.",
         concepts: [
           "Database",
           "Table",
@@ -1522,10 +1304,18 @@ Imagine a \`saved_pokemon\` table:
 - **Timestamp:** Date and time
 - **UUID:** Unique identifier
 
-### Why Supabase?
+### A Designer's Role in Schema Design
 
-We'll use **Supabase:** it gives you a real PostgreSQL database with a beautiful dashboard UI. You can see your tables, edit data visually, and query it with code. It's like Google Sheets that speaks SQL.`,
+You won't usually design the schema yourself — but you'll be in the room when it's discussed. The most useful question you can ask is: **"What data does the UI need to display?"**
+
+That question directly shapes the columns engineers create. Every field on your screen maps to a column in a table. If you design a "trainer level" badge on a profile screen and there's no \`level\` column in the \`trainers\` table, that's a backend task — and it's better to surface it before the sprint starts.
+
+:::tip
+When planning a new feature, ask: what table does this data live in? If it doesn't exist yet, that's a schema change — flag it as a backend task before sprint planning.
+:::`,
         exercise: {
+          playgroundNote: "This is a planning exercise — run it to see the table design, then think about what columns your design would need.",
+          errorHint: "Something went wrong with the code. Check for syntax errors in the object definition.",
           starterCode: `// Let's think about database design!
 // No code to run yet — this is a planning exercise.
 
@@ -1553,7 +1343,7 @@ Object.entries(teamTableDesign.columns).forEach(([col, type]) => {
   console.log(\`  \${col}: \${type}\`);
 });
 
-console.log("\\n💡 In the next chapter, we'll create this table for real!");`,
+console.log("\\n💡 Every column in this table maps to something visible in your UI.");`,
           solution: `const teamTableDesign = {
   tableName: "my_team",
   columns: {
@@ -1577,305 +1367,247 @@ console.log(JSON.stringify(teamTableDesign, null, 2));`,
         },
         resources: [
           {
-            title: "Supabase Getting Started",
-            url: "https://supabase.com/docs/guides/getting-started",
-            type: "docs",
-            description: "Create your free Supabase project and first table.",
-          },
-          {
             title: "Database Design for Beginners",
             url: "https://www.youtube.com/watch?v=ztHopE5Wnpc",
             type: "video",
             description: "Visual introduction to database tables and relationships.",
           },
+          {
+            title: "dbdiagram.io",
+            url: "https://dbdiagram.io",
+            type: "interactive",
+            description: "Free browser-based tool for drawing and reading database schemas. Great for visualising what your engineer shares with you.",
+          },
         ],
       },
       {
         id: "3-2",
-        title: "Your First Database",
-        subtitle: "Setting up Supabase and creating tables",
-        readTime: 7,
+        title: "Reading an ERD",
+        subtitle: "How to read the blueprint of any database",
+        readTime: 5,
         narrative:
-          "Time to get hands-on. We're going to create a real database, define a table, and see it come to life in the Supabase dashboard.",
+          "Your engineer sends you a diagram before the sprint. It has boxes, lines, and symbols. That's an ERD — an Entity Relationship Diagram — and it contains everything you need to know about what data exists and how it connects. You don't need to build one. You need to read one.",
         concepts: [
-          "Supabase",
-          "PostgreSQL",
-          "CREATE TABLE",
-          "SQL",
-          "Dashboard",
+          "ERD",
+          "Entity Relationship Diagram",
+          "Primary Key",
+          "Foreign Key",
+          "Table relationships",
+          "Schema reading",
         ],
-        content: `## Setting Up Supabase
+        content: `## What Is an ERD?
 
-### Step 1: Create a Supabase Account
-1. Go to [supabase.com](https://supabase.com) and sign up (free!)
-2. Create a new project and give it a name like "api-explorer"
-3. Save your project URL and anon key (we'll need these)
+An **Entity Relationship Diagram** is a visual blueprint of a database. Engineers draw them to plan data structure before writing a single line of code. As a designer, receiving one before a sprint is a gift — it tells you exactly what data exists and what's possible.
 
-### Step 2: Create Your First Table
+The diagram above shows the ERD for the Pokémon companion app, along with a legend explaining PK, FK, and crow's foot notation. Reading it:
 
-In the Supabase dashboard, go to **Table Editor** and click **New Table**.
+- **trainers** has 4 columns: id (PK), username, avatar_url, created_at
+- **team_pokemon** has 6 columns: id (PK), trainer_id (FK), pokemon_id, nickname, position, added_at
+- The line from **trainers.id** → **team_pokemon.trainer_id** means: one trainer can have many Pokémon
+- The crow's foot on the team_pokemon side shows the "many" end
+- **badges** also has a FK pointing back to trainers — one trainer can earn many badges
 
-Or use SQL. Go to **SQL Editor** and run:
+### What to Look For as a Designer
 
-\`\`\`sql
-CREATE TABLE saved_pokemon (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  pokemon_id INTEGER NOT NULL,
-  name TEXT NOT NULL,
-  sprite_url TEXT,
-  types TEXT[],
-  saved_at TIMESTAMPTZ DEFAULT NOW()
-);
-\`\`\`
+When you receive an ERD, ask these questions:
 
-Let's break this down:
-- \`id UUID DEFAULT gen_random_uuid() PRIMARY KEY\`: Auto-generate a unique ID for each row
-- \`INTEGER NOT NULL\`: A number that must have a value
-- \`TEXT\`: A string of text
-- \`TEXT[]\`: An array (list) of text values
-- \`DEFAULT NOW()\`: Automatically set to the current time
+**Does the data I need exist?**
+If your design shows a trainer's avatar on a profile screen, check: is there an \`avatar_url\` column in the \`trainers\` table? If not, that's a column that needs to be added — a backend task to flag before the sprint.
 
-### Step 3: Connect From Code
+**What's the shape of related data?**
+If you're designing a screen that shows a trainer AND their team together, you're working with data from two tables. That's a join query. Flag it as more complex than a simple data fetch.
 
-\`\`\`javascript
-import { createClient } from '@supabase/supabase-js'
+**What's impossible given this schema?**
+If the schema has no \`wins\` or \`losses\` columns, you cannot design a battle record screen without a schema change. The ERD tells you what's buildable right now.
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-)
-\`\`\`
+### Tools for Reading ERDs
 
-That's it! You now have a database connected to your app.
+Your team might share ERDs in various formats:
+- **[dbdiagram.io](https://dbdiagram.io)** — browser-based, interactive, free
+- **Lucidchart** — popular in enterprise teams
+- **Figma** — some teams diagram databases in Figma alongside their UI
+- **A screenshot in Notion** — the most common format in practice
 
-### The Supabase Dashboard
+You don't need to create these. You need to receive them, read them, and respond with: *"I see you have X and Y — but my design also needs Z. Is that in scope?"*
 
-One of the best things about Supabase is the visual dashboard. You can:
-- See all your tables and their data
-- Add/edit/delete rows manually
-- Run SQL queries
-- See real-time changes
-
-It's like having a spreadsheet view of your database.`,
+:::tip
+Ask your engineering team to share the ERD for any feature you're designing. Fifteen minutes reading it will surface more constraints than a week of design review.
+:::`,
         exercise: {
-          starterCode: `// Once you've set up Supabase and added your keys to .env.local,
-// uncomment the code below to test your connection!
-
-// For now, let's practice the concepts:
-
-console.log("=== Database Connection Checklist ===");
-console.log("1. ✓ Create Supabase account at supabase.com");
-console.log("2. ✓ Create a new project");
-console.log("3. ✓ Copy your project URL and anon key");
-console.log("4. ✓ Add them to .env.local");
-console.log("5. ✓ Create the saved_pokemon table");
-console.log("");
-console.log("Once connected, we'll be able to:");
-console.log("  - INSERT new Pokémon (save favorites)");
-console.log("  - SELECT Pokémon (read your list)");
-console.log("  - UPDATE Pokémon (edit details)");
-console.log("  - DELETE Pokémon (remove from favorites)");
-console.log("");
-console.log("Head to /setup in the app for the full setup guide!");`,
-          solution: `console.log("Set up Supabase and add your keys to .env.local");`,
+          readOnly: true,
+          playgroundNote: "Reading exercise — refer to the ERD diagram at the top of this chapter to answer the questions in the Instructions tab.",
+          starterCode: `// Refer to the ERD diagram above this chapter.
+//
+// Three tables: trainers, team_pokemon, badges
+//
+// Work through the questions in the Instructions tab.
+// Click "Show Answers" in the hint when you're ready to check.`,
+          solution: `// Answers:
+//
+// 1. Trainer Profile needs: username, avatar_url (from trainers table)
+//    Plus team data from team_pokemon (joined via trainer_id FK)
+//
+// 2. The trainer_id foreign key in team_pokemon references id in trainers.
+//    This is what links a Pokémon slot to its trainer.
+//
+// 3. Battle history is not in this schema.
+//    There's no battles or match_history table.
+//    This would require a new table — a backend change to flag before sprint.`,
           instructions: [
-            "Visit supabase.com and create a free account",
-            "Create a new project named 'api-explorer'",
-            "Go to the SQL Editor and create the saved_pokemon table",
-            "Copy your project URL and anon key to .env.local",
+            "Study the ERD in the code panel. Find the trainers and team_pokemon tables.",
+            "Question 1: A Trainer Profile screen shows username, avatar, bio, and team. Which tables do you need? Which columns?",
+            "Question 2: What column connects team_pokemon back to its trainer? What type of key is it?",
+            "Question 3: A PM asks for a battle history screen. Is this possible with the current schema? What would you flag?",
           ],
-          hint: "The setup page at /setup has the complete walkthrough with copy-paste commands!",
+          hint: "For Q3: look for a battles or match_history table in the ERD. If it doesn't exist, that feature requires a new table — a backend change, not a frontend change.",
         },
+        quiz: [
+          {
+            id: "3-2-q1",
+            question: "An ERD shows a trainers table with a PK column called id, and a team_pokemon table with a column trainer_id marked FK. What does the FK tell you?",
+            options: [
+              "trainer_id stores the trainer's display name for reference",
+              "trainer_id is automatically generated and doesn't need to be set",
+              "team_pokemon rows are linked to a specific trainer — the FK value must match an id in trainers",
+              "FK means the column is optional and can be left empty",
+            ],
+            correctIndex: 2,
+            explanation:
+              "A Foreign Key (FK) is a column that references the Primary Key of another table. trainer_id in team_pokemon must contain a valid id from the trainers table. This is what links a Pokémon to its trainer — and why deleting a trainer could affect their team data.",
+          },
+          {
+            id: "3-2-q2",
+            question: "You're designing a Trainer Profile screen showing username, avatar, and a 6-slot team grid. You receive the ERD. What's the first design question to answer from it?",
+            options: [
+              "Which database tool does the team use?",
+              "Does the trainers table have username and avatar_url columns, and is team_pokemon linked via a FK?",
+              "How many rows are currently in the trainers table?",
+              "Whether the schema uses UUIDs or integers for primary keys",
+            ],
+            correctIndex: 1,
+            explanation:
+              "The first check is always: does the data I need actually exist in the schema? If username or avatar_url aren't columns in trainers, or if there's no FK linking team_pokemon to trainers, those are backend gaps to raise before the sprint starts.",
+          },
+        ],
         resources: [
           {
-            title: "Supabase JavaScript Client",
-            url: "https://supabase.com/docs/reference/javascript/introduction",
-            type: "docs",
-            description: "Official reference for the Supabase JS library.",
+            title: "dbdiagram.io",
+            url: "https://dbdiagram.io",
+            type: "interactive",
+            description: "Free browser-based ERD tool. Try creating the Pokémon schema yourself to solidify your reading skills.",
+          },
+          {
+            title: "Entity Relationship Diagrams Explained (Lucidchart)",
+            url: "https://www.youtube.com/watch?v=QpdhBUYk7Kk",
+            type: "video",
+            description: "Visual walkthrough of ERD notation, relationships, and how to read a diagram.",
+          },
+          {
+            title: "What is an ERD? (Lucidchart guide)",
+            url: "https://www.lucidchart.com/pages/er-diagrams",
+            type: "article",
+            description: "Plain-language guide to entity relationship diagrams with visual examples.",
           },
         ],
       },
       {
         id: "3-3",
         title: "CRUD: The Four Things You Can Do",
-        subtitle: "Create, Read, Update, Delete with Supabase",
-        readTime: 7,
+        subtitle: "How every UI action maps to a database operation",
+        readTime: 5,
         narrative:
-          "Every app in the world does four things with data: Create it, Read it, Update it, and Delete it. These four operations have a catchy name: CRUD. Let's master each one.",
+          "Every app in the world does four things with data: Create it, Read it, Update it, and Delete it. These four operations have a catchy name: CRUD. Understanding which operation your design requires is one of the most useful things you can tell an engineer.",
         concepts: [
           "CRUD",
-          "INSERT",
-          "SELECT",
-          "UPDATE",
-          "DELETE",
-          "Supabase client",
+          "Create",
+          "Read",
+          "Update",
+          "Delete",
+          "UI to data mapping",
         ],
-        content: `## CRUD Operations
+        content: `## The Four Operations
 
-Every feature you'll ever design maps to one of these four operations:
+Every feature you'll ever design maps to one of these four operations — **Create, Read, Update, Delete**. No exceptions. The diagram above shows each one with its HTTP method, database operation, UI triggers, screens to design, and a Pokémon example.
 
-### Create (INSERT)
-Adding new data to the database.
-\`\`\`javascript
-const { data, error } = await supabase
-  .from('saved_pokemon')
-  .insert({
-    pokemon_id: 25,
-    name: 'pikachu',
-    sprite_url: 'https://...',
-    types: ['electric']
-  })
-  .select()  // Return the newly created row
-\`\`\`
+### Soft Deletes
 
-### Read (SELECT)
-Fetching data from the database.
-\`\`\`javascript
-// Get all saved Pokémon
-const { data } = await supabase
-  .from('saved_pokemon')
-  .select('*')
+One nuance worth knowing: not every "delete" actually removes data. In many systems, deletion sets a flag (like \`deleted_at\`) rather than destroying the row. This is a **soft delete** — the data still exists but is hidden. It's what makes "undo" and "restore from trash" possible. If your design includes an undo flow, ask the engineer if the delete is soft or hard.
 
-// Get one specific Pokémon
-const { data } = await supabase
-  .from('saved_pokemon')
-  .select('*')
-  .eq('name', 'pikachu')
-  .single()
+### Why This Matters for Tickets
 
-// Get with ordering
-const { data } = await supabase
-  .from('saved_pokemon')
-  .select('*')
-  .order('saved_at', { ascending: false })
-\`\`\`
+When you write a design ticket for an engineer, you can now include the database operation it implies. "This button creates a new saved_pokemon row" is more useful than "this button saves the Pokémon". It tells the engineer exactly what backend work is needed before they've read a line of code.
 
-### Update (UPDATE)
-Changing existing data.
-\`\`\`javascript
-const { data, error } = await supabase
-  .from('saved_pokemon')
-  .update({ nickname: 'Sparky' })
-  .eq('pokemon_id', 25)  // Only update Pikachu
-  .select()
-\`\`\`
-
-### Delete (DELETE)
-Removing data from the database.
-\`\`\`javascript
-const { error } = await supabase
-  .from('saved_pokemon')
-  .delete()
-  .eq('pokemon_id', 25)  // Only delete Pikachu
-\`\`\`
-
-### The Pattern
-
-Notice how every Supabase operation follows the same pattern:
-1. \`supabase.from('table_name')\`: Pick the table
-2. \`.insert()\` / \`.select()\` / \`.update()\` / \`.delete()\`: Pick the operation
-3. \`.eq()\` / \`.order()\` / \`.limit()\`: Add filters
-4. Check for \`error\`: Always handle errors!
-
-### For Designers
-
-Map your screens to CRUD:
-- **"Save to favorites" button** → INSERT
-- **"My favorites" list** → SELECT
-- **"Edit nickname" form** → UPDATE
-- **"Remove from favorites" button** → DELETE`,
+:::tip
+Every button and form in your design maps to a CRUD operation. If you can name which one, your dev ticket is already clearer than most.
+:::`,
         exercise: {
-          starterCode: `// CRUD Practice — simulated with in-memory data
-// (Connect Supabase in /setup to use a real database!)
+          readOnly: true,
+          playgroundNote: "This is a mapping exercise — study the screen descriptions below and identify which CRUD operation each one requires.",
+          starterCode: `// CRUD Mapping Exercise
+// For each screen/action below, identify: Create, Read, Update, or Delete
 
-let myTeam = [];
+const screens = [
+  {
+    screen: "Pokémon Team page — loads when user opens the app",
+    action: "Displays all saved Pokémon in the user's team",
+    crudOperation: "?",  // What operation is this?
+  },
+  {
+    screen: "'Save to Team' button on a Pokémon detail page",
+    action: "Adds this Pokémon to the user's saved team",
+    crudOperation: "?",
+  },
+  {
+    screen: "Nickname field — user types a custom name for their Pikachu",
+    action: "Changes the nickname column for that specific Pokémon row",
+    crudOperation: "?",
+  },
+  {
+    screen: "'Release' button — removes a Pokémon from the team",
+    action: "Permanently removes the row from the team_pokemon table",
+    crudOperation: "?",
+  },
+];
 
-// CREATE — Save a Pokémon
-function savePokemon(pokemon) {
-  const entry = { ...pokemon, id: Date.now(), saved_at: new Date() };
-  myTeam.push(entry);
-  console.log("Saved:", entry.name);
-  return entry;
-}
+// Answers are in the solution — check them after you've mapped each one.
+screens.forEach(s => {
+  console.log(\`Screen: \${s.screen}\`);
+  console.log(\`Operation: \${s.crudOperation}\\n\`);
+});`,
+          solution: `const screens = [
+  {
+    screen: "Pokémon Team page — loads when user opens the app",
+    action: "Displays all saved Pokémon in the user's team",
+    crudOperation: "READ — fetches existing rows from team_pokemon",
+  },
+  {
+    screen: "'Save to Team' button on a Pokémon detail page",
+    action: "Adds this Pokémon to the user's saved team",
+    crudOperation: "CREATE — inserts a new row into team_pokemon",
+  },
+  {
+    screen: "Nickname field — user types a custom name for their Pikachu",
+    action: "Changes the nickname column for that specific Pokémon row",
+    crudOperation: "UPDATE — modifies an existing row's nickname column",
+  },
+  {
+    screen: "'Release' button — removes a Pokémon from the team",
+    action: "Permanently removes the row from the team_pokemon table",
+    crudOperation: "DELETE — removes the row from team_pokemon",
+  },
+];
 
-// READ — Get all saved Pokémon
-function getTeam() {
-  return myTeam;
-}
-
-// UPDATE — Rename a Pokémon
-function renamePokemon(id, nickname) {
-  const pokemon = myTeam.find(p => p.id === id);
-  if (pokemon) {
-    pokemon.nickname = nickname;
-    console.log(\`Renamed \${pokemon.name} to "\${nickname}"\`);
-  }
-  return pokemon;
-}
-
-// DELETE — Remove a Pokémon
-function removePokemon(id) {
-  const index = myTeam.findIndex(p => p.id === id);
-  if (index > -1) {
-    const removed = myTeam.splice(index, 1)[0];
-    console.log("Removed:", removed.name);
-  }
-}
-
-// Let's try it!
-console.log("=== CRUD Operations ===\\n");
-
-const pikachu = savePokemon({ name: "pikachu", types: ["electric"] });
-savePokemon({ name: "charizard", types: ["fire", "flying"] });
-savePokemon({ name: "eevee", types: ["normal"] });
-
-console.log("\\nTeam:", getTeam().map(p => p.nickname || p.name));
-
-renamePokemon(pikachu.id, "Sparky");
-console.log("\\nTeam:", getTeam().map(p => p.nickname || p.name));
-
-removePokemon(pikachu.id);
-console.log("\\nTeam after removal:", getTeam().map(p => p.name));`,
-          solution: `let myTeam = [];
-
-function savePokemon(pokemon) {
-  const entry = { ...pokemon, id: Date.now(), saved_at: new Date() };
-  myTeam.push(entry);
-  return entry;
-}
-function getTeam() { return myTeam; }
-function renamePokemon(id, nickname) {
-  const p = myTeam.find(p => p.id === id);
-  if (p) p.nickname = nickname;
-  return p;
-}
-function removePokemon(id) {
-  myTeam = myTeam.filter(p => p.id !== id);
-}
-
-// NEW: filter by type — mirrors Supabase's .eq('types', type)
-function getByType(type) {
-  return myTeam.filter(p => p.types.includes(type));
-}
-
-const pikachu = savePokemon({ name: "pikachu", types: ["electric"] });
-savePokemon({ name: "charizard", types: ["fire", "flying"] });
-savePokemon({ name: "eevee", types: ["normal"] });
-savePokemon({ name: "gengar", types: ["ghost", "poison"] });
-
-console.log("Fire types:", getByType("fire").map(p => p.name));
-console.log("Electric types:", getByType("electric").map(p => p.name));
-
-renamePokemon(pikachu.id, "Sparky");
-removePokemon(pikachu.id);
-console.log("\\nFinal team:", getTeam().map(p => p.nickname || p.name));`,
+screens.forEach(s => {
+  console.log(\`Screen: \${s.screen}\`);
+  console.log(\`Operation: \${s.crudOperation}\\n\`);
+});`,
           instructions: [
-            "Run the starter code to understand the existing CRUD functions",
-            "Add a 4th Pokémon: savePokemon({ name: 'gengar', types: ['ghost', 'poison'] })",
-            "Write a getByType(type) function that returns only Pokémon whose types array includes that type",
-            "Test it: getByType('fire') should return only Charizard",
+            "Study each screen description and decide: which CRUD operation does it require?",
+            "Look at the crudOperation field — it currently says '?'. What would you fill in?",
+            "Think about each screen's design implications: what states does a READ screen need that a CREATE screen doesn't?",
+            "Run the code to see the answers, then check them against your own guesses.",
           ],
-          hint: "getByType should use Array.filter() and Array.includes(). In Supabase, this would be .eq('type', 'fire'), and your function is the in-memory version of that query.",
+          hint: "If the action creates something that didn't exist before → Create. If it loads existing data → Read. If it changes existing data → Update. If it removes data → Delete.",
         },
         quiz: [
           {
@@ -1894,10 +1626,10 @@ console.log("\\nFinal team:", getTeam().map(p => p.nickname || p.name));`,
         ],
         resources: [
           {
-            title: "Supabase CRUD Operations",
-            url: "https://supabase.com/docs/reference/javascript/select",
-            type: "docs",
-            description: "Official guide to reading and writing data with Supabase.",
+            title: "CRUD Explained (freeCodeCamp)",
+            url: "https://www.freecodecamp.org/news/crud-operations-explained/",
+            type: "article",
+            description: "Clear, developer-friendly explanation of each CRUD operation with examples.",
           },
         ],
       },
@@ -1907,7 +1639,7 @@ console.log("\\nFinal team:", getTeam().map(p => p.nickname || p.name));`,
         subtitle: "Connecting tables with foreign keys",
         readTime: 6,
         narrative:
-          "Real apps have data that connects to other data. A trainer has Pokémon. A playlist has songs. Let's learn how tables relate to each other.",
+          "Real apps have data that connects to other data. A trainer has Pokémon. A Pokémon has moves. Let's learn how tables relate to each other.",
         concepts: [
           "Foreign key",
           "One-to-many",
@@ -1917,166 +1649,99 @@ console.log("\\nFinal team:", getTeam().map(p => p.nickname || p.name));`,
         ],
         content: `## How Tables Relate
 
-In a real app, data is connected. A **Trainer** has many **Pokémon**. A **Playlist** has many **Songs**. These connections are called **relationships**.
+In a real app, data doesn't live in a single table. A **Trainer** has many **Pokémon**. A **Pokémon** has many **moves**. These connections between tables are called **relationships** — and they're visible on the ERD as lines between boxes.
 
-### One-to-Many
+### One-to-Many: The Most Common Relationship
 
-The most common relationship. One trainer → many Pokémon.
+The diagram above shows this: one trainer can have many Pokémon, but each Pokémon belongs to only one trainer. The \`trainer_id\` foreign key in \`team_pokemon\` is what creates the link — it points back to the trainer's \`id\`. Remove it, and the database doesn't know which trainer owns which Pokémon.
 
-**trainers table:**
-| id | name | badge_count |
-|----|------|-------------|
-| 1 | Ash | 8 |
-| 2 | Misty | 4 |
+### Many-to-Many: Where Design Gets Interesting
 
-**team_pokemon table:**
-| id | trainer_id | pokemon_name | level |
-|----|-----------|--------------|-------|
-| 1 | 1 | Pikachu | 55 |
-| 2 | 1 | Charizard | 50 |
-| 3 | 2 | Starmie | 45 |
+Some relationships are more complex. A Pokémon move can belong to many Pokémon, and each Pokémon can know many moves. That's **many-to-many**.
 
-The \`trainer_id\` column in \`team_pokemon\` is a **foreign key:** it points to the \`id\` in the \`trainers\` table.
+Many-to-many relationships require a **junction table** — a third table that sits between the two and holds the links. The diagram above shows this with \`pokemon_moves\` sitting between \`pokemon\` and \`moves\`.
 
-### Creating Related Tables in SQL
+This creates specific design challenges: how do you display a move that's shared across 50 Pokémon? What happens when a move is updated — do all Pokémon that know it show the new version? These questions belong in your design spec, not just in the backend.
 
-\`\`\`sql
-CREATE TABLE trainers (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  name TEXT NOT NULL,
-  badge_count INTEGER DEFAULT 0
-);
+### What This Means When You Design
 
-CREATE TABLE team_pokemon (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  trainer_id UUID REFERENCES trainers(id),
-  pokemon_name TEXT NOT NULL,
-  level INTEGER DEFAULT 1
-);
-\`\`\`
+**Profile pages** pull from multiple tables. A Trainer Profile shows data from \`trainers\` AND from \`team_pokemon\`. That's a join query — more complex than loading a single table, and worth flagging in the ticket.
 
-### Querying Related Data with Supabase
+**Lists and counters** often aggregate. A leaderboard showing "trainer name + number of Pokémon" needs to count rows in \`team_pokemon\` per trainer. If your design includes any kind of count, sum, or aggregated value, the query behind it is more involved.
 
-\`\`\`javascript
-// Get a trainer with all their Pokémon
-const { data } = await supabase
-  .from('trainers')
-  .select(\`
-    name,
-    badge_count,
-    team_pokemon (
-      pokemon_name,
-      level
-    )
-  \`)
-  .eq('name', 'Ash')
-  .single()
+**Deletions cascade.** If a trainer is deleted, what happens to their team? The database can be set up to automatically delete related rows (a "cascade"), or to block the deletion, or to leave orphaned rows. This is a design decision disguised as a backend concern — flag it when you spec a delete flow.
 
-// Result:
-// {
-//   name: "Ash",
-//   badge_count: 8,
-//   team_pokemon: [
-//     { pokemon_name: "Pikachu", level: 55 },
-//     { pokemon_name: "Charizard", level: 50 }
-//   ]
-// }
-\`\`\`
-
-### For Designers
-
-Understanding relationships helps you design better:
-- **Profile page** → Show the trainer AND their team (one-to-many query)
-- **Team builder** → Add/remove Pokémon from a trainer's team (INSERT/DELETE with foreign key)
-- **Leaderboard** → Count each trainer's Pokémon (aggregate query)`,
+:::tip
+If your design shows data that spans two entities (a trainer and their team, a user and their orders), ask to see the relationship in the ERD before you start designing the screen.
+:::`,
         exercise: {
-          starterCode: `// Let's model relationships with our simulated database
-
-const trainers = [
-  { id: 1, name: "Ash", badge_count: 8 },
-  { id: 2, name: "Misty", badge_count: 4 },
-];
-
-const teamPokemon = [
-  { id: 1, trainer_id: 1, pokemon_name: "Pikachu", level: 55 },
-  { id: 2, trainer_id: 1, pokemon_name: "Charizard", level: 50 },
-  { id: 3, trainer_id: 1, pokemon_name: "Bulbasaur", level: 45 },
-  { id: 4, trainer_id: 2, pokemon_name: "Starmie", level: 45 },
-  { id: 5, trainer_id: 2, pokemon_name: "Psyduck", level: 30 },
-];
-
-// "JOIN" — Get a trainer with their Pokémon
-function getTrainerWithTeam(trainerName) {
-  const trainer = trainers.find(t => t.name === trainerName);
-  if (!trainer) return null;
-
-  const team = teamPokemon.filter(p => p.trainer_id === trainer.id);
-  return { ...trainer, team };
-}
-
-// Let's see it in action
-const ash = getTrainerWithTeam("Ash");
-console.log(\`=== \${ash.name}'s Profile ===\`);
-console.log(\`Badges: \${ash.badge_count}\`);
-console.log(\`Team (\${ash.team.length} Pokémon):\`);
-ash.team.forEach(p => {
-  console.log(\`  - \${p.pokemon_name} (Lv. \${p.level})\`);
-});
-
-console.log("");
-
-const misty = getTrainerWithTeam("Misty");
-console.log(\`=== \${misty.name}'s Profile ===\`);
-console.log(\`Badges: \${misty.badge_count}\`);
-console.log(\`Team (\${misty.team.length} Pokémon):\`);
-misty.team.forEach(p => {
-  console.log(\`  - \${p.pokemon_name} (Lv. \${p.level})\`);
-});`,
-          solution: `const trainers = [
-  { id: 1, name: "Ash", badge_count: 8 },
-  { id: 2, name: "Misty", badge_count: 4 },
-  { id: 3, name: "Brock", badge_count: 9 },
-];
-
-const teamPokemon = [
-  { id: 1, trainer_id: 1, pokemon_name: "Pikachu", level: 55 },
-  { id: 2, trainer_id: 1, pokemon_name: "Charizard", level: 50 },
-  { id: 3, trainer_id: 1, pokemon_name: "Bulbasaur", level: 45 },
-  { id: 4, trainer_id: 2, pokemon_name: "Starmie", level: 45 },
-  { id: 5, trainer_id: 2, pokemon_name: "Psyduck", level: 30 },
-  { id: 6, trainer_id: 3, pokemon_name: "Onix", level: 40 },
-  { id: 7, trainer_id: 3, pokemon_name: "Geodude", level: 35 },
-];
-
-function getTrainerWithTeam(trainerName) {
-  const trainer = trainers.find(t => t.name === trainerName);
-  if (!trainer) return null;
-  return { ...trainer, team: teamPokemon.filter(p => p.trainer_id === trainer.id) };
-}
-
-// Leaderboard: trainers sorted by team size, descending
-function getLeaderboard() {
-  return trainers
-    .map(t => ({ ...t, teamSize: teamPokemon.filter(p => p.trainer_id === t.id).length }))
-    .sort((a, b) => b.teamSize - a.teamSize);
-}
-
-const brock = getTrainerWithTeam("Brock");
-console.log(\`=== \${brock.name}'s Profile ===\`);
-brock.team.forEach(p => console.log(\`  - \${p.pokemon_name} (Lv. \${p.level})\`));
-
-console.log("\\n=== Leaderboard ===");
-getLeaderboard().forEach((t, i) => {
-  console.log(\`\${i + 1}. \${t.name} — \${t.teamSize} Pokémon\`);
-});`,
+          readOnly: true,
+          playgroundNote: "Design analysis exercise — refer to the relationship diagram at the top of this chapter.",
+          starterCode: `// Refer to the diagram above this chapter.
+//
+// It shows two relationship types:
+//   - One-to-many: trainers → team_pokemon
+//   - Many-to-many: pokemon ↔ pokemon_moves ↔ moves
+//
+// Work through the questions in the Instructions tab.`,
+          solution: `// Answers:
+//
+// 1. Leaderboard (trainer name + count):
+//    - Needs data from both trainers (name) and team_pokemon (count per trainer)
+//    - Requires a JOIN on trainer_id + an aggregate COUNT
+//    - This is more complex than loading a single table — flag it in the ticket
+//    - The query groups team_pokemon rows by trainer_id and counts them
+//
+// 2. Trainer account deletion:
+//    - team_pokemon rows have a FK pointing to trainers
+//    - Options: cascade (auto-delete team when trainer deleted),
+//               restrict (block deletion if team rows exist),
+//               set null (orphan the rows)
+//    - Design implication: does your "delete account" flow need a
+//      confirmation that shows "this will also delete your 6 saved Pokémon"?
+//    - Answer: yes — cascade deletes should be surfaced in the UI
+//
+// 3. "Which trainers have the same Pokémon?":
+//    - Possible with current schema — join team_pokemon rows by pokemon_id
+//    - But it requires a more complex query (group by pokemon_id, find overlaps)
+//    - Design problem: do you show this per-Pokémon or per-trainer?
+//    - A "shared Pokémon" feature might warrant its own table for clarity`,
           instructions: [
-            "Run the existing code to understand how getTrainerWithTeam works",
-            "Add trainer Brock (id: 3, badge_count: 9) to the trainers array",
-            "Add 2 Pokémon for Brock (trainer_id: 3) to the teamPokemon array",
-            "Write a getLeaderboard() function that returns all trainers sorted by team size, largest first",
+            "Study the schema. Note that team_pokemon has a trainer_id FK — this is the link between the two tables.",
+            "Question 1: A leaderboard shows trainer name and their Pokémon count. Which tables does this query touch? What makes it more complex than a simple page load?",
+            "Question 2: A trainer deletes their account. What happens to their team_pokemon rows? What should your design communicate to the user before they confirm?",
+            "Question 3: A PM wants to show 'which trainers have the same Pokémon'. Is this possible with the current schema? What design challenge does it create?",
           ],
-          hint: "getLeaderboard should use .map() to attach a teamSize count to each trainer, then .sort() to order them. In Supabase, this would be .select('*, team_pokemon(count)').order('count', { ascending: false }).",
+          hint: "For Q2: think about cascade deletes. If a trainer row is removed and team_pokemon rows reference it, those rows become 'orphaned'. The database has to decide what to do — and your design should communicate the consequence to the user.",
         },
+        quiz: [
+          {
+            id: "3-4-q1",
+            question: "A trainer profile page shows the trainer's name, badge count, and their full Pokémon team. The data lives in two tables: trainers and team_pokemon. What connects them?",
+            options: [
+              "The trainer's name is stored in both tables so they can be matched",
+              "A JOIN query reads both tables simultaneously into a single flat list",
+              "The team_pokemon table has a trainer_id foreign key that references the id in trainers",
+              "Supabase automatically links tables that share the same column names",
+            ],
+            correctIndex: 2,
+            explanation:
+              "A foreign key is a column in one table that points to the primary key of another. trainer_id in team_pokemon creates a permanent, enforced link to the trainers table. This is how the database knows which Pokémon belong to which trainer.",
+          },
+          {
+            id: "3-4-q2",
+            question: "You're designing a leaderboard that shows every trainer's name alongside how many Pokémon they've caught. The count lives in team_pokemon, the name lives in trainers. What does your query need to do?",
+            options: [
+              "Run two separate queries and merge the results in JavaScript",
+              "Store the Pokémon count directly on the trainers table so you only need one query",
+              "JOIN the two tables on trainer_id and aggregate the team_pokemon rows per trainer",
+              "This isn't possible — related data always requires multiple round trips to the database",
+            ],
+            correctIndex: 2,
+            explanation:
+              "A JOIN combined with an aggregate (COUNT) is the standard pattern. In Supabase: .select('name, team_pokemon(count)'). One query, one response, no JavaScript merging required.",
+          },
+        ],
         resources: [
           {
             title: "Database Relationships Explained",
@@ -2091,7 +1756,7 @@ getLeaderboard().forEach((t, i) => {
   {
     id: "4",
     title: "Leveling Up: Real-World APIs",
-    description: "OAuth, authentication, and combining APIs with databases.",
+    description: "Understand OAuth, authenticated APIs, and how to read a ticket — the skills that make you a better design partner.",
     icon: "Rocket",
     chapters: [
       {
@@ -2114,54 +1779,52 @@ OAuth lets users grant your app permission to access their data on another servi
 
 ### The Flow (Simplified)
 
-1. **Your app** → Redirects user to GitHub login page
-2. **User** → Logs in and clicks "Allow" (granting permissions)
-3. **GitHub** → Redirects back to your app with a **code**
-4. **Your app** → Exchanges that code for an **access token**
-5. **Your app** → Uses the token to make API calls on behalf of the user
+1. **Your app** redirects the user to GitHub's login page
+2. **User** logs in on GitHub and clicks "Allow" (granting permissions)
+3. **GitHub** redirects back to your app with a temporary **code**
+4. **Your app** exchanges that code for an **access token** (this happens server-side, invisibly)
+5. **Your app** uses the token to make API calls on behalf of the user
 
-### Real Example: GitHub
-
-\`\`\`
-Step 1: Redirect to GitHub
-https://github.com/login/oauth/authorize?
-  client_id=YOUR_CLIENT_ID&
-  response_type=code&
-  redirect_uri=http://localhost:3000/api/github/callback&
-  scope=read:user repo
-
-Step 2: User logs in and approves
-
-Step 3: GitHub redirects to your app
-http://localhost:3000/api/github/callback?code=AQB...xyz
-
-Step 4: Exchange code for token (server-side)
-POST https://github.com/login/oauth/access_token
-
-Step 5: Use token for API calls
-GET https://api.github.com/user/repos
-Authorization: Bearer BQC...abc
-\`\`\`
+The user never gives your app their GitHub password. They authenticate directly with GitHub, which hands you a scoped token instead.
 
 ### Scopes: What You're Asking Permission For
 
-When you redirect to GitHub, you specify **scopes:** what data you want access to:
-- \`read:user\`: Read the user's profile
-- \`repo\`: Access repositories
-- \`gist\`: Read gists
+When you initiate the flow, you specify **scopes** — what access you need:
 
-Users see these scopes on the consent screen, so design it carefully!
+| Scope | What it allows |
+|-------|---------------|
+| \`read:user\` | Read the user's public profile data |
+| \`repo\` | Read and write access to repositories |
+| \`user:email\` | Read the user's email address |
 
-### For Designers
+Users see these scopes on GitHub's consent screen before approving. **Asking for more than you need erodes trust.** Request the minimum scope your feature actually requires.
 
-OAuth introduces several UX moments to design:
-1. **"Connect GitHub" button:** The entry point
-2. **Redirect to GitHub:** User briefly leaves your app
-3. **Consent screen:** GitHub asks "Allow this app to..."
-4. **Redirect back:** User returns to your app, now connected
-5. **Connected state:** Show their profile, a "Disconnect" option
-6. **Token expired:** Graceful re-authentication flow`,
+### The UX Moments to Design
+
+OAuth isn't just a backend concern — it introduces 6 distinct UX moments:
+
+1. **"Connect GitHub" button** — the entry point. Design for trust: show what access you're requesting.
+2. **Redirect to GitHub** — the user briefly leaves your app. Show a clear loading/redirect state.
+3. **Consent screen** — this is GitHub's UI, but your app's scope request is displayed here.
+4. **Redirect back** — the user returns. Show a connecting/loading state during token exchange.
+5. **Connected state** — display confirmation (their avatar, username) and a "Disconnect" option.
+6. **Token expired** — tokens don't last forever. Design a graceful re-authentication flow.
+
+### Designing the Permission Moment
+
+The consent screen is the most trust-sensitive moment in the OAuth flow. Users are deciding whether your app is worth granting access to. Several design decisions in your app affect whether they approve or abandon:
+
+- **Clarity before the redirect:** Tell users exactly what you're asking for and why, in your own UI, before they hit GitHub's screen. "We need read access to your repos to show you contribution stats" is more trustworthy than a button that just says "Connect GitHub".
+- **Minimum viable scope:** Only request what you genuinely need. If you only need to read a user's profile, don't request \`repo\` access — it looks suspicious.
+- **The return state:** After OAuth completes, land the user somewhere that feels like progress, not a blank page.
+- **The disconnect flow:** Always provide a way to revoke access. Users trust apps that let them leave.
+
+:::tip
+Whenever you're designing a "connect your account" or "sign in with X" flow, you're designing an OAuth experience. The consent screen is the most trust-sensitive moment — give it the same attention as your onboarding screens.
+:::`,
         exercise: {
+          playgroundNote: "This code maps out the OAuth flow as a data structure. Run it to walk through each step — no real OAuth is happening here, just the concept made visible.",
+          errorHint: "Something went wrong with the object structure. Check for missing commas or closing brackets.",
           starterCode: `// OAuth is a multi-step process that requires a real server.
 // Let's understand the flow by simulating it!
 
@@ -2244,37 +1907,37 @@ const oauthFlow = {
   },
 };`,
           instructions: [
-            "Run the code to see the four-step OAuth flow",
-            "Add 'read:email' to the scope string in step1.params — this requests email access. Re-run and check the params output changes.",
-            "Both step1 and step3 use the same redirect_uri. Change both to 'https://myapp.com/api/github/callback' to simulate a production deploy — they must match or GitHub rejects the exchange.",
-            "Look at step4.headers — what does the 'Bearer' prefix tell the server, and which module covered this pattern?",
+            "Run the code to see the four-step OAuth flow laid out as a data structure",
+            "Find step1.params.scope — this is what your app is requesting access to. What does 'read:user repo' mean?",
+            "Find step4.headers — what does the 'Bearer' prefix tell GitHub, and where does this token come from?",
+            "Think about the UX: which of the 6 moments listed in the chapter is represented by each step in the flow?",
           ],
-          hint: "The redirect_uri in step1 and step3 must be identical — GitHub validates this as a security check. If they differ, step3's code exchange fails with a 400 error.",
+          hint: "step3 (token exchange) happens server-side — the user never sees it. step2 (consent) is what users interact with. The Bearer token in step4 is the key that unlocks every subsequent API call.",
         },
         quiz: [
           {
             id: "4-1-q1",
-            question: "Your team is building an app that lets users connect their Spotify account. A junior engineer suggests storing the user's Spotify password in your database so the app can log in on their behalf. What's the core problem with this approach?",
+            question: "Your team is building an app that lets users connect their GitHub account. A junior engineer suggests storing the user's GitHub password in your database so the app can log in on their behalf. What's the core problem with this approach?",
             options: [
-              "It would work fine as long as the database is encrypted at rest",
+              "If your database is breached, every user's GitHub credentials are exposed. OAuth gives your app a scoped token — not the password — so a breach only affects your app, not the user's entire GitHub account",
               "Passwords are too long to store efficiently in a relational database",
-              "If your database is breached, every user's Spotify credentials are exposed. OAuth gives your app a scoped token — not the password — so a breach only affects your app, not the user's entire Spotify account",
-              "Spotify's Terms of Service require OAuth for all third-party apps",
+              "It would work fine as long as the database is encrypted at rest",
+              "GitHub's Terms of Service require OAuth for all third-party apps",
             ],
-            correctIndex: 2,
+            correctIndex: 0,
             explanation:
-              "OAuth exists precisely to solve this problem. Users never share their password with your app. They authenticate directly with Spotify, which issues your app a scoped token. If that token leaks, Spotify can revoke it. A stolen password is much harder to fix.",
+              "OAuth exists precisely to solve this problem. Users never share their password with your app. They authenticate directly with GitHub, which issues your app a scoped token. If that token leaks, GitHub can revoke it. A stolen password is much harder to fix.",
           },
           {
             id: "4-1-q2",
             question: "A user clicks 'Connect GitHub' in your app. GitHub redirects them back to /api/github/callback?code=abc123. What must your server do with that code, and why does this have to happen server-side rather than in the browser?",
             options: [
               "Store the code in localStorage and attach it to future API requests as an auth header",
-              "Exchange the code for an access token via a server-side POST to GitHub, using your client secret. The secret must never appear in browser code — anyone opening DevTools could steal it",
-              "Redirect the user back to GitHub with the code to retrieve their profile data",
               "The code is the access token — pass it directly in Authorization headers going forward",
+              "Redirect the user back to GitHub with the code to retrieve their profile data",
+              "Exchange the code for an access token via a server-side POST to GitHub, using your client secret. The secret must never appear in browser code — anyone opening DevTools could steal it",
             ],
-            correctIndex: 1,
+            correctIndex: 3,
             explanation:
               "The code-for-token exchange requires your client secret, which must be kept private. Browser JavaScript is visible to anyone with DevTools open. Your server handles the exchange, stores the token securely, and only exposes data the user is allowed to see.",
           },
@@ -2310,72 +1973,62 @@ const oauthFlow = {
         ],
         content: `## Authenticated APIs in Practice
 
-Most APIs beyond simple public ones (like PokeAPI) require authentication. The most common method is a **Bearer token:** a string you include in every request header.
+Most APIs beyond simple public ones (like PokeAPI) require authentication. The most common method is a **Bearer token** — a string you include in every request header.
 
-### The GitHub API: No OAuth Required
+### What a Token Does
 
-GitHub has a great API that lets you access public data without any auth, and private data with a Personal Access Token (PAT). You can create one in your GitHub settings under Developer Settings → Personal Access Tokens.
+A Bearer token tells the API: *"This request is coming from a trusted user who has already been verified."*
 
-\`\`\`javascript
-// Public data — no auth needed
-const response = await fetch("https://api.github.com/users/jtcrawley");
-const user = await response.json();
-console.log(user.name, user.public_repos);
+Without a token: \`401 Unauthorized\`
+With a valid token: \`200 OK\` + your data
 
-// Private data — needs a token
-const response = await fetch("https://api.github.com/user/repos", {
-  headers: {
-    Authorization: \`Bearer YOUR_GITHUB_TOKEN\`,
-  },
-});
-const repos = await response.json();
-\`\`\`
-
-### What the Token Does
-
-The token tells GitHub: *"This request is coming from a trusted app that the user has authorised."*
-
-Without it: \`401 Unauthorized\`
-With it: \`200 OK\` + your data
-
-### The Authorization Header
-
-Every authenticated API uses the same pattern, though the format varies slightly:
+Every authenticated API uses the same header pattern, though the exact format varies:
 
 | API | Header format |
 |-----|--------------|
 | GitHub | \`Authorization: Bearer YOUR_TOKEN\` |
-| PokeAPI | No auth needed |
 | Stripe | \`Authorization: Bearer sk_live_...\` |
 | Supabase | \`apikey: YOUR_ANON_KEY\` |
+| PokeAPI | No auth needed (public) |
 
-### For Designers
+### Rate Limits: The Design Implication
 
-When you see a "Connect your account" feature, that's OAuth generating one of these tokens behind the scenes. Once connected, every API call the app makes on your behalf includes your token in the header.`,
-        exercise: {
-          starterCode: `// Let's call the GitHub API!
-// Public profile — no auth needed
+Authenticated APIs often have different rate limits depending on whether you're logged in:
 
-const username = "jtcrawley"; // change this to any GitHub username
+- **GitHub unauthenticated:** 60 requests/hour
+- **GitHub authenticated:** 5,000 requests/hour
 
-const response = await fetch(\`https://api.github.com/users/\${username}\`);
-const user = await response.json();
+This matters for design. If you're building a feature that makes many API calls (a dashboard that fetches 20 repos), you need to be aware of limits. Design patterns like pagination, lazy loading, and caching exist partly to manage rate limits gracefully.
 
-console.log("=== GitHub Profile ===");
-console.log("Name:", user.name);
-console.log("Username:", user.login);
-console.log("Public repos:", user.public_repos);
-console.log("Followers:", user.followers);
-console.log("Bio:", user.bio);
-console.log("\\nRaw response status:", response.status);`,
-          solution: `// Conceptual exercise with example data`,
-          instructions: [
-            "Run the code to fetch a real GitHub profile",
-            "Change the username to your own GitHub username",
-            "Notice we're using a GET request with no auth. This is public data.",
-            "Private data (like private repos) would need an Authorization header",
+### When Data Needs to Persist
+
+Fetching from an API gives you data for the moment. But what if the user wants to see that data tomorrow, or offline?
+
+The pattern is: **fetch → transform → save → display**.
+
+1. **Fetch** the data from the API (live, network dependent)
+2. **Transform** it — pick only the fields your UI needs
+3. **Save** it to your own database
+4. **Display** from the database (fast, offline-capable, stable)
+
+This is why Instagram can show you posts even when you first open the app on slow connections — they've already fetched and cached the recent feed. The API isn't called every time you scroll.
+
+**For designers:** if a feature needs to work offline, show historical data, or load instantly — it needs persistence. That's a backend conversation to have early.
+
+:::tip
+If a feature shows user-specific data, confirm early: is there an authenticated endpoint for it? Who manages the token lifecycle? These questions prevent late-stage blockers.
+:::`,
+        postmanExercise: {
+          method: "GET",
+          url: "https://api.github.com/users/octocat",
+          steps: [
+            { instruction: "Send a GET to https://api.github.com/users/octocat" },
+            { instruction: "Explore the response — public repos, followers, avatar URL, bio" },
+            { instruction: "Change \"octocat\" to your own GitHub username and send again" },
+            { instruction: "Now try: GET https://api.github.com/users/octocat/repos", detail: "This returns their public repositories. Notice each repo has its own fields." },
+            { instruction: "Check the response headers for X-RateLimit-Remaining", detail: "GitHub limits unauthenticated requests to 60/hour. With a token it's 5,000/hour." },
           ],
-          hint: "Try changing the username to 'torvalds' or 'gaearon'. You'll get real data back!",
+          expectedOutput: "A JSON profile with name, avatar_url, public_repos count, and more. No authentication needed for public data.",
         },
         quiz: [
           {
@@ -2422,149 +2075,184 @@ console.log("\\nRaw response status:", response.status);`,
       },
       {
         id: "4-3",
-        title: "Combining APIs + Database",
-        subtitle: "Building features that persist",
-        readTime: 6,
+        title: "Reading a Ticket as a Designer",
+        subtitle: "From Jira ticket to design questions",
+        readTime: 5,
         narrative:
-          "Here's where everything comes together. We'll fetch data from an API, save it to our database, and build something that lasts beyond a single session.",
+          "Engineering has written a ticket. It has an endpoint, a payload, and acceptance criteria. You've been added for design review. Here's how to read it, what to look for, and what to flag before anyone writes a line of code.",
         concepts: [
-          "Data pipeline",
-          "API to database",
-          "Persistence",
-          "Aggregation",
+          "API ticket anatomy",
+          "Endpoint",
+          "Acceptance criteria",
+          "Data states",
+          "Design review",
+          "Gap analysis",
         ],
-        content: `## The Full Loop: API → Database → UI
+        content: `## Reading a Ticket as a Designer
 
-Until now we've done two things separately:
-1. Fetch data from APIs (PokeAPI, GitHub)
-2. Store data in a database (Supabase)
+The diagram above breaks down a real API ticket — each part labelled with the design question you should ask. The review checklist at the bottom is your pre-sprint tool. Refer back to it whenever you're added to a ticket.
 
-Now let's combine them: **fetch from an API, then save to the database.**
+The ticket in the example is **reasonable but incomplete from a design perspective.** Most tickets are. Your job is to find the gaps before development starts. Here's the thinking:
 
-### The Pattern
+## The Gaps Most Tickets Miss
 
-\`\`\`javascript
-// 1. Fetch from API
-const apiResponse = await fetch("https://pokeapi.co/api/v2/pokemon?limit=5");
-const { results: pokemon } = await apiResponse.json();
+### Missing fields
 
-// 2. Transform the data (pick only what we need)
-const pokemonToSave = pokemon.map(p => ({
-  name: p.name,
-  url: p.url,
-  saved_at: new Date().toISOString(),
-}));
+The response has \`name\` and \`sprite\` — but if your design shows a **type badge** (fire, water, electric), that field isn't in the response. Either the API needs updating, or the type must be fetched separately. Compare every field in your design against the response shape.
 
-// 3. Save to database
-const { data, error } = await supabase
-  .from('saved_pokemon')
-  .insert(pokemonToSave)
-  .select();
+### Empty state ambiguity
 
-// 4. Now the data persists! Show it in the UI anytime.
-\`\`\`
+The acceptance criteria says nothing about what happens when \`pokemon\` is an empty array \`[]\`. Does it return a 200 with an empty array, or a 404? Your design's empty state depends on this answer. Flag it.
 
-### Why Save API Data?
+### Missing data states
 
-- **Speed:** Reading from your database is faster than calling the API again
-- **Persistence:** Data stays even if the API is down
-- **History:** Track changes over time (your top songs this month vs last month)
-- **Offline access:** Show cached data without internet
+If the acceptance criteria only mentions the success case, the loading, error, and empty states are unspecified. That means an engineer will invent them — or skip them entirely.
 
-### For Designers
+### The N+1 problem
 
-This "fetch → transform → save → display" pattern is behind almost every feature:
-- **Instagram**: Fetch posts from API → Save to cache → Display in feed
-- **Your app**: Fetch Pokémon → Aggregate by type → Display your collection`,
+An N+1 problem is when loading one screen requires one initial request plus N additional requests — one per item.
+
+Example: the endpoint above returns a list of Pokémon. But if your design shows each Pokémon's **full stats** (HP, Attack, Defense), you'd need to call \`GET /pokemon/{id}\` for each one — that's 6 more calls to show a 6-Pokémon team. An engineer might not flag this unless your design surfaces it.
+
+---
+
+Use the checklist in the diagram above as your pre-sprint tool. One design review conversation before development starts is worth ten rounds of revision after.
+
+:::tip
+The best time to run a design review on a ticket is before the sprint starts. One hour with the spec, the API response, and the schema is worth ten hours of revision after development begins.
+:::`,
         exercise: {
-          starterCode: `// Let's simulate the full API → Database → UI loop
+          readOnly: true,
+          playgroundNote: "Study the ticket below and answer the design review questions in the Instructions panel.",
+          starterCode: `// Engineering Ticket: Trainer Profile Screen
+//
+// Story: As a user, I can view my trainer profile showing
+//        my username, avatar, and saved Pokémon team.
+//
+// Endpoint: GET /api/trainers/{trainerId}
+//
+// Response shape:
+// {
+//   "id": "abc123",
+//   "username": "AshKetchum",
+//   "pokemon": [
+//     {
+//       "id": 25,
+//       "name": "pikachu",
+//       "nickname": "Sparky",
+//       "position": 1
+//     }
+//   ]
+// }
+//
+// Acceptance criteria:
+// - Returns trainer data with their saved Pokémon
+// - Returns 404 if trainer not found
+//
+// -------------------------------------------------------
+// Design spec shows:
+// - Trainer avatar image
+// - Username
+// - Pokémon type badges (fire, electric, etc.)
+// - Pokémon sprites/images
+// - Empty state: "Your team is empty. Start exploring!"
+// -------------------------------------------------------
+//
+// Run the code to print the ticket, then answer the
+// questions in the Instructions tab.
 
-// Step 1: "Fetch" from PokeAPI (simulated response)
-const apiPokemon = [
-  { id: 25,  name: "pikachu",   types: ["electric"],        sprite_url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png" },
-  { id: 6,   name: "charizard", types: ["fire", "flying"],  sprite_url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png" },
-  { id: 133, name: "eevee",     types: ["normal"],          sprite_url: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png" },
+const ticket = {
+  endpoint: "GET /api/trainers/{trainerId}",
+  responseFields: ["id", "username", "pokemon[].id", "pokemon[].name", "pokemon[].nickname", "pokemon[].position"],
+  acceptanceCriteria: ["Returns trainer data with saved Pokémon", "Returns 404 if trainer not found"],
+  designRequires: ["avatar image", "username", "type badges", "sprites", "empty state"],
+};
+
+console.log("Ticket fields:", ticket.responseFields.join(", "));
+console.log("Design requires:", ticket.designRequires.join(", "));
+console.log("\\nWhich design requirements are missing from the response?");`,
+          solution: `// Missing from response vs design requirements:
+//
+// 1. avatar_url — the design shows an avatar image but
+//    the response has no avatar_url field.
+//    Fix: add avatar_url to the trainers table + response.
+//
+// 2. sprite (pokemon image) — response has pokemon[].id and name
+//    but no sprite URL. The design shows Pokémon images.
+//    Fix: add sprite_url to team_pokemon table + response,
+//    OR fetch from PokeAPI as a second call per Pokémon.
+//
+// 3. type badges — response has no types field.
+//    Fix: same as sprites — add to DB or fetch from PokeAPI.
+//
+// 4. Empty state — acceptance criteria says nothing about
+//    pokemon[] being empty. Does it return 200 + [] or 404?
+//    The empty state copy "Your team is empty. Start exploring!"
+//    requires a 200 response to show correctly.
+//    Flag: add acceptance criterion for empty team case.
+//
+// 5. Loading state — no mention in the ticket at all.
+//    Flag: confirm loading state is in the design spec.
+
+const gaps = [
+  "avatar_url missing from response",
+  "sprite URLs missing from response",
+  "types/type badges missing from response",
+  "empty pokemon[] case not specified in acceptance criteria",
+  "loading state not mentioned in ticket",
 ];
 
-console.log("Step 1: Fetched", apiPokemon.length, "Pokémon from API\\n");
-
-// Step 2: Transform (pick only the fields our database needs)
-const pokemonToSave = apiPokemon.map(p => ({
-  pokemon_id: p.id,
-  name: p.name,
-  types: p.types,
-  sprite_url: p.sprite_url,
-  saved_at: new Date().toISOString(),
-}));
-
-console.log("Step 2: Transformed data for database");
-console.log(JSON.stringify(pokemonToSave[0], null, 2));
-console.log("");
-
-// Step 3: "Save" to database (simulated)
-const database = [...pokemonToSave];
-console.log("Step 3: Saved", database.length, "Pokémon to database\\n");
-
-// Step 4: "Read" from database and display in UI
-console.log("Step 4: Reading from database for UI\\n");
-console.log("=== My Saved Pokémon ===");
-database.forEach((p, i) => {
-  console.log(\`\${i + 1}. \${p.name} (\${p.types.join(", ")})\`);
-});
-
-console.log("\\nThis data now persists in your Supabase database!");`,
-          solution: `// Transform step extended with primary_type and saved fields
-const pokemonToSave = apiPokemon.map(p => ({
-  pokemon_id: p.id,
-  name: p.name,
-  types: p.types,
-  primary_type: p.types[0],        // first type is the primary
-  sprite_url: p.sprite_url,
-  saved: false,                    // tracks whether user has explicitly saved it
-  saved_at: new Date().toISOString(),
-}));`,
+console.log("\\nDesign review gaps found:");
+gaps.forEach((gap, i) => console.log(\`  \${i + 1}. \${gap}\`));`,
           instructions: [
-            "Run the code and read the Step 2 output — notice which fields are saved",
-            "Add a 'primary_type' field to the transform in Step 2: primary_type: p.types[0] — this extracts the first (primary) type for easy filtering. Re-run.",
-            "Add a 'saved: false' boolean field to the transform — your UI would flip this to true when the user explicitly saves a Pokémon. Re-run and confirm it appears in the Step 2 output.",
-            "Update the Step 4 display loop to also log p.primary_type for each entry",
+            "Read the ticket carefully — note what the response includes and what the design spec requires.",
+            "Gap 1: The design shows a trainer avatar. Is avatar_url in the response? What do you flag?",
+            "Gap 2: The design shows Pokémon type badges and sprites. Are those fields in the response?",
+            "Gap 3: The acceptance criteria covers 404 — but what happens when pokemon[] is empty? What copy shows?",
+            "Run the solution to see a complete gap analysis. How many issues would you have caught before sprint?",
           ],
-          hint: "The transform step is where you shape API data for your own schema. You're not stuck with the API's field names — rename, omit, and add fields that make sense for your app.",
+          hint: "Compare each item in 'Design spec shows' against the response fields. Anything in the design that doesn't have a matching field in the response is a gap to raise before development starts.",
         },
         quiz: [
           {
             id: "4-3-q1",
-            question: "Your app fetches a user's top Spotify tracks in real time. A month later Spotify renames the response field track.name to track.title and your UI breaks everywhere. How would the fetch → transform → save pattern have protected you?",
+            question: "A ticket says GET /teams/{id} returns { name, pokemon[] }. Your design shows a 'No team yet — start exploring' empty state. What's missing from the ticket?",
             options: [
-              "It wouldn't — if the API response changes, the data saved in your database is also wrong",
-              "You control your own schema. The transform step maps track.name to your name column once. Your UI reads from your stable database column and never sees the API field name at all",
-              "Databases automatically validate incoming API shapes and reject breaking changes",
-              "You'd still need to update both your database schema and your UI regardless",
-            ],
-            correctIndex: 1,
-            explanation:
-              "The transform step is a buffer between API instability and your UI. When Spotify changes their field name, you update one line in your transform function. The database column name stays the same, so nothing in your UI breaks.",
-          },
-          {
-            id: "4-3-q2",
-            question: "A user opens your app on a flight with no internet. They want to browse their saved Pokémon collection. Which step in the fetch → transform → save → display pipeline makes this work?",
-            options: [
-              "The fetch step, because fetch() can be configured with a cache: 'force-cache' option for offline use",
-              "The transform step, because normalising data removes the need for a network connection",
-              "The save step. Once data is in your database, the display step reads from there — not from PokeAPI. No internet needed for data that's already persisted",
-              "The display step, because modern browsers automatically cache the last successful API response",
+              "The endpoint URL format is wrong — it should use query params, not path params",
+              "The response needs a 'total' field to know if pokemon[] is empty",
+              "The acceptance criteria doesn't specify what happens when pokemon[] is empty — does it return 200 + [] or 404? The empty state design depends on this",
+              "Empty states are a frontend concern and don't need to be in the ticket",
             ],
             correctIndex: 2,
             explanation:
-              "This is the core value of persistence. The display step reads from your database, not the API. If you skip the save step and fetch live each time, the app is broken offline. Saving first means the UI always has something to show.",
+              "The acceptance criteria only covers the success case and the 404. An empty team (pokemon[] = []) is a valid state that needs explicit handling. If the API returns 404 for an empty team, your empty state design breaks — it'd show an error screen instead. Always specify the empty array behaviour in your design review.",
+          },
+          {
+            id: "4-3-q2",
+            question: "A ticket spec says GET /pokemon/{id} returns { name, types, stats }. Your design shows a Pokémon sprite/avatar. What problem do you flag before the sprint?",
+            options: [
+              "The HTTP method should be POST for fetching individual resources",
+              "types is an array and your design can't render arrays",
+              "The response doesn't include a sprite URL field — the design requires an image that isn't in the spec. Either the response needs updating or the design needs changing",
+              "stats is too much data — the response should be simplified",
+            ],
+            correctIndex: 2,
+            explanation:
+              "The response includes name, types, and stats — but no image/sprite URL. Your design shows an avatar. Either the engineer needs to add sprite_url to the response, or your design needs to use something else. Catching this before development starts is worth an entire sprint of rework.",
           },
         ],
         resources: [
           {
-            title: "Building Full-Stack Apps with Supabase",
-            url: "https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs",
-            type: "docs",
-            description: "Official Next.js + Supabase tutorial.",
+            title: "Writing Good Acceptance Criteria (Atlassian)",
+            url: "https://www.atlassian.com/agile/project-management/acceptance-criteria",
+            type: "article",
+            description: "How to write and review acceptance criteria that cover edge cases — useful when reviewing tickets as a designer.",
+          },
+          {
+            title: "The Four States of UI (UX Collective)",
+            url: "https://uxdesign.cc/the-four-states-of-ui-84241eddc942",
+            type: "article",
+            description: "A reminder of all four data states that every API-driven screen needs designed.",
           },
         ],
       },
@@ -2574,7 +2262,7 @@ const pokemonToSave = apiPokemon.map(p => ({
         subtitle: "Test your UI without waiting for the backend",
         readTime: 6,
         narrative:
-          "Your design sprint ends Friday. The backend won't be ready for two weeks. You have two options: wait, or mock it. Mocking lets you build and test a fully interactive UI against fake data right now. By the time the real API is ready, your design has already been tested, iterated, and signed off.",
+          "You've reviewed the ticket, flagged the gaps, and asked your questions. The engineer goes off to build it — and says it'll be ready in two weeks. Your sprint ends Friday. Now what? You mock it. Mocking lets you test a fully interactive UI against fake data right now. By the time the real API is ready, your design has already been tested, iterated, and signed off.",
         concepts: [
           "Mock API",
           "Fake data",
@@ -2707,8 +2395,14 @@ return HttpResponse.error()
 return HttpResponse.json({ pokemon: [] })
 \`\`\`
 
-Design teams that mock properly never ship with untested empty or error states. They're easy to trigger in a mock — so there's no excuse not to design them.`,
+Design teams that mock properly never ship with untested empty or error states. They're easy to trigger in a mock — so there's no excuse not to design them.
+
+:::tip
+If you're waiting on the backend to test a design, you don't have to wait. Mock it, test all four states, get sign-off — then swap in the real API when it's ready.
+:::`,
         exercise: {
+          playgroundNote: "Change 'success' to 'empty' or 'error' on the mockFetch line to test the other states — that's exactly what mocking is for.",
+          errorHint: "That error was intentional! Change the state string back to 'success' to see working data again.",
           starterCode: `// Simulating different API states with fake data
 // This is the same pattern a real mock would follow
 
@@ -2789,12 +2483,12 @@ for (const state of ["success", "empty", "error"]) {
             id: "4-4-q1",
             question: "Your sprint ends Friday and the backend API won't be ready for two more weeks. You need to demonstrate an interactive prototype with loading and error states. What's the right approach?",
             options: [
-              "Wait for the real API before testing any UI interactions",
-              "Use static screenshots to simulate the different states",
               "Build a mock API that returns fake data so you can test all four states now",
+              "Use static screenshots to simulate the different states",
+              "Wait for the real API before testing any UI interactions",
               "Ask engineering to prioritise the API above other work",
             ],
-            correctIndex: 2,
+            correctIndex: 0,
             explanation:
               "A mock API lets you develop and test UI independently of the backend. You can trigger loading, success, empty, and error states on demand. When the real API ships, swapping it in is usually a one-line change.",
           },
@@ -2831,171 +2525,275 @@ for (const state of ["success", "empty", "error"]) {
   },
   {
     id: "5",
-    title: "Capstone Project",
-    description: "Wire every concept together into a real feature and see exactly where this knowledge takes you next.",
+    title: "Putting It All Together",
+    description: "Apply everything you've learned to audit a real design spec — then see where this fluency takes you next.",
     icon: "Trophy",
     chapters: [
       {
         id: "5-1",
-        title: "Putting It All Together",
-        subtitle: "Build a Pokémon collection app from scratch",
-        readTime: 10,
+        title: "Design Audit Capstone",
+        subtitle: "You've got the spec, the API, and the schema. Spot what's missing.",
+        readTime: 8,
         narrative:
-          "Here's where everything comes together. We'll fetch data from an API, save it to our database, and build something that lasts beyond a single session.",
+          "Real design handoffs don't come with clean, complete specs. They come with partial designs, rough API responses, and database schemas that almost match the UI. Your job is to close the gap before a developer starts building. Let's practice.",
         concepts: [
-          "Full-stack architecture",
-          "Data flow design",
-          "API + database",
-          "Schema design",
-          "Error handling",
+          "Design audit",
+          "Gap analysis",
+          "Data states",
+          "API response review",
+          "Schema review",
+          "Pre-sprint checklist",
         ],
-        content: `## The Capstone: Pokémon Collection App
+        content: `## The Design Audit
 
-You've learned every piece in isolation. Now we wire them together.
+This isn't a quiz. It's the kind of thinking your engineering team needs from you before sprint planning.
 
-The app: a personal Pokémon collection where users browse by type, view stats, save favourites, and see their history. Every feature maps directly to something you've learned.
+Real handoffs are messy. The design was done without a confirmed API spec. The schema was roughed in without checking the design. And nobody noticed the gaps — until development started and things didn't fit.
 
-### The Full Architecture
+Your job as a design-fluent designer is to catch those gaps first.
 
-Here's how data moves through the whole system:
+---
 
+## The Three Artefacts
 
-### Connecting the Concepts
+Every feature handoff involves three things. Here they are for a "My Team" screen:
 
-**Module 1 → PokeAPI calls**
-Every card in your UI starts with a fetch request. Browse by type? That's \`GET /type/{name}\`. View details? That's \`GET /pokemon/{id}\`.
+### Artefact 1: The Design Spec
 
-**Module 2 → HTTP methods + headers**
-Reading the collection uses GET. Saving a Pokémon uses POST. Removing one uses DELETE. Your Supabase client sends the right method automatically, but now you understand *why*.
+The screen shows:
+- Trainer name and avatar image at the top
+- A 6-slot team grid, each slot showing:
+  - Pokémon sprite (image)
+  - Pokémon name
+  - Type badge (coloured chip: fire = red, water = blue, grass = green)
+- An empty state: *"Your team is empty. Find your first Pokémon →"*
+- A loading skeleton while the team fetches
 
-**Module 3 → Database schema**
-Your \`saved_pokemon\` table needs a clear schema:
+### Artefact 2: The API Response
 
-| Column | Type | Purpose |
-|--------|------|---------|
-| id | uuid | Primary key |
-| pokemon_id | integer | PokeAPI id |
-| name | text | Display name |
-| sprite_url | text | Image URL |
-| types | text[] | Array of types |
-| saved_at | timestamp | When it was added |
+\`GET /api/teams/{trainerId}\` returns:
+\`\`\`json
+{
+  "trainer_id": "abc123",
+  "username": "AshKetchum",
+  "pokemon": [
+    {
+      "id": 25,
+      "name": "pikachu",
+      "nickname": "Sparky",
+      "position": 1
+    }
+  ]
+}
+\`\`\`
 
-**Module 4 → Authentication**
-In a production version, OAuth protects your collection so only *you* can see and edit it. The token from login travels in your request headers to Supabase, exactly what you learned.
+### Artefact 3: The Database Schema
 
-### The Designer Angle
+\`\`\`
+trainers:      id, username, created_at
+team_pokemon:  id, trainer_id (FK), pokemon_id, nickname, position, added_at
+\`\`\`
 
-This is where API fluency pays off most. Instead of asking an engineer "can we filter Pokémon by type?", you already know:
-- PokeAPI has a \`/type/{name}\` endpoint that returns every Pokémon of that type
-- The response includes a \`pokemon\` array you can map over
-- Each item has a \`pokemon.url\` you can follow for full stats
+---
 
-You can spec the *exact* data shape in your designs. That's a genuinely different level of collaboration.
+## Task 1: Data States Audit
 
-### What's in the Playground
+List every state this screen needs designed. Don't just say "loading" and "success" — go through each element.
 
-The exercise below builds the core of this app: fetch a type, parse the response, then structure it exactly how you'd pass it into a UI component or save it to the database.
+| State | What triggers it | What the design should show |
+|-------|-----------------|----------------------------|
+| Loading | Team fetch in progress | Skeleton grid of 6 slots |
+| Success (full team) | 1-6 Pokémon returned | Grid with sprites, names, type badges |
+| Success (empty team) | pokemon[] returns [] | Empty state message + CTA |
+| Success (partial team) | 1-5 Pokémon | Filled slots + empty slot placeholders |
+| Error (401) | User not logged in | Redirect to login or auth prompt |
+| Error (404) | Trainer ID not found | "Something went wrong" + retry |
+| Error (500) | Server failure | Friendly error + retry |
 
-Try changing \`"fire"\` to \`"water"\`, \`"psychic"\`, or \`"dragon"\` and run again.`,
+Count how many states there are. Now ask: how many are in the design?
+
+---
+
+## Task 2: Gap Analysis
+
+Compare the design spec against the API response. Find what's missing.
+
+**Gap 1: Avatar image**
+The design shows the trainer's avatar at the top. Check the API response — is \`avatar_url\` in there? It isn't. The response has \`username\` but no image. Either the API needs updating, or the design needs to change.
+
+**Gap 2: Pokémon sprites**
+Each slot in the team grid shows a Pokémon image. The API response has \`name\` and \`id\` — but no \`sprite_url\`. This means either:
+- A second API call to PokeAPI is needed per Pokémon (N+1 problem — flag it)
+- Or the \`sprite_url\` should be stored in \`team_pokemon\` and returned in the response
+
+**Gap 3: Type badges**
+The design shows coloured type badges. The API response has no \`types\` field at all. Same issue as sprites — types need to come from somewhere.
+
+**Gap 4: Colour mapping**
+Even if we get the type name ("fire"), the badge is red. That colour-to-type mapping isn't in the API or the database — it lives in the frontend. This needs to be a frontend data file, not an API call. Worth noting in your design spec.
+
+---
+
+## Task 3: Eng Sync Questions
+
+Write the two questions you'd bring to the next sprint planning session.
+
+Good questions to raise from this audit:
+
+1. *"The design shows trainer avatars and Pokémon sprites — neither are in the current API response. Can we add \`avatar_url\` to the trainers table and \`sprite_url\` to team_pokemon, or are we fetching sprites from PokeAPI per Pokémon?"*
+
+2. *"What does the endpoint return when \`pokemon[]\` is empty — a 200 with an empty array, or a 404? The empty state copy depends on getting a 200."*
+
+---
+
+## The Payoff
+
+You just caught five issues before any code was written:
+1. Missing avatar_url in response
+2. Missing sprite_url in response
+3. Missing types in response
+4. N+1 risk if sprites come from PokeAPI
+5. Empty team state undefined in the spec
+
+Each of these, found in development, would be a conversation, a ticket, a delay, and potentially a design revision. Found in the audit? It's a 10-minute Slack thread.
+
+**That's what this course was for.**
+
+:::tip
+The best time to run a design audit is before the sprint starts. One hour with the spec, the API response, and the schema is worth ten hours of revision after development begins.
+:::`,
         exercise: {
-          starterCode: `// Capstone: Build the data layer for a Pokémon type browser
-// This is the exact pattern you'd use in a real app
+          readOnly: true,
+          playgroundNote: "Work through the three audit tasks described in the chapter. This exercise shows you the artefacts as structured data.",
+          starterCode: `// Design Audit: My Team Screen
+//
+// The three artefacts:
 
-const TYPE = "fire"; // Try: "water", "dragon", "psychic", "ghost"
+const apiResponse = {
+  trainer_id: "abc123",
+  username: "AshKetchum",
+  // Note: no avatar_url
+  pokemon: [
+    { id: 25, name: "pikachu", nickname: "Sparky", position: 1 },
+    { id: 6, name: "charizard", nickname: null, position: 2 },
+    // Note: no sprite_url, no types
+  ]
+};
 
-// Step 1: Fetch all Pokémon of a given type
-console.log(\`Fetching \${TYPE}-type Pokémon...\\n\`);
+const databaseSchema = {
+  trainers: ["id", "username", "created_at"],  // no avatar_url
+  team_pokemon: ["id", "trainer_id", "pokemon_id", "nickname", "position", "added_at"]
+  // no sprite_url, no types
+};
 
-const typeRes = await fetch(\`https://pokeapi.co/api/v2/type/\${TYPE}\`);
-const typeData = await typeRes.json();
+const designRequires = [
+  "trainer avatar image",
+  "trainer username",
+  "pokemon sprite (image)",
+  "pokemon name",
+  "pokemon type badge",
+  "empty state when no pokemon",
+  "loading skeleton",
+];
 
-// The response has a pokemon array — each item wraps the Pokémon data
-const firstFive = typeData.pokemon.slice(0, 5);
+// Run this to see the gap analysis:
+console.log("=== Gap Analysis ===\\n");
+const responseFields = ["trainer_id", "username", "pokemon[].id", "pokemon[].name", "pokemon[].nickname", "pokemon[].position"];
 
-// Step 2: Fetch full details for each (name + sprite)
-const details = await Promise.all(
-  firstFive.map(entry => fetch(entry.pokemon.url).then(r => r.json()))
-);
+designRequires.forEach(requirement => {
+  const covered = responseFields.some(f => requirement.toLowerCase().includes(f.split(".").pop() || ""));
+  const status = covered ? "✓ covered" : "✗ MISSING from response";
+  console.log(\`\${status}: \${requirement}\`);
+});`,
+          solution: `// Full gap analysis with questions for eng sync
 
-// Step 3: Shape the data the way your UI actually needs it
-// This is exactly what you'd insert into your database or pass to a component
-const collection = details.map(p => ({
-  pokemon_id: p.id,
-  name: p.name,
-  sprite_url: p.sprites.front_default,
-  types: p.types.map(t => t.type.name),
-  base_stats: {
-    hp:      p.stats[0].base_stat,
-    attack:  p.stats[1].base_stat,
-    defense: p.stats[2].base_stat,
-    speed:   p.stats[5].base_stat,
+const gaps = [
+  {
+    missing: "trainer avatar image",
+    where: "Not in API response or schema",
+    fix: "Add avatar_url to trainers table + include in GET /teams response",
   },
-  // saved_at would be added by the database on insert
-}));
+  {
+    missing: "pokemon sprite (image)",
+    where: "Not in API response or team_pokemon schema",
+    fix: "Option A: add sprite_url to team_pokemon + response. Option B: fetch from PokeAPI per pokemon (N+1 — flag this).",
+  },
+  {
+    missing: "pokemon type badge",
+    where: "Not in API response",
+    fix: "Option A: add types[] to team_pokemon + response. Option B: fetch types from PokeAPI per pokemon.",
+  },
+  {
+    missing: "empty state when no pokemon",
+    where: "Acceptance criteria doesn't define empty array behaviour",
+    fix: "Confirm: does empty team return 200 + [] or 404? Empty state copy needs a 200.",
+  },
+  {
+    missing: "type badge colour mapping",
+    where: "fire=red, water=blue — not in API or DB",
+    fix: "Frontend data file. Not an API concern. Note in design spec.",
+  },
+];
 
-console.log(\`Found \${typeData.pokemon.length} \${TYPE}-type Pokémon total\\n\`);
-console.log("First 5 — shaped for our database schema:");
-collection.forEach(p => {
-  console.log(\`  #\${p.pokemon_id} \${p.name} [\${p.types.join(", ")}]  HP:\${p.base_stats.hp}  ATK:\${p.base_stats.attack}\`);
+console.log("=== Pre-Sprint Gap Report ===\\n");
+gaps.forEach((g, i) => {
+  console.log(\`Gap \${i + 1}: \${g.missing}\`);
+  console.log(\`  Where: \${g.where}\`);
+  console.log(\`  Fix: \${g.fix}\\n\`);
 });
 
-console.log("\\nSample database insert (what you'd pass to Supabase):");
-console.log(JSON.stringify(collection[0], null, 2));`,
-          solution: `// Same as starter — explore by changing the TYPE variable`,
+console.log("Questions for eng sync:");
+console.log("  1. Can we add avatar_url and sprite_url to the response?");
+console.log("  2. Does empty pokemon[] return 200+[] or 404?");`,
           instructions: [
-            "Run to fetch real fire-type Pokémon from PokeAPI",
-            "Change the TYPE variable to any type: \"water\", \"psychic\", \"dragon\", \"ghost\"",
-            "Notice the data shape. This is exactly what you'd INSERT into a Supabase table.",
-            "The base_stats object shows how you'd model game data in a real schema",
+            "Read the three artefacts in the code: the API response, the schema, and what the design requires.",
+            "Task 1: Count how many data states the design needs. Is each one mentioned in the artefacts?",
+            "Task 2: Compare designRequires against the API response fields. What's in the design that isn't in the response?",
+            "Task 3: Write two questions you'd raise in sprint planning based on what you found.",
+            "Run the solution to see the full gap analysis — how many did you catch on your own?",
           ],
-          hint: "Change the TYPE constant at the top to \"dragon\" and run again. Dragon types tend to have much higher attack stats than fire types. That's real data from the API.",
+          hint: "Look at designRequires line by line. For each item, ask: does the API response contain a field that maps to this? If not — that's a gap. Check the schema too: if it's not in the database, it can't be in the response.",
         },
         quiz: [
           {
             id: "5-1-q1",
-            question: "You're designing a Pokémon type browser. Selecting 'Dragon' should show 12 dragon-type Pokémon with their stats. Based on how PokeAPI is structured, how many API calls does your engineer actually need to make?",
+            question: "The design shows type badges with colour coding (fire = red, water = blue). You check the API response — types[0].type.name returns 'fire' but there's no colour field. Where does the colour come from, and what do you note in your spec?",
             options: [
-              "One call to /pokemon?type=dragon — a single request returns everything",
-              "Twelve calls only — one GET /pokemon/{id} per Pokémon",
-              "At least 13: one GET /type/dragon to get the list, then up to 12 parallel calls to each Pokémon's detail URL for stats. Promise.all runs those concurrently.",
-              "Two calls: one for the type list and one bulk endpoint that returns all stats at once",
+              "Request a new API endpoint that returns type colours from the backend",
+              "Add a type_colour column to the team_pokemon table",
+              "The colour mapping lives in the frontend — it's a static file mapping type names to hex codes. Note in the spec that this is a frontend concern, not an API field",
+              "Use the type's national Pokédex number modulo 18 to derive a colour deterministically",
             ],
             correctIndex: 2,
             explanation:
-              "PokeAPI doesn't have a bulk-with-stats endpoint. GET /type/dragon returns a list of Pokémon with minimal data (name + URL). To get sprites and stats you follow each URL individually. Promise.all makes this efficient by running them in parallel rather than one-by-one.",
+              "Type colours are a presentation concern — they map a type name (a string) to a brand colour. This belongs in a frontend constants file, not a database column or API field. Noting this in your design spec prevents a confused engineer from adding an unnecessary column.",
           },
           {
             id: "5-1-q2",
-            question: "Your database schema has a primary_type column for filtering. The PokeAPI response gives you p.types as an array like [{slot: 1, type: {name: 'fire'}}, {slot: 2, type: {name: 'flying'}}]. What does the transform step need to extract for primary_type?",
+            question: "The design shows a trainer avatar. The API response has username but no avatar_url. The database schema shows trainers(id, username, created_at). What do you raise before the sprint?",
             options: [
-              "Save the entire p.types array as a JSON blob — filter it in the UI instead",
-              "Ask the backend team to add a primary_type field to PokeAPI",
-              "p.types[0].type.name — the first element's type name is the primary type. The transform step maps this to your column before the Supabase insert",
-              "p.types.find(t => t.slot === 1).name — though this requires a custom API wrapper",
+              "Nothing — the engineer will notice the missing field themselves during development",
+              "Ask the designer to remove the avatar from the design since it's not in the API",
+              "Flag that avatar_url needs to be added to the trainers table and included in the API response — note it as a backend change required before this feature can ship",
+              "Use the username to generate a letter-based avatar entirely in the frontend",
             ],
             correctIndex: 2,
             explanation:
-              "p.types[0].type.name gives you 'fire'. This is exactly what the transform step is for — bridging the gap between the API's shape and your schema's shape. You're not stuck with how PokeAPI structures its response.",
+              "The design requires data that doesn't exist yet. avatar_url needs to be added to the schema and returned in the API response. This is a backend change — and catching it before the sprint means it can be planned properly, not discovered mid-development when design revisions are expensive.",
           },
         ],
         resources: [
           {
-            title: "PokeAPI: Types endpoint",
-            url: "https://pokeapi.co/docs/v2#types",
+            title: "PokeAPI Documentation",
+            url: "https://pokeapi.co/docs/v2",
             type: "docs",
-            description: "The /type/{name} endpoint. See what data it returns and how to use it.",
+            description: "Explore the full PokeAPI response shapes to practice reading real API responses.",
           },
           {
-            title: "Supabase: Inserting data",
-            url: "https://supabase.com/docs/guides/database/tables",
-            type: "docs",
-            description: "How to create a table and insert rows from your app.",
-          },
-          {
-            title: "JavaScript Promises In 10 Minutes",
-            url: "https://www.youtube.com/watch?v=DHvZLI7Db8E",
-            type: "video",
-            description: "Covers Promise.all and async patterns, exactly the technique used in the exercise above.",
+            title: "Designing for the API (Smashing Magazine)",
+            url: "https://www.smashingmagazine.com/2012/10/designing-the-be-api/",
+            type: "article",
+            description: "How designers and engineers can collaborate on API contracts before development starts.",
           },
         ],
       },
@@ -3005,7 +2803,7 @@ console.log(JSON.stringify(collection[0], null, 2));`,
         subtitle: "Where API fluency takes you from here",
         readTime: 5,
         narrative:
-          "You started this course asking 'what even is an API?' You're finishing it knowing how to fetch data, authenticate requests, model schemas, and build features that persist. That's a real shift.",
+          "You started this course asking 'what even is an API?' You're finishing it knowing how to read a response, review a ticket, audit a spec, and have informed conversations with your engineering team. That's a real shift.",
         concepts: [
           "GraphQL",
           "Webhooks",
@@ -3021,8 +2819,8 @@ Before this course, APIs were a black box. Here's the mental model you've built:
 - **HTTP methods** are verbs: GET reads, POST creates, PUT updates, DELETE removes
 - **Headers** carry context: authentication, content type, rate limit info
 - **Status codes** are signals: 200 means success, 4xx is your fault, 5xx is theirs
-- **Databases** are structured storage: tables, rows, relationships, and schemas you design
-- **CRUD** maps to HTTP: Create→POST, Read→GET, Update→PUT, Delete→DELETE
+- **Databases** are structured storage: tables, rows, relationships, and schemas you can read
+- **CRUD** maps to UI: Create→form submit, Read→page load, Update→edit flow, Delete→confirmation
 - **Auth** protects data: API keys for services, OAuth for user identity, tokens in headers
 
 That's not beginner knowledge. That's the foundation engineers build real systems on.
@@ -3086,8 +2884,14 @@ The designers who understand this will be able to spec agent workflows with prec
 
 That's the work that matters right now, and you're equipped for it.
 
-**You belong in those conversations.**`,
+**You belong in those conversations.**
+
+:::tip
+The concepts you've learned here — requests, responses, schemas, states, auth — are the same concepts behind every AI agent, every API-first product, and every engineering conversation you'll have from here on.
+:::`,
         exercise: {
+          playgroundNote: "This code shows the structure of a real Claude API request. Run it to see the annotated output — no actual AI call is made, just the pattern made visible.",
+          errorHint: "Something went wrong with the object structure. Check for missing brackets or commas in the request body.",
           starterCode: `// Final exercise: the LLM API pattern
 // LLM calls look exactly like everything else you've learned
 
@@ -3171,12 +2975,12 @@ const request = {
             id: "5-2-q1",
             question: "A PM asks: 'Can we add an AI feature that suggests which Pokémon to catch next based on the user's current team?' You've just seen the Claude API structure. What can you tell them about how hard this is to build?",
             options: [
-              "It requires a completely different tech stack — LLM APIs don't work like regular REST APIs",
               "It's a POST request with the user's team data in the messages array. The response.content[0].text is the suggestion. Same auth, same headers, same JSON pattern as every other API in this course",
+              "It requires a completely different tech stack — LLM APIs don't work like regular REST APIs",
               "LLM responses are too unpredictable to rely on for product features",
               "You'd need to fine-tune a model on Pokémon data before it could give useful suggestions",
             ],
-            correctIndex: 1,
+            correctIndex: 0,
             explanation:
               "LLM APIs are POST requests. You send a JSON body with a messages array, authenticate with an API key header, and parse a JSON response. Every concept is from Module 2. The only new thing is the specific field names — which you learn from the docs, just like any other API.",
           },

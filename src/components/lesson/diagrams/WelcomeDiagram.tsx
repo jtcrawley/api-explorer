@@ -35,28 +35,28 @@ const SKILLS = [
 
 const AGENT_FLOW = [
   {
-    label: "User",
-    sub: '"Book a flight"',
+    label: "Trainer asks",
+    sub: '"Find my team"',
     icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
   },
   {
-    label: "AI Agent",
-    sub: "Interprets intent",
+    label: "AI Companion",
+    sub: "Understands intent",
     icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>,
   },
   {
-    label: "API Calls",
-    sub: "Flights · Payments",
+    label: "Calls Pokémon HQ",
+    sub: "PokeAPI · battle data",
     icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
   },
   {
-    label: "Database",
-    sub: "Saves the trip",
+    label: "Pokédex saves",
+    sub: "Updates your records",
     icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3" strokeWidth={2}/><path strokeWidth={2} d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path strokeWidth={2} d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>,
   },
   {
-    label: "Response",
-    sub: "Confirms to user",
+    label: "Trainer gets answer",
+    sub: "Team is ready",
     icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   },
 ];
@@ -126,10 +126,10 @@ export default function WelcomeDiagram() {
           </p>
 
           {/* Nodes */}
-          <div className="flex items-start gap-1.5 overflow-x-auto pb-1">
+          <div className="flex items-start justify-between w-full">
             {AGENT_FLOW.map((node, i) => (
-              <div key={node.label} className="flex items-start gap-1.5 flex-shrink-0">
-                <div className="flex flex-col items-center gap-1.5 w-[72px]">
+              <div key={node.label} className="flex items-start gap-1.5 flex-1 min-w-0">
+                <div className="flex flex-col items-center gap-1.5 w-full max-w-[80px]">
                   <span
                     className="w-9 h-9 rounded-xl flex items-center justify-center"
                     style={{ backgroundColor: "var(--bg-tertiary)", color: "var(--text-secondary)" }}

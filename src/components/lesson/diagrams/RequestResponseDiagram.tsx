@@ -43,19 +43,19 @@ export default function RequestResponseDiagram() {
 
       {/* ── Mobile: vertical stack ── */}
       <div className="flex sm:hidden flex-col items-center gap-0">
-        <Node icon={<MonitorIcon />} label="Client" sub="Your browser" />
-        <VerticalArrows forwardLabel="↓ Request" backLabel="↑ Response" forwardColor="var(--accent)" backColor="var(--success)" />
+        <Node icon={<MonitorIcon />} label="Your Browser" sub="The customer" />
+        <VerticalArrows forwardLabel="↓ Request" backLabel="↑ Response" forwardColor="var(--http-get)" backColor="var(--success)" />
         <Node icon={<ZapIcon />} label="API" sub="The waiter" highlight />
-        <VerticalArrows forwardLabel="↓" backLabel="↑" forwardColor="var(--text-tertiary)" backColor="var(--success)" />
+        <VerticalArrows forwardLabel="↓" backLabel="↑" forwardColor="var(--http-get)" backColor="var(--success)" />
         <Node icon={<ServerIcon />} label="Server" sub="The kitchen" />
       </div>
 
       {/* ── Desktop: horizontal row ── */}
       <div className="hidden sm:flex items-center justify-center gap-0">
-        <Node icon={<MonitorIcon />} label="Client" sub="Your browser" />
-        <HorizontalArrows forwardLabel="Request →" backLabel="← Response" forwardColor="var(--accent)" backColor="var(--success)" />
+        <Node icon={<MonitorIcon />} label="Your Browser" sub="The customer" />
+        <HorizontalArrows forwardLabel="Request →" backLabel="← Response" forwardColor="var(--http-get)" backColor="var(--success)" />
         <Node icon={<ZapIcon />} label="API" sub="The waiter" highlight />
-        <HorizontalArrows forwardLabel="→" backLabel="←" forwardColor="var(--text-tertiary)" backColor="var(--success)" />
+        <HorizontalArrows forwardLabel="→" backLabel="←" forwardColor="var(--http-get)" backColor="var(--success)" />
         <Node icon={<ServerIcon />} label="Server" sub="The kitchen" />
       </div>
     </div>
@@ -75,8 +75,8 @@ function Node({ icon, label, sub, highlight }: { icon: React.ReactNode; label: s
         {icon}
       </span>
       <div className="text-center">
-        <div className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{label}</div>
-        <div className="text-xs" style={{ color: "var(--text-tertiary)" }}>{sub}</div>
+        <div className="text-sm font-semibold whitespace-nowrap" style={{ color: "var(--text-primary)" }}>{label}</div>
+        <div className="text-xs whitespace-nowrap" style={{ color: "var(--text-tertiary)" }}>{sub}</div>
       </div>
     </div>
   );

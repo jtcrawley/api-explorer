@@ -304,7 +304,7 @@ export default function DashboardPage() {
       <Sidebar />
       <main className="md:ml-72 flex-1 min-h-screen">
         {/* Mobile top bar */}
-        <div className="md:hidden flex items-center px-16 py-4 border-b" style={{ borderColor: "var(--border)" }}>
+        <div className="md:hidden flex items-center pl-14 pr-4 py-4 border-b" style={{ borderColor: "var(--border)" }}>
           <span className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Dashboard</span>
         </div>
 

@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/components/navigation/Sidebar";
 import LessonContent from "@/components/lesson/LessonContent";
 import CodePlayground from "@/components/lesson/CodePlayground";
+import PostmanExerciseCard from "@/components/lesson/PostmanExerciseCard";
 import Quiz from "@/components/lesson/Quiz";
 import ResourceList from "@/components/lesson/ResourceList";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import ModalOverlay from "@/components/ui/ModalOverlay";
 import { useTheme } from "@/components/ui/ThemeProvider";
 import {
   getModule,
@@ -32,21 +34,29 @@ import {
 
 // ─── Copy pools ──────────────────────────────────────────────────────────────
 
-const COMPLETE_MESSAGES = (name: string): string[] => [
-  `Another chapter down. The API world is starting to make real sense.`,
+const COMPLETE_MESSAGES_EARLY = (name: string): string[] => [
+  `First chapter down — you're already thinking like someone who gets it.`,
   `Look at you go. ${name} knew you had it in you.`,
-  `That clicked, didn't it? You're building genuine intuition here.`,
+  `Small steps. Real skills. ${name} approves.`,
   `One step closer to being the designer who actually gets it.`,
+];
+
+const COMPLETE_MESSAGES_ALL = (name: string): string[] => [
+  ...COMPLETE_MESSAGES_EARLY(name),
+  `Another chapter down. The API world is starting to make real sense.`,
+  `That clicked, didn't it? You're building genuine intuition here.`,
   `Your engineering teammates are going to love working with you.`,
   `Knowledge locked in. ${name} has your back.`,
   `The more you learn, the more the pieces connect. Keep going.`,
-  `Small steps. Real skills. ${name} approves.`,
   `APIs are starting to feel a lot less scary, aren't they?`,
   `Product sense + API fluency = a genuinely dangerous combo.`,
 ];
 
+const COMPLETE_MESSAGES = (name: string, completed: number): string[] =>
+  completed <= 2 ? COMPLETE_MESSAGES_EARLY(name) : COMPLETE_MESSAGES_ALL(name);
+
 const COURSE_COMPLETE_SUBTITLES = (finalName: string): string[] => [
-  `You went from "What's an API?" to building real features. That's not nothing. That's everything.`,
+  `You went from "What's an API?" to reading tickets and auditing specs. That's not nothing. That's everything.`,
   `Most designers never get here. You did. ${finalName} is proof of every chapter you showed up for.`,
   `API-fluent. Database-aware. Dangerously good collaborator. You've earned it.`,
   `The gap between you and your engineering team just got a whole lot smaller. Well done.`,
@@ -290,7 +300,7 @@ export default function ChapterPage() {
       });
     } else {
       // Regular chapter complete celebration
-      setCelebrationMessage(pickRandom(COMPLETE_MESSAGES(evolvedName)));
+      setCelebrationMessage(pickRandom(COMPLETE_MESSAGES(evolvedName, afterCount)));
       setCelebrating(true);
     }
   };
@@ -311,7 +321,7 @@ export default function ChapterPage() {
       <main className="md:ml-72 flex-1 min-h-screen min-w-0 overflow-x-hidden">
         {/* Mobile top bar — gives breathing room below the hamburger button */}
         <div
-          className="md:hidden flex items-center gap-3 px-16 py-4 border-b"
+          className="md:hidden flex items-center gap-3 pl-14 pr-4 py-4 border-b"
           style={{ borderColor: "var(--border)" }}
         >
           <span className="text-sm font-medium truncate" style={{ color: "var(--text-secondary)" }}>
@@ -378,7 +388,23 @@ export default function ChapterPage() {
             <LessonContent content={chapter.content} />
           </div>
 
-          {/* Code exercise */}
+          {/* Resources — shown after content while learner is still engaged */}
+          {chapter.resources.length > 0 && (
+            <div className="mb-12">
+              <ResourceList resources={chapter.resources} />
+            </div>
+          )}
+
+          {/* Postman exercise (primary) */}
+          {chapter.postmanExercise && (
+            <div className="mb-12">
+              <h2 className="text-xl font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
+                Try It Yourself
+              </h2>
+              <PostmanExerciseCard exercise={chapter.postmanExercise} />
+            </div>
+          )}
+
           {chapter.exercise && (
             <div className="mb-12">
               <h2 className="text-xl font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
@@ -392,13 +418,6 @@ export default function ChapterPage() {
           {chapter.quiz && chapter.quiz.length > 0 && (
             <div className="mb-12">
               <Quiz questions={chapter.quiz} />
-            </div>
-          )}
-
-          {/* Resources */}
-          {chapter.resources.length > 0 && (
-            <div className="mb-12">
-              <ResourceList resources={chapter.resources} />
             </div>
           )}
 
@@ -442,16 +461,7 @@ export default function ChapterPage() {
 
       {/* ── Chapter complete modal ── */}
       {celebrating && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          style={{ animation: "overlayIn 0.2s ease-out" }}
-        >
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 backdrop-blur-sm"
-            style={{ backgroundColor: "rgba(0,0,0,0.55)" }}
-            onClick={dismissCelebration}
-          />
+        <ModalOverlay onBackdropClick={dismissCelebration} zIndex={50}>
 
           {/* Modal */}
           <div
@@ -483,21 +493,13 @@ export default function ChapterPage() {
 
             {/* Actions */}
             <div className="flex items-center gap-3 w-full">
-              <button
-                onClick={dismissCelebration}
-                className="flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-colors hover:bg-[var(--bg-tertiary)]"
-                style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
-              >
+              <Button variant="secondary" className="flex-1" onClick={dismissCelebration}>
                 Skip
-              </button>
+              </Button>
               {next && (
-                <button
-                  onClick={dismissCelebration}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: "var(--success)" }}
-                >
+                <Button className="flex-1" onClick={dismissCelebration}>
                   Next Chapter →
-                </button>
+                </Button>
               )}
             </div>
 
@@ -505,20 +507,12 @@ export default function ChapterPage() {
               Auto-dismissing in {celebrationCountdown}s
             </p>
           </div>
-        </div>
+        </ModalOverlay>
       )}
 
       {/* ── Course complete modal ── */}
       {courseComplete && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center"
-          style={{ animation: "overlayIn 0.25s ease-out" }}
-        >
-          {/* Backdrop — darker for the biggest moment */}
-          <div
-            className="absolute inset-0 backdrop-blur-md"
-            style={{ backgroundColor: "rgba(0,0,0,0.75)" }}
-          />
+        <ModalOverlay zIndex={60} backdropOpacity="rgba(0,0,0,0.75)" backdropBlur="md" overlayAnimation="overlayIn 0.25s ease-out" onBackdropClick={() => router.push("/dashboard")}>
 
           {/* Modal */}
           <div
@@ -618,29 +612,16 @@ export default function ChapterPage() {
             </div>
 
             {/* CTA */}
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="relative z-10 w-full py-3 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
-              style={{ backgroundColor: "var(--accent)" }}
-            >
+            <Button className="relative z-10 w-full" onClick={() => router.push("/dashboard")}>
               View your results →
-            </button>
+            </Button>
           </div>
-        </div>
+        </ModalOverlay>
       )}
 
       {/* ── Evolution modal ── */}
       {evolution && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          style={{ animation: "overlayIn 0.2s ease-out" }}
-        >
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 backdrop-blur-sm"
-            style={{ backgroundColor: "rgba(0,0,0,0.65)" }}
-            onClick={dismissEvolution}
-          />
+        <ModalOverlay onBackdropClick={dismissEvolution} backdropOpacity="rgba(0,0,0,0.65)" zIndex={50}>
 
           {/* Modal */}
           <div
@@ -746,21 +727,13 @@ export default function ChapterPage() {
 
             {/* Actions */}
             <div className="flex items-center gap-3 w-full relative z-10">
-              <button
-                onClick={dismissEvolution}
-                className="flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-colors hover:bg-[var(--bg-tertiary)]"
-                style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
-              >
+              <Button variant="secondary" className="flex-1" onClick={dismissEvolution}>
                 Skip
-              </button>
+              </Button>
               {next && (
-                <button
-                  onClick={dismissEvolution}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: "var(--accent)" }}
-                >
+                <Button className="flex-1" onClick={dismissEvolution}>
                   Next Chapter →
-                </button>
+                </Button>
               )}
             </div>
 
@@ -768,7 +741,7 @@ export default function ChapterPage() {
               Auto-dismissing in {evolutionCountdown}s
             </p>
           </div>
-        </div>
+        </ModalOverlay>
       )}
     </div>
   );

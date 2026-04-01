@@ -124,7 +124,7 @@ export default function HomePage() {
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
           aria-hidden="true"
-          style={{ opacity: 0.35 }}
+          style={{ opacity: mode === "dark" ? 0.15 : 0.35 }}
         >
           <defs>
             <pattern id="hero-dot-grid" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
@@ -236,7 +236,10 @@ export default function HomePage() {
                 <span style={{ color: "var(--accent)" }}>APIs & Databases</span>
               </h1>
               <p className="text-base sm:text-xl max-w-xl mx-auto leading-relaxed" style={{ color: "var(--text-secondary)" }}>
-                A story-driven journey from &quot;What&apos;s an API?&quot; to building real features with Pokémon data.
+                Understand APIs, databases, and technical specs — so you can design what&apos;s actually buildable.
+              </p>
+              <p className="text-xs mt-3 tracking-wide" style={{ color: "var(--text-tertiary)" }}>
+                ~2 hours · 20 chapters · no coding required
               </p>
             </>
           )}
@@ -360,7 +363,7 @@ export default function HomePage() {
                   <div className="h-full rounded-full evo-xp-bar" style={{ backgroundColor: typeColor }} />
                 </div>
                 <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: typeColor, opacity: 0.6 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
 
@@ -400,7 +403,7 @@ export default function HomePage() {
                   <div className="h-full rounded-full evo-xp-bar-delayed" style={{ backgroundColor: typeColor }} />
                 </div>
                 <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" style={{ color: typeColor, opacity: 0.6 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
 

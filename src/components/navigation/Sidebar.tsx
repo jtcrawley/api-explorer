@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "@/components/ui/Logo";
 import ThemePicker from "@/components/ui/ThemePicker";
+import ProgressBar from "@/components/ui/ProgressBar";
+import IconButton from "@/components/ui/IconButton";
 import { modules } from "@/content/modules";
 import { getCompletedChapterIds } from "@/lib/progress";
 import { getTotalChapters } from "@/content/modules";
@@ -98,20 +100,17 @@ export default function Sidebar() {
     <>
       {/* ── Mobile hamburger — only visible when sidebar is closed ── */}
       {!mobileOpen && (
-        <button
+        <IconButton
+          label="Open menu"
+          size="md"
+          variant="secondary"
           onClick={() => setMobileOpen(true)}
-          className="md:hidden fixed top-4 left-4 z-50 w-9 h-9 flex items-center justify-center rounded-xl border transition-colors"
-          style={{
-            backgroundColor: "var(--bg-secondary)",
-            borderColor: "var(--border)",
-            color: "var(--text-primary)",
-          }}
-          aria-label="Open menu"
+          className="md:hidden fixed top-4 left-4 z-50"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-        </button>
+        </IconButton>
       )}
 
       {/* ── Mobile backdrop ── */}
@@ -136,6 +135,7 @@ export default function Sidebar() {
           height: "100dvh",
           backgroundColor: "var(--bg-secondary)",
           borderColor: "var(--border)",
+          willChange: "transform",
         }}
       >
         {/* Logo + mobile close button */}
@@ -144,20 +144,17 @@ export default function Sidebar() {
             <Logo size={28} />
           </Link>
           {/* Close button — only shown on mobile */}
-          <button
+          <IconButton
+            label="Close menu"
+            size="sm"
+            variant="ghost"
             onClick={() => setMobileOpen(false)}
-            className="md:hidden w-8 h-8 flex items-center justify-center rounded-xl border transition-colors"
-            style={{
-              backgroundColor: "var(--bg-tertiary)",
-              borderColor: "var(--border)",
-              color: "var(--text-secondary)",
-            }}
-            aria-label="Close menu"
+            className="md:hidden"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
+          </IconButton>
         </div>
 
         {/* Navigation — only this section scrolls */}
@@ -184,11 +181,11 @@ export default function Sidebar() {
                     }}
                   >
                     {moduleCompleted
-                      ? <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                      ? <svg className="w-3.5 h-3.5 checkmark-enter" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
                       : MODULE_ICONS[module.id]}
                   </span>
                   <span
-                    className="text-sm font-medium truncate min-w-0"
+                    className="text-sm font-medium min-w-0 leading-snug"
                     style={{ color: "var(--text-primary)" }}
                   >
                     {module.title}
@@ -248,7 +245,7 @@ export default function Sidebar() {
                           >
                             {isComplete ? "✓" : ""}
                           </span>
-                          <span className="truncate">{chapter.title}</span>
+                          <span className="leading-snug">{chapter.title}</span>
                         </Link>
                       );
                     })}
@@ -320,14 +317,29 @@ export default function Sidebar() {
 
         {/* Bottom controls */}
 
-        {/* Chapter progress label — sits above the border */}
-        <div className="px-4 pb-2 flex items-center justify-between flex-shrink-0">
-          <span className="text-[11px] font-medium" style={{ color: "var(--text-tertiary)" }}>
-            Chapter progress
-          </span>
-          <span className="text-[11px] font-semibold" style={{ color: "var(--text-secondary)" }}>
-            {completedCount}/{totalChapters}
-          </span>
+        {/* Chapter progress bar — sits above the border */}
+        <div className="px-4 pb-3 flex-shrink-0 space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-medium" style={{ color: "var(--text-tertiary)" }}>
+              {completedCount === 0 ? "Chapter progress" : `${Math.round(progressPercent)}% complete`}
+            </span>
+            <span className="text-[11px] font-medium tabular-nums" style={{ color: "var(--text-tertiary)" }}>
+              {completedCount}/{totalChapters}
+            </span>
+          </div>
+          <div
+            className="h-1.5 rounded-full overflow-hidden"
+            style={{ backgroundColor: "var(--bg-tertiary)" }}
+          >
+            <div
+              className="h-full rounded-full transition-all duration-500 ease-out"
+              style={{
+                width: `${progressPercent}%`,
+                backgroundColor: completedCount === totalChapters ? "#22c55e" : "var(--accent)",
+                minWidth: completedCount > 0 ? "6px" : "0px",
+              }}
+            />
+          </div>
         </div>
 
         <div className="border-t flex-shrink-0" style={{ borderColor: "var(--border)" }}>
@@ -373,18 +385,7 @@ export default function Sidebar() {
                     </div>
 
                     {/* XP bar — progress within current evolution stage */}
-                    <div
-                      className="h-1.5 rounded-full overflow-hidden"
-                      style={{ backgroundColor: "var(--bg-tertiary)" }}
-                    >
-                      <div
-                        className="h-full rounded-full transition-all duration-700"
-                        style={{
-                          width: `${stageProgress * 100}%`,
-                          backgroundColor: "var(--accent)",
-                        }}
-                      />
-                    </div>
+                    <ProgressBar value={stageProgress * 100} />
 
                     {/* Next evolution — right-aligned under the bar */}
                     <div className="mt-1 text-right">

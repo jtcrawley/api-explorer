@@ -13,20 +13,6 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [activeTab, setActiveTab] = useState<"output" | "instructions">("instructions");
-  const [urlCopied, setUrlCopied] = useState(false);
-
-  // Auto-detect static fetch URL from starter code for Postman button
-  const fetchUrlMatch = exercise.starterCode.match(/fetch\(\s*["']([^"'\n]+)["']/);
-  const postmanUrl = fetchUrlMatch ? fetchUrlMatch[1] : null;
-  const methodMatch = exercise.starterCode.match(/method:\s*["'](GET|POST|PUT|DELETE|PATCH)["']/i);
-  const httpMethod = methodMatch ? methodMatch[1].toUpperCase() : "GET";
-
-  const copyUrlToClipboard = () => {
-    if (!postmanUrl) return;
-    navigator.clipboard.writeText(postmanUrl);
-    setUrlCopied(true);
-    setTimeout(() => setUrlCopied(false), 2000);
-  };
 
   const runCode = useCallback(async () => {
     setIsRunning(true);
@@ -102,38 +88,65 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={resetCode}
-            className="text-xs px-2.5 py-1 rounded-lg hover:bg-[var(--bg-tertiary)] transition-colors"
-            style={{ color: "var(--text-tertiary)" }}
-          >
-            Reset
-          </button>
-          <button
-            onClick={runCode}
-            disabled={isRunning}
-            className="text-xs px-3 py-1 rounded-lg text-white disabled:opacity-50 hover:opacity-90 transition-opacity font-medium"
-            style={{ backgroundColor: "var(--accent)" }}
-          >
-            {isRunning ? "Running..." : "Run"}
-          </button>
+          {!exercise.readOnly && (
+            <>
+              <button
+                onClick={resetCode}
+                className="text-xs px-2.5 py-1 rounded-lg hover:bg-[var(--bg-tertiary)] transition-colors"
+                style={{ color: "var(--text-tertiary)" }}
+              >
+                Reset
+              </button>
+              <button
+                onClick={runCode}
+                disabled={isRunning}
+                className="text-xs px-3 py-1 rounded-lg text-white disabled:opacity-50 hover:opacity-90 transition-opacity font-medium"
+                style={{ backgroundColor: "var(--accent)" }}
+              >
+                {isRunning ? "Running..." : "Run"}
+              </button>
+            </>
+          )}
+          {exercise.readOnly && (
+            <span className="text-xs px-2.5 py-1 rounded-lg" style={{ color: "var(--text-tertiary)" }}>
+              Demo only
+            </span>
+          )}
         </div>
       </div>
+
+      {/* Playground note */}
+      {exercise.playgroundNote && (
+        <div
+          className="px-4 py-2.5 text-xs border-b flex items-start gap-2"
+          style={{
+            backgroundColor: "var(--accent-light)",
+            borderColor: "var(--border)",
+            color: "var(--text-secondary)",
+          }}
+        >
+          <span style={{ color: "var(--accent)" }}>✏️</span>
+          <span>{exercise.playgroundNote}</span>
+        </div>
+      )}
 
       {/* Editor */}
       <div style={{ backgroundColor: "var(--bg-code)" }}>
         <textarea
           value={code}
-          onChange={(e) => setCode(e.target.value)}
+          onChange={(e) => !exercise.readOnly && setCode(e.target.value)}
+          readOnly={exercise.readOnly}
           rows={Math.max(10, Math.min(code.split("\n").length + 2, 36))}
           className="w-full p-4 font-mono text-sm leading-6 resize-none focus:outline-none"
           style={{
             backgroundColor: "var(--bg-code)",
-            color: "#e2e8f0",
+            color: exercise.readOnly ? "var(--text-tertiary)" : "#e2e8f0",
             caretColor: "#e2e8f0",
+            cursor: exercise.readOnly ? "default" : "text",
           }}
           spellCheck={false}
           onKeyDown={(e) => {
+            if (exercise.readOnly) return;
             if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
               e.preventDefault();
               runCode();
@@ -240,43 +253,6 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
                   )}
                 </div>
               )}
-
-              {postmanUrl && (
-                <div
-                  className="mt-4 p-3 rounded-xl"
-                  style={{ backgroundColor: "var(--bg-tertiary)", borderLeft: "3px solid #FF6C37" }}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm flex-shrink-0" style={{ color: "#FF6C37" }}>🔶</span>
-                    <p className="text-xs font-semibold" style={{ color: "#FF6C37" }}>Try in Postman</p>
-                  </div>
-                  <p className="text-xs font-mono truncate mb-2" style={{ color: "var(--text-secondary)" }}>
-                    <span className="font-bold" style={{ color: "var(--text-primary)" }}>{httpMethod}</span>{" "}
-                    {postmanUrl}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={copyUrlToClipboard}
-                      className="text-xs px-2 py-1 rounded-lg transition-colors"
-                      style={{
-                        backgroundColor: urlCopied ? "var(--success-light)" : "var(--bg-secondary)",
-                        color: urlCopied ? "var(--success)" : "var(--text-tertiary)",
-                      }}
-                    >
-                      {urlCopied ? "Copied!" : "Copy URL"}
-                    </button>
-                    <a
-                      href="https://web.postman.co/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs px-2 py-1 rounded-lg transition-colors"
-                      style={{ backgroundColor: "#FF6C37", color: "white" }}
-                    >
-                      Open ↗
-                    </a>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
@@ -284,24 +260,40 @@ export default function CodePlayground({ exercise }: CodePlaygroundProps) {
             <div className="font-mono text-sm space-y-0.5">
               {output.length === 0 ? (
                 <p style={{ color: "var(--text-tertiary)" }}>
-                  Click &quot;Run&quot; or press Cmd+Enter to execute your code.
+                  {exercise.readOnly
+                    ? "This is a read-only demo — no need to run it."
+                    : "Click \"Run\" or press Cmd+Enter to execute your code."}
                 </p>
               ) : (
-                output.map((line, i) => (
-                  <div
-                    key={i}
-                    className="py-0.5"
-                    style={{
-                      color: line.startsWith("[ERROR]")
-                        ? "var(--error)"
-                        : line.startsWith("[WARN]")
-                        ? "var(--warning)"
-                        : "var(--text-primary)",
-                    }}
-                  >
-                    {line}
-                  </div>
-                ))
+                <>
+                  {output.map((line, i) => (
+                    <div
+                      key={i}
+                      className="py-0.5"
+                      style={{
+                        color: line.startsWith("[ERROR]")
+                          ? "var(--error)"
+                          : line.startsWith("[WARN]")
+                          ? "var(--warning)"
+                          : "var(--text-primary)",
+                      }}
+                    >
+                      {line}
+                    </div>
+                  ))}
+                  {exercise.errorHint && output.some((l) => l.startsWith("[ERROR]")) && (
+                    <div
+                      className="mt-3 text-xs px-3 py-2.5 rounded-xl font-sans"
+                      style={{
+                        backgroundColor: "color-mix(in srgb, var(--error) 8%, transparent)",
+                        color: "var(--text-secondary)",
+                        border: "1px solid color-mix(in srgb, var(--error) 20%, transparent)",
+                      }}
+                    >
+                      💡 {exercise.errorHint}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
